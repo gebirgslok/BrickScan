@@ -18,13 +18,6 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
     
-- task: CopyFiles@2
-  displayName: Copy to artifacts staging directory
-  inputs:
-    SourceFolder: '$(SYSTEM.DEFAULTWORKINGDIRECTORY)'
-    Contents: src\BrickScan.WebApi\bin\$(BuildConfiguration)\netcoreapp3.1\**
-    TargetFolder: '$(BUILD.ARTIFACTSTAGINGDIRECTORY)'
-
 - task: PublishBuildArtifacts@1
   displayName: Publish artifacts
   inputs:
