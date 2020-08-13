@@ -10,3 +10,17 @@ variables:
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
+  
+- task: CopyFiles@2
+  displayName: Copy to artifacts staging directory
+  inputs:
+    SourceFolder: '$(SYSTEM.DEFAULTWORKINGDIRECTORY)'
+    Contents: src\BrickScan.WebApi\$(BuildConfiguration)\**
+    TargetFolder: '$(BUILD.ARTIFACTSTAGINGDIRECTORY)'
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish artifacts
+  inputs:
+    PathtoPublish: '$(BUILD.ARTIFACTSTAGINGDIRECTORY)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
