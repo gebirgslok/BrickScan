@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickScan.WebApi", "BrickScan.WebApi\BrickScan.WebApi.csproj", "{65057694-429E-43A7-B3F4-CF420F0C3FE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickScan.WebApi", "src\BrickScan.WebApi\BrickScan.WebApi.csproj", "{65057694-429E-43A7-B3F4-CF420F0C3FE5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{6350A85C-BA46-4072-A2CC-443E00FD7B2B}"
 EndProject
