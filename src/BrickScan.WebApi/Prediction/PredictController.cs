@@ -23,56 +23,39 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
-namespace BrickScan.WebApi.Controllers
+namespace BrickScan.WebApi.Prediction
 {
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class PredictController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly IImageFileConverter _imageFileConverter;
+        private readonly IImagePredictor _imagePredictor;
 
-        private readonly ILogger<PredictController> _logger;
-
-        public PredictController(ILogger<PredictController> logger)
+        public PredictController(IImageFileConverter imageFileConverter, 
+            IImagePredictor imagePredictor)
         {
-            _logger = logger;
+            _imageFileConverter = imageFileConverter;
+            _imagePredictor = imagePredictor;
         }
 
-        [HttpGet]
-        public IActionResult Predict()
+        [HttpPost]
+        public async Task<IActionResult> Predict(IFormFile imageFile)
         {
-            _logger.LogInformation("Hello word! {version}", "1.2.3");
+            var result = await _imageFileConverter.TryConvertAsync(imageFile);
 
-            var rng = new Random();
-            var data = Enumerable.Range(1, 10).Select(index => new WeatherForecast
+            if (!result.Success)
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
-
-            try
-            {
-                var list = new List<string>();
-                list[1] = "foo";
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Failed to do blablub.");
+                return result.ActionResult!;
             }
 
-            return new OkObjectResult(new ApiResponse(200, data: data));
+            var predictionResult = _imagePredictor.Predict(result.ImageBytes!);
+            return new OkObjectResult(new ApiResponse(200, data: predictionResult));
         }
     }
 }

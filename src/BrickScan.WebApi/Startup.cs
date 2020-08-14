@@ -23,11 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using BrickScan.WebApi.Prediction;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.ML;
 using Serilog;
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -49,6 +52,15 @@ namespace BrickScan.WebApi
             services.AddControllers();
             services.AddMvcCore();
             services.AddApiVersioning(options => options.ReportApiVersions = true);
+
+            var modelFilePath = PathHelpers.GetAbsolutePath(Configuration.GetValue<string>("ModelFilePath"),
+                AppDomain.CurrentDomain.BaseDirectory!);
+
+            services.AddPredictionEnginePool<ModelInput, ModelOutput>()
+                .FromFile(filePath: modelFilePath, modelName: "BrickScanModel", watchForChanges: true);
+
+            services.AddTransient<IImageFileConverter, ImageFileConverter>();
+            services.AddTransient<IImagePredictor, ImagePredictor>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

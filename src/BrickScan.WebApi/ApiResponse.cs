@@ -24,10 +24,11 @@
 #endregion
 
 using System.Collections.Generic;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace BrickScan.WebApi.Controllers
+namespace BrickScan.WebApi
 {
     public class ApiResponse
     {
@@ -49,26 +50,16 @@ namespace BrickScan.WebApi.Controllers
 
         private static string GetDefaultMessageForStatusCode(int statusCode)
         {
-            switch (statusCode)
+            return statusCode switch
             {
-                case 200:
-                    return "Request successful.";
-
-                case 201:
-                    return "Resource(s) created.";
-
-                case 400:
-                    return "Bad request.";
-
-                case 401:
-                    return "Resource not found.";
-
-                case 500:
-                    return "An unhandled error occurred.";
-
-                default:
-                    return "An unknown error occurred.";
-            }
+                200 => "Request successful.",
+                201 => "Resource(s) created.",
+                400 => "Bad request.",
+                401 => "Resource not found.",
+                415 => "Unsupported media type.",
+                500 => "An unhandled error occurred.",
+                _ => "An unknown error occurred."
+            };
         }
     }
 }
