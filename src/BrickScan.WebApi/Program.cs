@@ -36,9 +36,10 @@ namespace BrickScan.WebApi
     {
         public static void Main(string[] args)
         {
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, true)
-                .AddJsonFile("appsettings.Development.json", true, true)
+                .AddJsonFile($"appsettings.{env}.json", true, true)
                 .Build();
 
             Log.Logger = new LoggerConfiguration()

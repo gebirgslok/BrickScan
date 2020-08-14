@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 // Copyright (c) 2020 Jens Eisenbach
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,50 +23,52 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Serilog;
-
-// ReSharper disable MemberCanBePrivate.Global
+using System.Collections.Generic;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 
-namespace BrickScan.WebApi
+namespace BrickScan.WebApi.Controllers
 {
-    public class Startup
+    public class ApiResponse
     {
-        public IConfiguration Configuration { get; }
+        public int StatusCode { get; }
 
-        public Startup(IConfiguration configuration)
+        public IEnumerable<string> Errors { get; }
+
+        public string Message { get; }
+
+        public object? Data { get; }
+
+        internal ApiResponse(int statusCode, string? message = null, object? data = null, IEnumerable<string>? errors = null)
         {
-            Configuration = configuration;
+            StatusCode = statusCode;
+            Message = message ?? GetDefaultMessageForStatusCode(StatusCode);
+            Data = data;
+            Errors = errors ?? new List<string>();
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        private static string GetDefaultMessageForStatusCode(int statusCode)
         {
-            services.AddControllers();
-            services.AddMvcCore();
-            services.AddApiVersioning(options => options.ReportApiVersions = true);
-        }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
+            switch (statusCode)
             {
-                app.UseDeveloperExceptionPage();
+                case 200:
+                    return "Request successful.";
+
+                case 201:
+                    return "Resource(s) created.";
+
+                case 400:
+                    return "Bad request.";
+
+                case 401:
+                    return "Resource not found.";
+
+                case 500:
+                    return "An unhandled error occurred.";
+
+                default:
+                    return "An unknown error occurred.";
             }
-
-            app.UseHttpsRedirection();
-            app.UseSerilogRequestLogging();
-            app.UseRouting();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
         }
     }
 }

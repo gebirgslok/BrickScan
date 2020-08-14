@@ -31,35 +31,48 @@ using Microsoft.Extensions.Logging;
 
 namespace BrickScan.WebApi.Controllers
 {
+    [ApiVersion("1.0")]
     [ApiController]
-    [Route("[controller]")]
-    public class ClassifyController : ControllerBase
+    [Route("api/v{version:apiVersion}/[controller]")]
+    public class PredictController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<ClassifyController> _logger;
+        private readonly ILogger<PredictController> _logger;
 
-        public ClassifyController(ILogger<ClassifyController> logger)
+        public PredictController(ILogger<PredictController> logger)
         {
             _logger = logger;
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public IActionResult Predict()
         {
             _logger.LogInformation("Hello word! {version}", "1.2.3");
 
             var rng = new Random();
-            return Enumerable.Range(1, 10).Select(index => new WeatherForecast
+            var data = Enumerable.Range(1, 10).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
+
+            try
+            {
+                var list = new List<string>();
+                list[1] = "foo";
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to do blablub.");
+            }
+
+            return new OkObjectResult(new ApiResponse(200, data: data));
         }
     }
 }
