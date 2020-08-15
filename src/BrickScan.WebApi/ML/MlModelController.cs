@@ -51,8 +51,8 @@ namespace BrickScan.WebApi.ML
 
         private async Task CopyAsync(byte[] bytes, string modelFilePath)
         {
-            var absoluteFilePath = PathHelpers.GetAbsolutePath(modelFilePath, AppDomain.CurrentDomain.BaseDirectory!);
-            var destinationDirectory = Path.GetDirectoryName(absoluteFilePath);
+
+            var destinationDirectory = Path.GetDirectoryName(modelFilePath);
 
             if (!Directory.Exists(destinationDirectory))
             {
@@ -61,9 +61,9 @@ namespace BrickScan.WebApi.ML
                 _logger.LogInformation("Successfully created {DestinationDirectory}.", destinationDirectory);
             }
 
-            _logger.LogInformation("Saving MlModel.zip ({Size} bytes) to {ModelFilePath}...", bytes.Length, absoluteFilePath);
-            await System.IO.File.WriteAllBytesAsync(absoluteFilePath, bytes);
-            _logger.LogInformation("Successfully saved MlModel.zip.", bytes.Length, absoluteFilePath);
+            _logger.LogInformation("Saving MlModel.zip ({Size} bytes) to {ModelFilePath}...", bytes.Length, modelFilePath);
+            await System.IO.File.WriteAllBytesAsync(modelFilePath, bytes);
+            _logger.LogInformation("Successfully saved MlModel.zip.", bytes.Length, modelFilePath);
         }
 
         [HttpPost]
@@ -77,6 +77,8 @@ namespace BrickScan.WebApi.ML
                     "No MlModel.zip file specified."
                 }));
             }
+
+            _logger.LogInformation("Received MlModel.zip ({Size} Bytes).", mlModel.Length);
 
             if (mlModel.Length == 0)
             {
@@ -101,7 +103,9 @@ namespace BrickScan.WebApi.ML
             await mlModel.CopyToAsync(imageMemoryStream);
             var bytes = imageMemoryStream.ToArray();
 
-            await CopyAsync(bytes, _configuration.GetValue<string>("ModelFilePath"));
+            var modelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!,
+                _configuration.GetValue<string>("ModelFilePath"));
+            await CopyAsync(bytes, modelFilePath);
             return new OkResult();
         }
     }

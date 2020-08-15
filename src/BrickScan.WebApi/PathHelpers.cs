@@ -30,15 +30,15 @@ namespace BrickScan.WebApi
 {
     internal static class PathHelpers
     {
-        internal static string GetAbsolutePath(string absoluteOrRelativePath, string baseDirectory)
-        {
-            var uri = new Uri(absoluteOrRelativePath, UriKind.RelativeOrAbsolute);
+        //internal static string GetAbsolutePath(string relativePath, string baseDirectory)
+        //{
+        //    var uri = new Uri(absoluteOrRelativePath, UriKind.RelativeOrAbsolute);
 
-            var path = uri.IsAbsoluteUri ?
-                uri.AbsolutePath :
-                Path.Combine(baseDirectory, uri.OriginalString);
+        //    var path = uri.IsAbsoluteUri ?
+        //        uri.AbsolutePath :
+        //        Path.Combine(baseDirectory, uri.OriginalString);
 
-            return path;
-        }
+        //    return path;
+        //}
     }
 }

@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.IO;
 using BrickScan.WebApi.Prediction;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -53,8 +54,8 @@ namespace BrickScan.WebApi
             services.AddMvcCore();
             services.AddApiVersioning(options => options.ReportApiVersions = true);
 
-            var modelFilePath = PathHelpers.GetAbsolutePath(Configuration.GetValue<string>("ModelFilePath"),
-                AppDomain.CurrentDomain.BaseDirectory!);
+            var modelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!,
+                Configuration.GetValue<string>("ModelFilePath"));
 
             services.AddPredictionEnginePool<ModelInput, ModelOutput>()
                 .FromFile(filePath: modelFilePath, modelName: "BrickScanModel", watchForChanges: true);
@@ -65,10 +66,10 @@ namespace BrickScan.WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            //if (env.IsDevelopment())
+            //{
+            app.UseDeveloperExceptionPage();
+            //}
 
             app.UseHttpsRedirection();
             app.UseSerilogRequestLogging();
