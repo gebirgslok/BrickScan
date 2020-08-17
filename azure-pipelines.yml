@@ -11,21 +11,35 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
 
-# - task: DotNetCoreCLI@2
-  # inputs:
-    # command: publish
-    # publishWebProjects: True
-    # arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    # zipAfterPublish: True
-    
-- task: CopyFiles@2
+- task: DotNetCoreCLI@2
   inputs:
-    SourceFolder: '$(SYSTEM.DEFAULTWORKINGDIRECTORY)'
-    Contents: |
-      BricklinkSharp.Client\bin\$(BuildConfiguration)\**
-      !**\runtimes\linux-x64\**
-      !**\runtimes\osx-x64\**
-    TargetFolder: '$(BUILD.ARTIFACTSTAGINGDIRECTORY)'    
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
+- task: DeleteFiles@1
+  displayName: Delete Tensorflow linux-x64 runtimes
+  inputs:
+    SourceFolder: $(Build.ArtifactStagingDirectory)\runtimes\linux-x64\
+    Contents: *
+    RemoveSourceFolder: true
+    
+- task: DeleteFiles@1
+  displayName: Delete Tensorflow osx-x64 runtimes
+  inputs:
+    SourceFolder: $(Build.ArtifactStagingDirectory)\runtimes\osx-x64\
+    Contents: *
+    RemoveSourceFolder: true
+    
+# - task: CopyFiles@2
+  # inputs:
+    # SourceFolder: '$(SYSTEM.DEFAULTWORKINGDIRECTORY)'
+    # Contents: |
+      # BricklinkSharp.Client\bin\$(BuildConfiguration)\**
+      # !**\runtimes\linux-x64\**
+      # !**\runtimes\osx-x64\**
+    # TargetFolder: '$(BUILD.ARTIFACTSTAGINGDIRECTORY)'    
     
 - task: PublishBuildArtifacts@1
   displayName: Publish artifacts
