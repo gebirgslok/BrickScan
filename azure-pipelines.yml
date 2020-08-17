@@ -22,14 +22,14 @@ steps:
 - task: DeleteFiles@1
   displayName: Delete Tensorflow linux-x64 runtimes
   inputs:
-    SourceFolder: '$(Build.ArtifactStagingDirectory)\runtimes\linux-x64\'
+    SourceFolder: '$(Build.ArtifactStagingDirectory)\BrickScan.WebApi\runtimes\linux-x64\'
     Contents: '*'
     RemoveSourceFolder: True
     
 - task: DeleteFiles@1
   displayName: Delete Tensorflow osx-x64 runtimes
   inputs:
-    SourceFolder: '$(Build.ArtifactStagingDirectory)\runtimes\osx-x64\'
+    SourceFolder: '$(Build.ArtifactStagingDirectory)\BrickScan.WebApi\runtimes\osx-x64\'
     Contents: '*'
     RemoveSourceFolder: True
     
