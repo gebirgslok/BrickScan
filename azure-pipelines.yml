@@ -21,15 +21,15 @@ steps:
 - task: DeleteFiles@1
   displayName: Delete Tensorflow linux-x64 runtimes
   inputs:
-    SourceFolder: $(Build.ArtifactStagingDirectory)\runtimes\linux-x64\
-    Contents: *
+    SourceFolder: '$(Build.ArtifactStagingDirectory)\runtimes\linux-x64\'
+    Contents: '*'
     RemoveSourceFolder: True
     
 - task: DeleteFiles@1
   displayName: Delete Tensorflow osx-x64 runtimes
   inputs:
-    SourceFolder: $(Build.ArtifactStagingDirectory)\runtimes\osx-x64\
-    Contents: *
+    SourceFolder: '$(Build.ArtifactStagingDirectory)\runtimes\osx-x64\'
+    Contents: '*'
     RemoveSourceFolder: True
     
 # - task: CopyFiles@2
