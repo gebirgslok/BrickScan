@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/gebirgslok/BrickScan</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <ExcludeFoldersFromDeployment>runtimes\osx-x64;runtimes\linux-x64</ExcludeFoldersFromDeployment>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
