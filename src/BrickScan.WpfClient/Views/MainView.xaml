@@ -1,0 +1,118 @@
+﻿<mah:MetroWindow x:Class="BrickScan.WpfClient.Views.MainView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:converter="clr-namespace:BrickScan.WpfClient.Converter"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:resx="clr-namespace:BrickScan.WpfClient.Properties"
+                 xmlns:s="https://github.com/canton7/Stylet"
+                 Title="{x:Static resx:Resources.BrickScan}"
+                 Width="1200"
+                 Height="800"
+                 mc:Ignorable="d">
+    <mah:MetroWindow.LeftWindowCommands>
+        <mah:WindowCommands>
+            <Button Click="{s:Action CloseApplication}" Content="{x:Static resx:Resources.Close}" />
+            <Button Click="{s:Action LaunchBrickScanOnGithub}" ToolTip="{x:Static resx:Resources.BrickScanOnGithub}">
+                <iconPacks:Material Width="22"
+                                    Height="22"
+                                    Kind="Github" />
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.LeftWindowCommands>
+    <Grid>
+        <Grid.Resources>
+            <converter:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
+            <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type mah:HamburgerMenuIconItem}">
+                <Grid x:Name="RootGrid"
+                      Height="48"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ContentControl Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Content="{Binding Icon, Mode=OneTime}"
+                                    Focusable="False"
+                                    Foreground="{DynamicResource MahApps.Brushes.Text}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Foreground="{DynamicResource MahApps.Brushes.Text}"
+                               Text="{Binding Label, Mode=OneTime}" />
+                </Grid>
+            </DataTemplate>
+            <Style BasedOn="{StaticResource {x:Type mah:HamburgerMenu}}" TargetType="{x:Type mah:HamburgerMenu}">
+                <Setter Property="HamburgerButtonTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <mah:FontIcon Glyph="&#xE700;" />
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsPaneOpen" Value="True">
+                        <Setter Property="HamburgerButtonTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <mah:FontIcon Glyph="&#xE711;" />
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <mah:HamburgerMenu CanResizeOpenPane="True"
+                           Foreground="White"
+                           IsPaneOpen="true"
+                           ItemTemplate="{StaticResource MenuItemTemplate}"
+                           ItemsSource="{Binding MenuItems, Mode=OneTime}"
+                           OpenPaneLength="200"
+                           OptionsItemTemplate="{StaticResource MenuItemTemplate}"
+                           OptionsItemsSource="{Binding MenuOptionItems, Mode=OneTime}"
+                           PaneBackground="{DynamicResource MahApps.Brushes.Gray8}"
+                           PaneForeground="{DynamicResource MahApps.Brushes.Text}"
+                           SelectedItem="{Binding SelectedMenuItem, Mode=TwoWay}">
+            <mah:HamburgerMenu.Content>
+                <MultiBinding Converter="{StaticResource SelectedItemToContentConverter}">
+                    <Binding Mode="OneWay"
+                             Path="SelectedItem"
+                             RelativeSource="{RelativeSource Self}" />
+                    <Binding Mode="OneWay"
+                             Path="SelectedOptionsItem"
+                             RelativeSource="{RelativeSource Self}" />
+                </MultiBinding>
+            </mah:HamburgerMenu.Content>
+            <mah:HamburgerMenu.ContentTemplate>
+                <DataTemplate DataType="{x:Type mah:HamburgerMenuItem}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="48" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Gray8}">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="24"
+                                       Foreground="{DynamicResource MahApps.Brushes.Text}"
+                                       Text="{Binding Label, Mode=OneTime}" />
+                        </Border>
+                        <ContentControl Grid.Row="1"
+                                        s:View.Model="{Binding Tag, Mode=OneTime}"
+                                        Focusable="False" />
+                    </Grid>
+                </DataTemplate>
+            </mah:HamburgerMenu.ContentTemplate>
+        </mah:HamburgerMenu>
+        <ContentControl Grid.Row="1" s:View.Model="{Binding StatusBarViewModel, Mode=OneTime}" />
+    </Grid>
+</mah:MetroWindow>
