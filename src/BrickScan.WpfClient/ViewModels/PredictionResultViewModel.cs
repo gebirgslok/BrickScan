@@ -23,39 +23,44 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.ComponentModel;
-using System.Windows;
-using BrickScan.WpfClient.Properties;
-using ControlzEx.Theming;
-using Serilog;
+using System.Threading.Tasks;
+using System.Windows.Media;
+using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
+using Stylet;
 
-namespace BrickScan.WpfClient
+// ReSharper disable once UnusedAutoPropertyAccessor.Global
+// ReSharper disable once MemberCanBePrivate.Global
+namespace BrickScan.WpfClient.ViewModels
 {
-    public partial class App
+    internal class PredictionResultViewModel : PropertyChangedBase
     {
-        public App()
+        public string Test { get; set; }
+
+        public ImageSource ImageSource { get; }
+
+        public NotifyTask<string> InitializationNotifier { get; }
+
+        public PredictionResultViewModel(Mat imageSection, Func<Task<string>, string, NotifyTask<string>> notifyTaskFactory)
         {
-            Settings.Default.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args)
+            ImageSource = imageSection.ToBitmapSource();
+            var task = StartPredictionAsync(imageSection).ContinueWith(s => s.Result + "foo");
+            InitializationNotifier = notifyTaskFactory.Invoke(task, "foobar");
+            InitializationNotifier.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args)
             {
-                if (args.PropertyName == nameof(Settings.Default.ThemeBaseColor) ||
-                    args.PropertyName == nameof(Settings.Default.ThemeColorScheme))
+                if (args.PropertyName == nameof(InitializationNotifier.IsCompleted))
                 {
-                    ChangeTheme();
+                    Test = InitializationNotifier.Result;
                 }
             };
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        private async Task<string> StartPredictionAsync(Mat imageSection)
         {
-            base.OnStartup(e);
-            ChangeTheme();
-        }
-
-        private void ChangeTheme()
-        {
-            var themeName = $"{Settings.Default.ThemeBaseColor}.{Settings.Default.ThemeColorScheme}";
-            Log.ForContext<App>().Information("Changing theme to {ThemeName}.", themeName);
-            ThemeManager.Current.ChangeTheme(this, themeName);
+            await Task.Delay(5000);
+            return "hello world";
         }
     }
 }

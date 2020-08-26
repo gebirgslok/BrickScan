@@ -22,10 +22,6 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="AutofacSerilogIntegration" Version="4.0.0" />
-    <PackageReference Include="Fody" Version="6.2.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="MahApps.Metro" Version="2.2.0" />
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.4.0" />
     <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.26">
@@ -34,6 +30,7 @@
     </PackageReference>
     <PackageReference Include="OpenCvSharp4" Version="4.4.0.20200725" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.4.0.20200725" />
+    <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.4.0.20200725" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.2.8" />
     <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
@@ -78,7 +75,7 @@
       <DependentUpon>App.config</DependentUpon>
     </None>
     <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>

@@ -23,16 +23,30 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 using System.Windows.Threading;
 using Autofac;
 using AutofacSerilogIntegration;
 using BrickScan.WpfClient.Model;
 using BrickScan.WpfClient.ViewModels;
 using Serilog;
+using VideoCapture = BrickScan.WpfClient.Model.VideoCapture;
 
 namespace BrickScan.WpfClient
 {
+    static class ContainerBuilderExtensions
+    {
+        public static void RegisterViewModels(this ContainerBuilder builder)
+        {
+            builder.RegisterType<PredictionConductorViewModel>().AsSelf();
+            builder.RegisterType<PredictionResultViewModel>().AsSelf();
+            builder.RegisterType<PredictViewModel>().AsSelf();
+            builder.RegisterType<MainViewModel>().AsSelf();
+            builder.RegisterType<StatusBarViewModel>().AsSelf();
+            builder.RegisterType<CameraSetupViewModel>().AsSelf().SingleInstance();
+            builder.RegisterGeneric(typeof(NotifyTask<>)).AsSelf();
+        }
+    }
+
     internal class Bootstrapper : AutofacBootstrapper<MainViewModel>
     {
         protected override void ConfigureBootstrapper()
@@ -53,10 +67,7 @@ namespace BrickScan.WpfClient
 
         protected override void ConfigureIoC(ContainerBuilder builder)
         {
-            builder.RegisterType<PredictViewModel>().AsSelf();
-            builder.RegisterType<MainViewModel>().AsSelf();
-            builder.RegisterType<StatusBarViewModel>().AsSelf();
-            builder.RegisterType<CameraSetupViewModel>().AsSelf().SingleInstance();
+            builder.RegisterViewModels();
             builder.RegisterType<UserManager>().As<IUserManager>().SingleInstance();
             builder.RegisterType<VideoCapture>().As<IVideoCapture>().SingleInstance();
             builder.RegisterType<RoiDetector>().As<IRoiDetector>();

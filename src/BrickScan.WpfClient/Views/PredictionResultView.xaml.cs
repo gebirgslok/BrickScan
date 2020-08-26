@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace BrickScan.WpfClient.Views
 {
     /// <summary>
-    /// Interaction logic for CameraSetupView.xaml
+    /// Interaction logic for PredictionResultView.xaml
     /// </summary>
-    public partial class CameraSetupView : UserControl
+    public partial class PredictionResultView : UserControl
     {
-        public CameraSetupView()
+        public PredictionResultView()
         {
             InitializeComponent();
         }

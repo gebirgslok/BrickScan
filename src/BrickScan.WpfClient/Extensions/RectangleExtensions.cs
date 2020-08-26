@@ -47,6 +47,11 @@ namespace BrickScan.WpfClient.Extensions
             return (sx, sy);
         }
 
+        internal static Rect ToRect(this Rectangle r)
+        {
+            return new Rect(r.X, r.Y, r.Width, r.Height);
+        }
+
         internal static Rectangle ToRectangle(this Rect r)
         {
             return new Rectangle(r.X, r.Y, r.Width, r.Height);

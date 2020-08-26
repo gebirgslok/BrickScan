@@ -23,27 +23,30 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Windows.Media.Imaging;
+using System;
+using BrickScan.WpfClient.Events;
 using OpenCvSharp;
+using Stylet;
 
-namespace BrickScan.WpfClient.Extensions
+namespace BrickScan.WpfClient.ViewModels
 {
-    internal static class MatExtensions
+    internal class PredictionConductorViewModel : Conductor<PropertyChangedBase>, IHandle<OnPredictionRequested>
     {
-        private static BitmapImage ConvertFromByteArray(byte[] array)
+        private readonly PredictViewModel _predictViewModel;
+        private readonly Func<Mat, PredictionResultViewModel> _predictionResultViewModelFunc;
+
+        public PredictionConductorViewModel(PredictViewModel predictViewModel, 
+            Func<Mat, PredictionResultViewModel> predictionResultViewModelFunc)
         {
-            using var memoryStream = new System.IO.MemoryStream(array);
-            var image = new BitmapImage();
-            image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.StreamSource = memoryStream;
-            image.EndInit();
-            return image;
+            _predictViewModel = predictViewModel;
+            _predictionResultViewModelFunc = predictionResultViewModelFunc;
+            ActiveItem = _predictViewModel;
         }
 
-        internal static BitmapSource ToBitmapSource(this Mat image)
+        public void Handle(OnPredictionRequested message)
         {
-            return ConvertFromByteArray(image.ToBytes());
+            ActiveItem = _predictionResultViewModelFunc.Invoke(message.ImageSection);
+            //_predictionResultViewModelFunc.StartPredictionAsync(message.ImageSection).Wait();
         }
     }
 }

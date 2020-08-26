@@ -27,10 +27,64 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Autofac;
+using Autofac.Core;
+using Autofac.Core.Registration;
+using Autofac.Util;
 using Stylet;
 
 namespace BrickScan.WpfClient
 {
+    class EventAggregationAutoSubscriptionModule : Autofac.Module
+    {
+        protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration)
+        {
+            registration.Activated += OnComponentActivated;
+        }
+
+        static void OnComponentActivated(object sender, ActivatedEventArgs<object> args)
+        {
+            var handler = args.Instance as IHandle;
+            
+            if (handler == null)
+            {
+                return;
+            }
+
+            var context = args.Context;
+            var lifetimeScope = context.Resolve<ILifetimeScope>();
+            var eventAggregator = lifetimeScope.Resolve<IEventAggregator>();
+
+            eventAggregator.Subscribe(handler);
+
+            var disposableAction = new DisposableAction(() =>
+            {
+                eventAggregator.Unsubscribe(handler);
+            });
+
+            lifetimeScope.Disposer.AddInstanceForDisposal(disposableAction);
+        }
+    }
+
+    sealed class DisposableAction : Disposable
+    {
+        public DisposableAction(Action action)
+        {
+            Action = action ?? throw new ArgumentNullException(nameof(action));
+        }
+
+        private Action Action { get; }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing)
+            {
+                Action.Invoke();
+            }
+        }
+    }
+
     internal class AutofacBootstrapper<TRootViewModel> : BootstrapperBase where TRootViewModel : class
     {
 #pragma warning disable 8618
@@ -55,6 +109,7 @@ namespace BrickScan.WpfClient
             builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance(); 
             builder.RegisterType<MessageBoxViewModel>().As<IMessageBoxViewModel>().ExternallyOwned();
             builder.RegisterAssemblyTypes(GetType().Assembly).ExternallyOwned();
+            builder.RegisterModule<EventAggregationAutoSubscriptionModule>();
         }
 
         protected override void ConfigureBootstrapper()
@@ -80,7 +135,7 @@ namespace BrickScan.WpfClient
         public override void Dispose()
         {
             ScreenExtensions.TryDispose(_rootViewModel);
-            _container?.Dispose();
+            _container.Dispose();
             base.Dispose();
         }
     }

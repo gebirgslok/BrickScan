@@ -29,12 +29,14 @@ using MahApps.Metro.IconPacks;
 using Stylet;
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    public class MainViewModel : Screen
+    internal class MainViewModel : Screen
     {
-        private readonly PredictViewModel _predictViewModel;
+        private readonly PredictionConductorViewModel _predictionConductorViewModel;
         private readonly SettingsViewModel _settingsViewModel;
 
         public StatusBarViewModel StatusBarViewModel { get; }
@@ -47,12 +49,12 @@ namespace BrickScan.WpfClient.ViewModels
 
         public IUserManager UserManager { get; }
 
-        public MainViewModel(PredictViewModel predictViewModel, 
+        public MainViewModel(PredictionConductorViewModel predictionConductorViewModel, 
             SettingsViewModel settingsViewModel, 
             StatusBarViewModel statusBarViewModel, 
             IUserManager userManager)
         {
-            _predictViewModel = predictViewModel;
+            _predictionConductorViewModel = predictionConductorViewModel;
             _settingsViewModel = settingsViewModel;
             StatusBarViewModel = statusBarViewModel;
             UserManager = userManager;
@@ -67,7 +69,7 @@ namespace BrickScan.WpfClient.ViewModels
                 {
                     Icon = new PackIconMaterial{ Kind = PackIconMaterialKind.Home },
                     Label = Properties.Resources.Home.ToUpperInvariant(),
-                    Tag = _predictViewModel
+                    Tag = _predictionConductorViewModel
                 },
                 new HamburgerMenuIconItem
                 {

@@ -23,29 +23,48 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Drawing;
 using System.Windows.Media;
+using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.Model;
+using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
+using PropertyChanged;
+using Serilog;
 using Stylet;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    public class PredictViewModel : PropertyChangedBase
+    internal class PredictViewModel : PropertyChangedBase, IDisposable
     {
         private readonly IVideoCapture _videoCapture;
+        private readonly IEventAggregator _eventAggregator;
+        private readonly ILogger _logger;
+        private bool _isDisposed;
 
         public CameraSetupViewModel CameraSetupViewModel { get; }
 
-        public ImageSource? ImageSource { get; set; }
+        public Mat? Frame { get; private set; }
 
-        public Rectangle Rectangle { get; set; }
+        public ImageSource? ImageSource { get; private set; }
+
+        public Rectangle Rectangle { get; private set; }
+
+        [DependsOn(nameof(Frame), nameof(Rectangle))]
+        public bool CanPredict => Frame != null && !Frame.Empty() && !Rectangle.IsEmpty;
 
         public PredictViewModel(CameraSetupViewModel cameraSetupViewModel, 
-            IVideoCapture videoCapture)
+            IVideoCapture videoCapture, 
+            IEventAggregator eventAggregator, 
+            ILogger logger)
         {
             CameraSetupViewModel = cameraSetupViewModel;
             _videoCapture = videoCapture;
+            _eventAggregator = eventAggregator;
+            _logger = logger;
             _videoCapture.FrameCaptured += OnFrameCaptured;
         }
 
@@ -53,11 +72,47 @@ namespace BrickScan.WpfClient.ViewModels
         {
             Execute.OnUIThread(() =>
             {
-                ImageSource = args.Frame?.ToBitmapSource();
+                Frame = args.Frame;
+                ImageSource = Frame?.ToBitmapSource();
                 Rectangle = args.Rectangle;
             });
         }
 
+        private void Dispose(bool disposing)
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
 
+            if (disposing)
+            {
+                _videoCapture.FrameCaptured -= OnFrameCaptured;
+            }
+
+            _isDisposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public void Predict()
+        {
+            var rect = Rectangle.ToRect();
+            try
+            {
+                var imageSegment = new Mat(Frame!, rect);
+                _eventAggregator.PublishOnUIThread(new OnPredictionRequested(imageSegment));
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to publish new prediction request " +
+                                         "(frame = {Frame}, rect = {Rect}). Message {Message", 
+                    Frame?.ToString() ?? "null", rect.ToString());
+            }
+        }
     }
 }

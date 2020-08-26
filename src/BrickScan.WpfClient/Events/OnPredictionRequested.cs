@@ -23,39 +23,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.ComponentModel;
-using System.Windows;
-using BrickScan.WpfClient.Properties;
-using ControlzEx.Theming;
-using Serilog;
+using OpenCvSharp;
 
-namespace BrickScan.WpfClient
+namespace BrickScan.WpfClient.Events
 {
-    public partial class App
+    public class OnPredictionRequested
     {
-        public App()
-        {
-            Settings.Default.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args)
-            {
-                if (args.PropertyName == nameof(Settings.Default.ThemeBaseColor) ||
-                    args.PropertyName == nameof(Settings.Default.ThemeColorScheme))
-                {
-                    ChangeTheme();
-                }
-            };
-        }
+        public Mat ImageSection { get; }
 
-        protected override void OnStartup(StartupEventArgs e)
+        internal OnPredictionRequested(Mat imageSection)
         {
-            base.OnStartup(e);
-            ChangeTheme();
-        }
-
-        private void ChangeTheme()
-        {
-            var themeName = $"{Settings.Default.ThemeBaseColor}.{Settings.Default.ThemeColorScheme}";
-            Log.ForContext<App>().Information("Changing theme to {ThemeName}.", themeName);
-            ThemeManager.Current.ChangeTheme(this, themeName);
+            ImageSection = imageSection;
         }
     }
 }
