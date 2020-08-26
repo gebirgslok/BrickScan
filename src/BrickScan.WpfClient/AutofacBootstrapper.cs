@@ -33,10 +33,12 @@ namespace BrickScan.WpfClient
 {
     internal class AutofacBootstrapper<TRootViewModel> : BootstrapperBase where TRootViewModel : class
     {
+#pragma warning disable 8618
         private IContainer _container;
+#pragma warning restore 8618
 
-        private object _rootViewModel;
-        protected virtual object RootViewModel => _rootViewModel ?? (_rootViewModel = GetInstance(typeof(TRootViewModel)));
+        private object? _rootViewModel;
+        protected virtual object RootViewModel => _rootViewModel ??= GetInstance(typeof(TRootViewModel));
 
         private void ConfigureBaseIoC(ContainerBuilder builder)
         {

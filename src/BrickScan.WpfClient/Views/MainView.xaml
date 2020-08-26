@@ -11,10 +11,25 @@
                  Title="{x:Static resx:Resources.BrickScan}"
                  Width="1200"
                  Height="800"
+                 Icon="pack://application:,,,/BrickScan.WpfClient;component/icon.png"
+                 ShowIconOnTitleBar="False"
                  mc:Ignorable="d">
+    <mah:MetroWindow.Resources>
+        <s:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"
+                                     FalseVisibility="Collapsed"
+                                     TrueVisibility="Visible" />
+        <s:BoolToVisibilityConverter x:Key="InvBoolToVisibilityConverter"
+                                     FalseVisibility="Visible"
+                                     TrueVisibility="Collapsed" />
+    </mah:MetroWindow.Resources>
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Button Click="{s:Action CloseApplication}" Content="{x:Static resx:Resources.Close}" />
+            <Button Click="{s:Action LaunchBrickScanHomepage}" ToolTip="{x:Static resx:Resources.BrickScanHomepage}">
+                <Image Width="22"
+                       Height="22"
+                       Source="pack://application:,,,/BrickScan.WpfClient;component/icon.png" />
+            </Button>
             <Button Click="{s:Action LaunchBrickScanOnGithub}" ToolTip="{x:Static resx:Resources.BrickScanOnGithub}">
                 <iconPacks:Material Width="22"
                                     Height="22"
@@ -22,6 +37,33 @@
             </Button>
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <TextBlock Margin="5,0,5,0"
+                       VerticalAlignment="Center"
+                       Opacity=".5"
+                       Text="{x:Static resx:Resources.NotLoggedOn}"
+                       Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource InvBoolToVisibilityConverter}, Mode=OneWay}" />
+            <Button Margin="5,0,5,0"
+                    VerticalAlignment="Center"
+                    Content="{Binding UserManager.Username, Mode=OneWay}"
+                    Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" />
+            <Button Click="{s:Action LogOn}"
+                    ToolTip="{x:Static resx:Resources.LogOn}"
+                    Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource InvBoolToVisibilityConverter}, Mode=OneWay}">
+                <iconPacks:Material Width="22"
+                                    Height="22"
+                                    Kind="Login" />
+            </Button>
+            <Button Click="{s:Action LogOff}"
+                    ToolTip="{x:Static resx:Resources.LogOff}"
+                    Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+                <iconPacks:Material Width="22"
+                                    Height="22"
+                                    Kind="Logout" />
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
     <Grid>
         <Grid.Resources>
             <converter:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />

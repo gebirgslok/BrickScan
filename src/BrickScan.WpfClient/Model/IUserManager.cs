@@ -23,28 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Globalization;
-using System.Linq;
-using System.Windows.Data;
-
-namespace BrickScan.WpfClient.Converter
+namespace BrickScan.WpfClient.Model
 {
-    internal class SelectedItemToContentConverter : IMultiValueConverter
+    public interface IUserManager
     {
-        public object? Convert(object[]? values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values != null && values.Length > 1)
-            {
-                return values[0] ?? values[1];
-            }
+        bool IsUserLoggedOn { get; }
 
-            return null;
-        }
+        string? Username { get; }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            return targetTypes.Select(t => Binding.DoNothing).ToArray();
-        }
+        void LogOn();
+
+        void LogOff();
     }
 }

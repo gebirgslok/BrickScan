@@ -23,44 +23,27 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Diagnostics;
-using System.Reflection;
-using BrickScan.WpfClient.Events;
-using PropertyChanged;
-using Stylet;
+using System.Windows.Media.Imaging;
+using OpenCvSharp;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable MemberCanBePrivate.Global
-
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Extensions
 {
-    public class StatusBarViewModel : PropertyChangedBase, IHandle<OnStatusBarMessageChanged>
+    internal static class MatExtensions
     {
-
-        public string AssemblyFileVersion { get; }
-
-        public string? Message { get; set; }
-
-        [DependsOn(nameof(Message))]
-        public bool HasMessage => !string.IsNullOrEmpty(Message);
-
-        public StatusBarViewModel(IEventAggregator eventAggregator)
+        private static BitmapImage ConvertFromByteArray(byte[] array)
         {
-            eventAggregator.Subscribe(this);
-            var assembly = Assembly.GetExecutingAssembly();
-            var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            AssemblyFileVersion = $"{Properties.Resources.ProgramVersion}: {fileVersionInfo.FileVersion}";
+            using var memoryStream = new System.IO.MemoryStream(array);
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.StreamSource = memoryStream;
+            image.EndInit();
+            return image;
         }
 
-        public void Handle(OnStatusBarMessageChanged message)
+        internal static BitmapSource ToBitmapSource(this Mat image)
         {
-            if (message.ClearMessage)
-            {
-                Message = null;
-                return;
-            }
-
-            Message = message.Message;
+            return ConvertFromByteArray(image.ToBytes());
         }
     }
 }

@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
 using Stylet;
@@ -42,15 +43,20 @@ namespace BrickScan.WpfClient.ViewModels
 
         public HamburgerMenuItemCollection MenuOptionItems => BuildMenuOptionsItems();
 
-        public HamburgerMenuItem SelectedMenuItem { get; set; }
+        public HamburgerMenuItem? SelectedMenuItem { get; set; }
+
+        public IUserManager UserManager { get; }
 
         public MainViewModel(PredictViewModel predictViewModel, 
             SettingsViewModel settingsViewModel, 
-            StatusBarViewModel statusBarViewModel)
+            StatusBarViewModel statusBarViewModel, 
+            IUserManager userManager)
         {
             _predictViewModel = predictViewModel;
             _settingsViewModel = settingsViewModel;
             StatusBarViewModel = statusBarViewModel;
+            UserManager = userManager;
+            SelectedMenuItem = MenuItems[0] as HamburgerMenuIconItem;
         }
 
         private HamburgerMenuItemCollection BuildMenuItems()
@@ -97,6 +103,21 @@ namespace BrickScan.WpfClient.ViewModels
         public void LaunchBrickScanOnGithub()
         {
             System.Diagnostics.Process.Start("https://github.com/gebirgslok/BrickScan");
+        }
+
+        public void LaunchBrickScanHomepage()
+        {
+
+        }
+
+        public void LogOn()
+        {
+            UserManager.LogOn();
+        }
+
+        public void LogOff()
+        {
+            UserManager.LogOff();
         }
     }
 }

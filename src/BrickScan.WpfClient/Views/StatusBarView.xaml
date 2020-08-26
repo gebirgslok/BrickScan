@@ -3,9 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:s="https://github.com/canton7/Stylet"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <s:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"
+                                     FalseVisibility="Collapsed"
+                                     TrueVisibility="Visible" />
+    </UserControl.Resources>
     <Grid>
         <StatusBar Background="{DynamicResource MahApps.Brushes.Accent}">
             <StatusBar.ItemsPanel>
@@ -14,12 +20,45 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                     </Grid>
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
-            <StatusBarItem Grid.Column="2">
+            <StatusBarItem Grid.Column="0">
                 <TextBlock Text="{Binding Path=AssemblyFileVersion, Mode=OneTime}" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Text="{Binding Path=Message, Mode=OneWay, TargetNullValue={x:Null}}" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="3">
+                <TextBlock Width="10"
+                           IsEnabled="{Binding Path=HasMessage, Mode=OneWay}"
+                           Visibility="{Binding Path=Message, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames RepeatBehavior="Forever"
+                                                                               Storyboard.TargetProperty="Text"
+                                                                               Duration="00:00:01.2">
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.0" Value="" />
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.3" Value="." />
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.6" Value=".." />
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.9" Value="..." />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
             </StatusBarItem>
         </StatusBar>
     </Grid>

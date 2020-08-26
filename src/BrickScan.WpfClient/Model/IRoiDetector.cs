@@ -23,28 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Globalization;
-using System.Linq;
-using System.Windows.Data;
+using System.Drawing;
+using OpenCvSharp;
 
-namespace BrickScan.WpfClient.Converter
+namespace BrickScan.WpfClient.Model
 {
-    internal class SelectedItemToContentConverter : IMultiValueConverter
+    public interface IRoiDetector
     {
-        public object? Convert(object[]? values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values != null && values.Length > 1)
-            {
-                return values[0] ?? values[1];
-            }
-
-            return null;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            return targetTypes.Select(t => Binding.DoNothing).ToArray();
-        }
+        Rectangle Detect(Mat? image, int sensitivity);
     }
 }

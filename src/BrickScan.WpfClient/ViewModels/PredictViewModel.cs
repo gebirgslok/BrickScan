@@ -23,11 +23,41 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Drawing;
+using System.Windows.Media;
+using BrickScan.WpfClient.Extensions;
+using BrickScan.WpfClient.Model;
 using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
 {
     public class PredictViewModel : PropertyChangedBase
     {
+        private readonly IVideoCapture _videoCapture;
+
+        public CameraSetupViewModel CameraSetupViewModel { get; }
+
+        public ImageSource? ImageSource { get; set; }
+
+        public Rectangle Rectangle { get; set; }
+
+        public PredictViewModel(CameraSetupViewModel cameraSetupViewModel, 
+            IVideoCapture videoCapture)
+        {
+            CameraSetupViewModel = cameraSetupViewModel;
+            _videoCapture = videoCapture;
+            _videoCapture.FrameCaptured += OnFrameCaptured;
+        }
+
+        private void OnFrameCaptured(object sender, FrameCapturedEventArgs args)
+        {
+            Execute.OnUIThread(() =>
+            {
+                ImageSource = args.Frame?.ToBitmapSource();
+                Rectangle = args.Rectangle;
+            });
+        }
+
+
     }
 }

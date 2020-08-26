@@ -118,4 +118,28 @@
   <data name="BrickScanOnGithub" xml:space="preserve">
     <value>BrickScan on GitHub.</value>
   </data>
+  <data name="LogOn" xml:space="preserve">
+    <value>Log on.</value>
+  </data>
+  <data name="LogOff" xml:space="preserve">
+    <value>Log off.</value>
+  </data>
+  <data name="NotLoggedOn" xml:space="preserve">
+    <value>Not logged on</value>
+  </data>
+  <data name="BrickScanHomepage" xml:space="preserve">
+    <value>BrickScan homepage.</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Sensitivity" xml:space="preserve">
+    <value>Sensitivity</value>
+  </data>
+  <data name="Identify" xml:space="preserve">
+    <value>Identify</value>
+  </data>
 </root>

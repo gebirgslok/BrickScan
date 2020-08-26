@@ -1,11 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <Version>0.1.0</Version>    
-    <FileVersin>0.1.0</FileVersin>
-    <Authors>Jens Eisenbach</Authors>
-    <Product>BrickScan for Windows</Product>
-    <Description>Native BrickScan App for Windows</Description>
-    <Copyright>Copyright © Jens Eisenbach 2020</Copyright>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
@@ -45,11 +39,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
@@ -71,9 +60,8 @@
       <IsTransformFile>true</IsTransformFile>
       <DependentUpon>App.config</DependentUpon>
     </None>
-    <None Update="Properties\Settings.settings">
+    <None Update="Properties\Setting.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
 </Project>
