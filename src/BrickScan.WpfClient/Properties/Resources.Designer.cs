@@ -88,11 +88,29 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot connect USB camera..
+        /// </summary>
+        public static string CannotConnectCameraTooltip {
+            get {
+                return ResourceManager.GetString("CannotConnectCameraTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string Close {
             get {
                 return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connects the selected USB camera..
+        /// </summary>
+        public static string ConnectCameraTooltip {
+            get {
+                return ResourceManager.GetString("ConnectCameraTooltip", resourceCulture);
             }
         }
         
@@ -147,6 +165,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string NotLoggedOn {
             get {
                 return ResourceManager.GetString("NotLoggedOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No USB camera selected..
+        /// </summary>
+        public static string NoUsbCameraSelectedTooltip {
+            get {
+                return ResourceManager.GetString("NoUsbCameraSelectedTooltip", resourceCulture);
             }
         }
         

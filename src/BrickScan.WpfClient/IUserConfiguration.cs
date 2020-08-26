@@ -23,28 +23,18 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Globalization;
-using System.Linq;
-using System.Windows.Data;
-
-namespace BrickScan.WpfClient.Converter
+namespace BrickScan.WpfClient
 {
-    internal class SelectedItemToContentConverter : IMultiValueConverter
+    public interface IUserConfiguration
     {
-        public object? Convert(object?[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values.Length > 1)
-            {
-                return values[1] ?? values[0];
-            }
+        int SelectedSensitivityLevel { get; set; }
 
-            return null;
-        }
+        int SelectedCameraIndex { get; set; }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            return targetTypes.Select(t => Binding.DoNothing).ToArray();
-        }
+        string ThemeBaseColor { get; set; }
+
+        string ThemeColorScheme { get; set; }
+
+        void Save();
     }
 }

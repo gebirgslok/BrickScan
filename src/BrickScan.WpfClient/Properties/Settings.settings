@@ -8,5 +8,11 @@
     <Setting Name="SelectedCameraIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="ThemeColorScheme" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Steel</Value>
+    </Setting>
+    <Setting Name="ThemeBaseColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Light</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

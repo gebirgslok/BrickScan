@@ -46,5 +46,29 @@ namespace BrickScan.WpfClient.Properties {
                 this["SelectedCameraIndex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Steel")]
+        public string ThemeColorScheme {
+            get {
+                return ((string)(this["ThemeColorScheme"]));
+            }
+            set {
+                this["ThemeColorScheme"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Light")]
+        public string ThemeBaseColor {
+            get {
+                return ((string)(this["ThemeBaseColor"]));
+            }
+            set {
+                this["ThemeBaseColor"] = value;
+            }
+        }
     }
 }

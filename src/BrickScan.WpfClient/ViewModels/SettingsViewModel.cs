@@ -23,11 +23,37 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Collections.Generic;
+using ControlzEx.Theming;
 using Stylet;
+// ReSharper disable ClassNeverInstantiated.Global
 
 namespace BrickScan.WpfClient.ViewModels
 {
     public class SettingsViewModel : PropertyChangedBase
     {
+        private readonly IUserConfiguration _userConfiguration;
+
+        public IReadOnlyCollection<string> AvailableThemeColorSchemes => ThemeManager.Current.ColorSchemes;
+
+        public IReadOnlyCollection<string> AvailableThemeBaseColors => ThemeManager.Current.BaseColors;
+
+        public string SelectedThemeBaseColor
+        {
+            get => _userConfiguration.ThemeBaseColor;
+            set => _userConfiguration.ThemeBaseColor = value;
+        }
+
+        public string SelectedThemeColorScheme
+        {
+            get => _userConfiguration.ThemeColorScheme;
+            set => _userConfiguration.ThemeColorScheme = value;
+        }
+
+        public SettingsViewModel(IUserConfiguration userConfiguration)
+        {
+            _userConfiguration = userConfiguration;
+        }
+
     }
 }

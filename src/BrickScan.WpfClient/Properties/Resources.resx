@@ -142,4 +142,13 @@
   <data name="Identify" xml:space="preserve">
     <value>Identify</value>
   </data>
+  <data name="ConnectCameraTooltip" xml:space="preserve">
+    <value>Connects the selected USB camera.</value>
+  </data>
+  <data name="NoUsbCameraSelectedTooltip" xml:space="preserve">
+    <value>No USB camera selected.</value>
+  </data>
+  <data name="CannotConnectCameraTooltip" xml:space="preserve">
+    <value>Cannot connect USB camera.</value>
+  </data>
 </root>

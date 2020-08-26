@@ -28,10 +28,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace BrickScan.WpfClient.Model
 {
-    //Code taken from https://github.com/secile/UsbCamera/blob/master/UsbCamera.cs.
+    /*********************************************************************************/
+    /* Code taken from https://github.com/secile/UsbCamera/blob/master/UsbCamera.cs. */ 
+    /*********************************************************************************/
 
     public class UsbCamera
     {

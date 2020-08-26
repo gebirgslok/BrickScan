@@ -45,10 +45,17 @@ namespace BrickScan.WpfClient.Model
             {6, (40.0, 80.0)},
             {7, (45.0, 90.0)},
             {8, (50.0, 100.0)},
-            {9, (55.0, 110.0)},
+            {9, (55.0, 110.0)}
         };
 
-        public Rectangle Detect(Mat? image, int sensitivity)
+        private readonly IUserConfiguration _userConfiguration;
+
+        public RoiDetector(IUserConfiguration userConfiguration)
+        {
+            _userConfiguration = userConfiguration;
+        }
+
+        public Rectangle Detect(Mat? image)
         {
             if (image == null)
             {
@@ -57,7 +64,7 @@ namespace BrickScan.WpfClient.Model
 
             using var grey = image.CvtColor(ColorConversionCodes.BGR2GRAY);
             using var blurred = grey.Blur(new OpenCvSharp.Size(5, 5));
-            var (t1, t2) = _sensitivityParams[sensitivity];
+            var (t1, t2) = _sensitivityParams[_userConfiguration.SelectedSensitivityLevel];
             using var edge = blurred.Canny(t1, t2);
 
             using var morph = edge.MorphologyEx(MorphTypes.Close, Cv2.GetStructuringElement(MorphShapes.Rect, new OpenCvSharp.Size(5, 5)),

@@ -1,8 +1,9 @@
-﻿<Application x:Class="BrickScan.WpfClient.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:s="https://github.com/canton7/Stylet"
-             xmlns:wpfClient="clr-namespace:BrickScan.WpfClient">
+﻿<Application
+    x:Class="BrickScan.WpfClient.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:s="https://github.com/canton7/Stylet"
+    xmlns:wpfClient="clr-namespace:BrickScan.WpfClient">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

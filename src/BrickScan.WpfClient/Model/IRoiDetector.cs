@@ -30,6 +30,6 @@ namespace BrickScan.WpfClient.Model
 {
     public interface IRoiDetector
     {
-        Rectangle Detect(Mat? image, int sensitivity);
+        Rectangle Detect(Mat? image);
     }
 }

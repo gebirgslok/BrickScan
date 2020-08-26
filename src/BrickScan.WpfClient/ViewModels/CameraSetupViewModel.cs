@@ -25,7 +25,6 @@
 
 using System.Threading.Tasks;
 using BrickScan.WpfClient.Model;
-using BrickScan.WpfClient.Properties;
 using PropertyChanged;
 using Stylet;
 // ReSharper disable MemberCanBePrivate.Global
@@ -34,6 +33,7 @@ namespace BrickScan.WpfClient.ViewModels
 {
     public class CameraSetupViewModel : PropertyChangedBase
     {
+        private readonly IUserConfiguration _userConfiguration;
         private readonly IVideoCapture _videoCapture;
 
         public UsbCamera[] AvailableUsbCameras { get; set; } = null!;
@@ -41,9 +41,9 @@ namespace BrickScan.WpfClient.ViewModels
         public UsbCamera? SelectedUsbCamera { get; set; }
 
         [DependsOn(nameof(SelectedUsbCamera), nameof(CameraCaptureState))]
-        public bool CanConnectCameraAsync => SelectedUsbCamera != null && 
-                                             CameraCaptureState == CameraCaptureState.Idle || 
-                                             CameraCaptureState == CameraCaptureState.Error;
+        public bool CanConnectCameraAsync => SelectedUsbCamera != null &&
+                                             (CameraCaptureState == CameraCaptureState.Idle ||
+                                              CameraCaptureState == CameraCaptureState.Error);
 
         [DependsOn(nameof(CameraCaptureState))]
         public bool CanDisconnectCameraAsync => CameraCaptureState == CameraCaptureState.Capturing ||
@@ -51,19 +51,20 @@ namespace BrickScan.WpfClient.ViewModels
 
         public CameraCaptureState CameraCaptureState { get; private set; }
 
+        public string ConnectCameraTooltip => GetConnectCameraTooltip();
+
         [DependsOn(nameof(CameraCaptureState))]
         public bool IsConnected => CameraCaptureState == CameraCaptureState.Capturing;
 
         public int SelectedSensitivityLevel
         {
-            get => Settings.Default.SelectedSensitivityLevel;
+            get => _userConfiguration.SelectedSensitivityLevel;
             set
             {
-                if (value != Settings.Default.SelectedSensitivityLevel)
+                if (value != _userConfiguration.SelectedSensitivityLevel)
                 {
-                    Settings.Default.SelectedSensitivityLevel = value;
+                    _userConfiguration.SelectedSensitivityLevel = value;
                     NotifyOfPropertyChange(nameof(SelectedSensitivityLevel));
-                    Settings.Default.Save();
                 }
             }
         }
@@ -78,17 +79,32 @@ namespace BrickScan.WpfClient.ViewModels
                 if (value != _selectedUsbCameraIndex)
                 {
                     _selectedUsbCameraIndex = value;
-                    Settings.Default.SelectedCameraIndex = _selectedUsbCameraIndex;
-                    Settings.Default.Save();
+                    _userConfiguration.SelectedCameraIndex = _selectedUsbCameraIndex;
                 }
             }
         }
 
-        public CameraSetupViewModel(IVideoCapture videoCapture)
+        public CameraSetupViewModel(IVideoCapture videoCapture, IUserConfiguration userConfiguration)
         {
             _videoCapture = videoCapture;
+            _userConfiguration = userConfiguration;
             RefreshCameraList();
-            SelectedSensitivityLevel = Settings.Default.SelectedSensitivityLevel;
+            SelectedSensitivityLevel = _userConfiguration.SelectedSensitivityLevel;
+        }
+
+        private string GetConnectCameraTooltip()
+        {
+            if (CanConnectCameraAsync)
+            {
+                return Properties.Resources.ConnectCameraTooltip;
+            }
+
+            if (SelectedUsbCamera == null)
+            {
+                return Properties.Resources.NoUsbCameraSelectedTooltip;
+            }
+
+            return Properties.Resources.CannotConnectCameraTooltip;
         }
 
         public async Task ConnectCameraAsync()
@@ -122,7 +138,7 @@ namespace BrickScan.WpfClient.ViewModels
             }
 
             var index = 0;
-            var settingsIndex = Settings.Default.SelectedCameraIndex;
+            var settingsIndex = _userConfiguration.SelectedCameraIndex;
 
             if (settingsIndex > 0 && settingsIndex < AvailableUsbCameras.Length)
             {

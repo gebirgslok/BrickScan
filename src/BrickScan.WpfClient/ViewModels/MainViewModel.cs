@@ -43,7 +43,7 @@ namespace BrickScan.WpfClient.ViewModels
 
         public HamburgerMenuItemCollection MenuOptionItems => BuildMenuOptionsItems();
 
-        public HamburgerMenuItem? SelectedMenuItem { get; set; }
+        public HamburgerMenuItem? SelectedItem { get; set; }
 
         public IUserManager UserManager { get; }
 
@@ -56,7 +56,7 @@ namespace BrickScan.WpfClient.ViewModels
             _settingsViewModel = settingsViewModel;
             StatusBarViewModel = statusBarViewModel;
             UserManager = userManager;
-            SelectedMenuItem = MenuItems[0] as HamburgerMenuIconItem;
+            SelectedItem = MenuItems[0] as HamburgerMenuIconItem;
         }
 
         private HamburgerMenuItemCollection BuildMenuItems()

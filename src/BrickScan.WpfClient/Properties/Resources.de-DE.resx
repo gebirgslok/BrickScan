@@ -162,4 +162,13 @@
   <data name="Identify" xml:space="preserve">
     <value>Identifizieren</value>
   </data>
+  <data name="ConnectCameraTooltip" xml:space="preserve">
+    <value>Verbindet die ausgewählte USB-Kamera.</value>
+  </data>
+  <data name="NoUsbCameraSelectedTooltip" xml:space="preserve">
+    <value>Keine USB-Kamera ausgewählt.</value>
+  </data>
+  <data name="CannotConnectCameraTooltip" xml:space="preserve">
+    <value>Die USB-Kamera kann nicht verbunden werden.</value>
+  </data>
 </root>

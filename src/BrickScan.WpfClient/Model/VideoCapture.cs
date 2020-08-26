@@ -24,28 +24,30 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Timers;
-using BrickScan.WpfClient.Properties;
 using OpenCvSharp;
+using Serilog;
 using Timer = System.Timers.Timer;
 
 namespace BrickScan.WpfClient.Model
 {
-    internal class OpenCvSharpVideoCapture : IVideoCapture
+    internal class VideoCapture : IVideoCapture
     {
         public event EventHandler<FrameCapturedEventArgs>? FrameCaptured;
 
         private readonly IRoiDetector _roiDetector;
-        private VideoCapture? _videoCapture;
+        private readonly ILogger _logger;
+        private OpenCvSharp.VideoCapture? _videoCapture;
         private Timer? _timer;
         private long _frameCount;
+        private bool _loggedExceptionForSession;
 
-        public OpenCvSharpVideoCapture(IRoiDetector roiDetector)
+        public VideoCapture(IRoiDetector roiDetector, ILogger logger)
         {
             _roiDetector = roiDetector;
+            _logger = logger;
         }
 
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
@@ -55,20 +57,27 @@ namespace BrickScan.WpfClient.Model
                 var mat = new Mat();
                 if (_videoCapture!.Read(mat))
                 {
-                    var rectangle = _roiDetector.Detect(mat, Settings.Default.SelectedSensitivityLevel);
+                    var rectangle = _roiDetector.Detect(mat);
                     OnFrameCaptured(mat, rectangle);
                 }
             }
             catch (Exception ex)
             {
-                //todo: do some useful logging
-                Debug.WriteLine(ex.Message);
+                if (!_loggedExceptionForSession)
+                {
+                    _logger.Error(ex, "An exception occurred while processing the next frame (frame# {FrameCount}). {Message}", 
+                        _frameCount, 
+                        ex.Message);
+
+                    _loggedExceptionForSession = true;
+                }
             }
         }
 
         private void OnFrameCaptured(Mat frame, Rectangle rectangle)
         {
             Interlocked.Increment(ref _frameCount);
+            _logger.Debug("Captured frame# {FrameCount}, detected rectangle = {Rectangle}.", _frameCount, rectangle.ToString());
             FrameCaptured?.Invoke(this, new FrameCapturedEventArgs(frame, _frameCount, rectangle));
         }
 
@@ -76,14 +85,22 @@ namespace BrickScan.WpfClient.Model
         {
             try
             {
-                _videoCapture = VideoCapture.FromCamera(cameraIndex);
-                _timer = new Timer(1000.0 / 30); //30 FPS.
-                _timer.Start();
+                _videoCapture = OpenCvSharp.VideoCapture.FromCamera(cameraIndex);
+                _logger.Information("Successfully opened camera {CameraIndex}.", cameraIndex);
+                const double timerInterval = 1000.0 / 30;
+                _timer = new Timer(timerInterval); //30 FPS.
                 _frameCount = 0;
+                _loggedExceptionForSession = false;
+                _timer.Start();
+
+                _logger.Information("Set up capture session: timerInterval = {TimerInterval}, " +
+                                    "_frameCount = {FrameCount}, _loggedExceptionForSession = {LoggedExceptionForSession}.",
+                    timerInterval, _frameCount, _loggedExceptionForSession);
+
                 _timer.Elapsed += OnTimerElapsed;
                 return true;
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
                 if (_timer != null)
                 {
@@ -92,17 +109,25 @@ namespace BrickScan.WpfClient.Model
                 }
 
                 _videoCapture?.Dispose();
-
-                //todo: add logging
+                _logger.Error(exception, "Failed to open video capture from camera {CameraIndex}. {Message}", cameraIndex, exception.Message);
                 return false;
             }
         }
 
         public void Close()
         {
-            _timer?.Dispose();
-            _videoCapture?.Dispose();
-            _frameCount = 0;
+            try
+            {
+                _frameCount = 0;
+                _loggedExceptionForSession = false;
+                _timer?.Dispose();
+                _videoCapture?.Dispose();
+                _videoCapture = null;
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to close (dispose) video capture. {Message}", exception.Message);
+            }
         }
     }
 }
