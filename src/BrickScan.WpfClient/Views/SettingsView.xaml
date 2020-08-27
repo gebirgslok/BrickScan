@@ -29,12 +29,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:BrickScan.WpfClient.Properties"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <ScrollViewer
-        HorizontalScrollBarVisibility="Disabled"
-        VerticalScrollBarVisibility="Auto">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -44,12 +43,17 @@
                 Grid.Row="0"
                 Margin="5"
                 VerticalAlignment="Center"
-                Content="Benutzeroberfläche"
+                Content="{x:Static resx:Resources.UserInterface}"
                 FontSize="14"
                 FontWeight="SemiBold" />
             <Grid
                 Grid.Row="1"
-                Margin="5">
+                Margin="5"
+                IsSharedSizeScope="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" SharedSizeGroup="UserInterfaceRow" />
+                    <RowDefinition Height="Auto" SharedSizeGroup="UserInterfaceRow" />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -57,11 +61,13 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Label
+                    Grid.Row="0"
                     Grid.Column="0"
                     Margin="2"
                     VerticalAlignment="Center"
-                    Content="Base color" />
+                    Content="{x:Static resx:Resources.BaseColor}" />
                 <ComboBox
+                    Grid.Row="0"
                     Grid.Column="1"
                     Margin="2"
                     HorizontalAlignment="Stretch"
@@ -69,17 +75,33 @@
                     ItemsSource="{Binding Path=AvailableThemeBaseColors, Mode=OneTime}"
                     SelectedItem="{Binding Path=SelectedThemeBaseColor, Mode=TwoWay}" />
                 <Label
+                    Grid.Row="0"
                     Grid.Column="2"
                     Margin="2"
                     VerticalAlignment="Center"
-                    Content="Color scheme" />
+                    Content="{x:Static resx:Resources.ColorScheme}" />
                 <ComboBox
+                    Grid.Row="0"
                     Grid.Column="3"
                     Margin="2"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     ItemsSource="{Binding Path=AvailableThemeColorSchemes, Mode=OneTime}"
                     SelectedItem="{Binding Path=SelectedThemeColorScheme, Mode=TwoWay}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="2"
+                    VerticalAlignment="Center"
+                    Content="{x:Static resx:Resources.Language}" />
+                <ComboBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding Path=AvailableLanguageOptions, Mode=OneTime}"
+                    SelectedItem="{Binding Path=SelectedLanguageOption, Mode=TwoWay}" />
             </Grid>
         </Grid>
     </ScrollViewer>

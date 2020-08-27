@@ -85,6 +85,19 @@ namespace BrickScan.WpfClient
             }
         }
 
+        public string SelectedCultureKey
+        {
+            get => Settings.Default.SelectedCultureKey;
+            set
+            {
+                if (!string.Equals(value, Settings.Default.SelectedCultureKey, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Settings.Default.SelectedCultureKey = value;
+                    Save();
+                }
+            }
+        }
+
         private UserConfiguration()
         {
         }

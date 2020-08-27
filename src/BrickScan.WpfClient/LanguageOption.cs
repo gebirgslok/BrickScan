@@ -23,20 +23,25 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Configuration;
+
 namespace BrickScan.WpfClient
 {
-    public interface IUserConfiguration
+    internal class LanguageOption : ConfigurationElement
     {
-        int SelectedSensitivityLevel { get; set; }
+        public string CultureKey { get; }
 
-        int SelectedCameraIndex { get; set; }
+        public string DisplayName { get; }
 
-        string ThemeBaseColor { get; set; }
+        public LanguageOption(string cultureKey, string displayName)
+        {
+            CultureKey = cultureKey;
+            DisplayName = displayName;
+        }
 
-        string ThemeColorScheme { get; set; }
-
-        string SelectedCultureKey { get; set; }
-
-        void Save();
+        public override string ToString()
+        {
+            return DisplayName;
+        }
     }
 }

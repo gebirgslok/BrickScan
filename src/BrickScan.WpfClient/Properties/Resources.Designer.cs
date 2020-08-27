@@ -61,6 +61,24 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string Back {
+            get {
+                return ResourceManager.GetString("Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base color.
+        /// </summary>
+        public static string BaseColor {
+            get {
+                return ResourceManager.GetString("BaseColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to BrickScan.
         /// </summary>
         public static string BrickScan {
@@ -106,6 +124,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Color scheme.
+        /// </summary>
+        public static string ColorScheme {
+            get {
+                return ResourceManager.GetString("ColorScheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connects the selected USB camera..
         /// </summary>
         public static string ConnectCameraTooltip {
@@ -138,6 +165,33 @@ namespace BrickScan.WpfClient.Properties {
         public static string Identify {
             get {
                 return ResourceManager.GetString("Identify", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image size.
+        /// </summary>
+        public static string ImageSize {
+            get {
+                return ResourceManager.GetString("ImageSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input.
+        /// </summary>
+        public static string Input {
+            get {
+                return ResourceManager.GetString("Input", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string Language {
+            get {
+                return ResourceManager.GetString("Language", resourceCulture);
             }
         }
         
@@ -187,6 +241,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Running identification....
+        /// </summary>
+        public static string RunningIdentificationMessage {
+            get {
+                return ResourceManager.GetString("RunningIdentificationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sensitivity.
         /// </summary>
         public static string Sensitivity {
@@ -219,6 +282,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string Stop {
             get {
                 return ResourceManager.GetString("Stop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User interface.
+        /// </summary>
+        public static string UserInterface {
+            get {
+                return ResourceManager.GetString("UserInterface", resourceCulture);
             }
         }
     }

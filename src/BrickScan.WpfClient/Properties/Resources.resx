@@ -151,4 +151,28 @@
   <data name="CannotConnectCameraTooltip" xml:space="preserve">
     <value>Cannot connect USB camera.</value>
   </data>
+  <data name="UserInterface" xml:space="preserve">
+    <value>User interface</value>
+  </data>
+  <data name="BaseColor" xml:space="preserve">
+    <value>Base color</value>
+  </data>
+  <data name="ColorScheme" xml:space="preserve">
+    <value>Color scheme</value>
+  </data>
+  <data name="Input" xml:space="preserve">
+    <value>Input</value>
+  </data>
+  <data name="ImageSize" xml:space="preserve">
+    <value>Image size</value>
+  </data>
+  <data name="RunningIdentificationMessage" xml:space="preserve">
+    <value>Running identification...</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
 </root>

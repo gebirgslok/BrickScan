@@ -30,7 +30,9 @@ using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    internal class PredictionConductorViewModel : Conductor<PropertyChangedBase>, IHandle<OnPredictionRequested>
+    internal class PredictionConductorViewModel : Conductor<PropertyChangedBase>, 
+        IHandle<OnPredictionRequested>, 
+        IHandle<OnPredictionResultCloseRequested>
     {
         private readonly PredictViewModel _predictViewModel;
         private readonly Func<Mat, PredictionResultViewModel> _predictionResultViewModelFunc;
@@ -46,7 +48,11 @@ namespace BrickScan.WpfClient.ViewModels
         public void Handle(OnPredictionRequested message)
         {
             ActiveItem = _predictionResultViewModelFunc.Invoke(message.ImageSection);
-            //_predictionResultViewModelFunc.StartPredictionAsync(message.ImageSection).Wait();
+        }
+
+        public void Handle(OnPredictionResultCloseRequested message)
+        {
+            ActiveItem = _predictViewModel;
         }
     }
 }

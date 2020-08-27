@@ -27,6 +27,7 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using BrickScan.WpfClient.Events;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using Stylet;
@@ -37,14 +38,21 @@ namespace BrickScan.WpfClient.ViewModels
 {
     internal class PredictionResultViewModel : PropertyChangedBase
     {
-        public string Test { get; set; }
+        private readonly IEventAggregator _eventAggregator;
+
+        public string? Test { get; set; }
 
         public ImageSource ImageSource { get; }
 
         public NotifyTask<string> InitializationNotifier { get; }
 
-        public PredictionResultViewModel(Mat imageSection, Func<Task<string>, string, NotifyTask<string>> notifyTaskFactory)
+        public string ImageSizeString => $"{ImageSource.Width}×{ImageSource.Height}";
+
+        public PredictionResultViewModel(Mat imageSection, 
+            Func<Task<string>, string, NotifyTask<string>> notifyTaskFactory, 
+            IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
             ImageSource = imageSection.ToBitmapSource();
             var task = StartPredictionAsync(imageSection).ContinueWith(s => s.Result + "foo");
             InitializationNotifier = notifyTaskFactory.Invoke(task, "foobar");
@@ -59,8 +67,13 @@ namespace BrickScan.WpfClient.ViewModels
 
         private async Task<string> StartPredictionAsync(Mat imageSection)
         {
-            await Task.Delay(5000);
+            await Task.Delay(10000);
             return "hello world";
+        }
+
+        public void NavigateBack()
+        {
+            _eventAggregator.PublishOnUIThread(new OnPredictionResultCloseRequested());
         }
     }
 }

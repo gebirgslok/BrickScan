@@ -27,6 +27,13 @@ using OpenCvSharp;
 
 namespace BrickScan.WpfClient.Events
 {
+    public class OnPredictionResultCloseRequested
+    {
+        internal OnPredictionResultCloseRequested()
+        {
+        }
+    }
+
     public class OnPredictionRequested
     {
         public Mat ImageSection { get; }

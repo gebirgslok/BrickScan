@@ -23,10 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Globalization;
+using System.Threading;
 using System.Windows.Threading;
 using Autofac;
 using AutofacSerilogIntegration;
 using BrickScan.WpfClient.Model;
+using BrickScan.WpfClient.Properties;
 using BrickScan.WpfClient.ViewModels;
 using Serilog;
 using VideoCapture = BrickScan.WpfClient.Model.VideoCapture;
@@ -49,6 +52,18 @@ namespace BrickScan.WpfClient
 
     internal class Bootstrapper : AutofacBootstrapper<MainViewModel>
     {
+        private void SetupLanguage()
+        {
+            var cultureInfo = new CultureInfo(Settings.Default.SelectedCultureKey);
+            Thread.CurrentThread.CurrentCulture = cultureInfo;
+            Thread.CurrentThread.CurrentUICulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+            Log.ForContext<Bootstrapper>().Information("Set up culture = {CultureName}.", 
+                Settings.Default.SelectedCultureKey);
+        }
+
         protected override void ConfigureBootstrapper()
         {
             Log.Logger = new LoggerConfiguration()
@@ -56,6 +71,8 @@ namespace BrickScan.WpfClient
                 .CreateLogger();
 
             Log.ForContext<Bootstrapper>().Information("Set up logger.");
+
+            SetupLanguage();
 
             base.ConfigureBootstrapper();
         }

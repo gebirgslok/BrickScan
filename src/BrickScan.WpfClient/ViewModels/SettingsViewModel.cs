@@ -24,19 +24,40 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
+using System.Linq;
 using ControlzEx.Theming;
 using Stylet;
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    public class SettingsViewModel : PropertyChangedBase
+    internal class SettingsViewModel : PropertyChangedBase
     {
+        private static readonly IReadOnlyCollection<LanguageOption> _availableLanguageOptions = GetAvailableLanguageOptions();
         private readonly IUserConfiguration _userConfiguration;
 
         public IReadOnlyCollection<string> AvailableThemeColorSchemes => ThemeManager.Current.ColorSchemes;
 
         public IReadOnlyCollection<string> AvailableThemeBaseColors => ThemeManager.Current.BaseColors;
+
+        public IReadOnlyCollection<LanguageOption> AvailableLanguageOptions => _availableLanguageOptions;
+
+        private LanguageOption _selectedLanguageOption = null!;
+        public LanguageOption SelectedLanguageOption
+        {
+            get { return _selectedLanguageOption; }
+            set
+            {
+                if (!ReferenceEquals(value, _selectedLanguageOption))
+                {
+                    _selectedLanguageOption = value;
+                    _userConfiguration.SelectedCultureKey = _selectedLanguageOption.CultureKey;
+                    NotifyOfPropertyChange(nameof(SelectedLanguageOption));
+                }
+            }
+        }
 
         public string SelectedThemeBaseColor
         {
@@ -53,7 +74,19 @@ namespace BrickScan.WpfClient.ViewModels
         public SettingsViewModel(IUserConfiguration userConfiguration)
         {
             _userConfiguration = userConfiguration;
+            SelectedLanguageOption =
+                AvailableLanguageOptions.First(option => option.CultureKey == _userConfiguration.SelectedCultureKey);
         }
 
+        private static IReadOnlyCollection<LanguageOption> GetAvailableLanguageOptions()
+        {
+            var settingCollection = (NameValueCollection)ConfigurationManager.GetSection("languageOptions");
+
+            var options = settingCollection.AllKeys
+                .Select(key => new LanguageOption(key, settingCollection[key]))
+                .ToArray();
+
+            return options;
+        }
     }
 }

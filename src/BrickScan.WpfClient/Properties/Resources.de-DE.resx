@@ -171,4 +171,28 @@
   <data name="CannotConnectCameraTooltip" xml:space="preserve">
     <value>Die USB-Kamera kann nicht verbunden werden.</value>
   </data>
+  <data name="UserInterface" xml:space="preserve">
+    <value>Benutzeroberfläche</value>
+  </data>
+  <data name="BaseColor" xml:space="preserve">
+    <value>Basisfarbe</value>
+  </data>
+  <data name="ColorScheme" xml:space="preserve">
+    <value>Farbschema</value>
+  </data>
+  <data name="Input" xml:space="preserve">
+    <value>Eingabe</value>
+  </data>
+  <data name="ImageSize" xml:space="preserve">
+    <value>Bildgröße</value>
+  </data>
+  <data name="RunningIdentificationMessage" xml:space="preserve">
+    <value>Erkennung läuft...</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
 </root>
