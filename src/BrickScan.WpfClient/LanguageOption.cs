@@ -27,7 +27,7 @@ using System.Configuration;
 
 namespace BrickScan.WpfClient
 {
-    internal class LanguageOption : ConfigurationElement
+    public class LanguageOption : ConfigurationElement
     {
         public string CultureKey { get; }
 

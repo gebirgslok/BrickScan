@@ -12,6 +12,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>8.0</LangVersion>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
   <PropertyGroup>
     <ProjectConfigFileName>App.config</ProjectConfigFileName>
@@ -79,4 +80,11 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <Target Name="FixAL1703Warning" BeforeTargets="GenerateSatelliteAssemblies"
+          Condition="'$(PlatformTarget)' == 'x64'">
+    <Message Text="Adjusting SDK tools directory to use x64 version of AL.EXE"/>
+      <PropertyGroup>
+        <TargetFrameworkSDKToolsDirectory>$(TargetFrameworkSDKToolsDirectory)\$(PlatformTarget)\</TargetFrameworkSDKToolsDirectory>
+      </PropertyGroup>
+  </Target>
 </Project>

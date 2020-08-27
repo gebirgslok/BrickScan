@@ -73,8 +73,9 @@ namespace BrickScan.WpfClient.ViewModels
             {
                 await task;
             }
-            catch
+            catch (Exception exception)
             {
+                _logger.Error(exception, "An occurred while awaiting task. Message: {Message}", exception.Message);
             }
             finally
             {

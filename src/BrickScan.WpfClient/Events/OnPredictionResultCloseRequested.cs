@@ -23,17 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using OpenCvSharp;
-
 namespace BrickScan.WpfClient.Events
 {
-    public class OnPredictionRequested
+    public class OnPredictionResultCloseRequested
     {
-        public Mat ImageSection { get; }
-
-        internal OnPredictionRequested(Mat imageSection)
+        internal OnPredictionResultCloseRequested()
         {
-            ImageSection = imageSection;
         }
     }
 }

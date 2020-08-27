@@ -62,9 +62,7 @@
             mah:ControlsHelper.ContentCharacterCasing="Upper"
             Command="{s:Action Predict}"
             Style="{DynamicResource MahApps.Styles.Button.Square.Accent}">
-            <StackPanel
-                VerticalAlignment="Center"
-                Orientation="Horizontal">
+            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                 <iconPacks:PackIconMaterial
                     Width="20"
                     Height="20"

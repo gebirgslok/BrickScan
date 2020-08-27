@@ -17,6 +17,7 @@
     <RepositoryType>Git</RepositoryType>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />

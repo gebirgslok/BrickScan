@@ -9,22 +9,28 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{6350A85C-BA4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPF", "WPF", "{1D2F4074-41D8-4C8F-A771-AE007D768704}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickScan.WpfClient", "src\BrickScan.WpfClient\BrickScan.WpfClient.csproj", "{84695259-E20C-44B4-8948-A2252D112D41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickScan.WpfClient", "src\BrickScan.WpfClient\BrickScan.WpfClient.csproj", "{84695259-E20C-44B4-8948-A2252D112D41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickScan.WpfClient.Tests", "src\BrickScan.WpfClient.Tests\BrickScan.WpfClient.Tests.csproj", "{4804F843-1703-4C68-B2FE-A2CA62A5D124}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{65057694-429E-43A7-B3F4-CF420F0C3FE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{65057694-429E-43A7-B3F4-CF420F0C3FE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{65057694-429E-43A7-B3F4-CF420F0C3FE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{65057694-429E-43A7-B3F4-CF420F0C3FE5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{84695259-E20C-44B4-8948-A2252D112D41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{84695259-E20C-44B4-8948-A2252D112D41}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{84695259-E20C-44B4-8948-A2252D112D41}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{84695259-E20C-44B4-8948-A2252D112D41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65057694-429E-43A7-B3F4-CF420F0C3FE5}.Debug|x64.ActiveCfg = Debug|x64
+		{65057694-429E-43A7-B3F4-CF420F0C3FE5}.Debug|x64.Build.0 = Debug|x64
+		{65057694-429E-43A7-B3F4-CF420F0C3FE5}.Release|x64.ActiveCfg = Release|x64
+		{65057694-429E-43A7-B3F4-CF420F0C3FE5}.Release|x64.Build.0 = Release|x64
+		{84695259-E20C-44B4-8948-A2252D112D41}.Debug|x64.ActiveCfg = Debug|x64
+		{84695259-E20C-44B4-8948-A2252D112D41}.Debug|x64.Build.0 = Debug|x64
+		{84695259-E20C-44B4-8948-A2252D112D41}.Release|x64.ActiveCfg = Release|x64
+		{84695259-E20C-44B4-8948-A2252D112D41}.Release|x64.Build.0 = Release|x64
+		{4804F843-1703-4C68-B2FE-A2CA62A5D124}.Debug|x64.ActiveCfg = Debug|x64
+		{4804F843-1703-4C68-B2FE-A2CA62A5D124}.Debug|x64.Build.0 = Debug|x64
+		{4804F843-1703-4C68-B2FE-A2CA62A5D124}.Release|x64.ActiveCfg = Release|x64
+		{4804F843-1703-4C68-B2FE-A2CA62A5D124}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{65057694-429E-43A7-B3F4-CF420F0C3FE5} = {6350A85C-BA46-4072-A2CC-443E00FD7B2B}
 		{84695259-E20C-44B4-8948-A2252D112D41} = {1D2F4074-41D8-4C8F-A771-AE007D768704}
+		{4804F843-1703-4C68-B2FE-A2CA62A5D124} = {1D2F4074-41D8-4C8F-A771-AE007D768704}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {21FCB532-B7D0-459F-920F-03D58C73C127}

@@ -52,20 +52,14 @@
     </mah:MetroWindow.Resources>
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
-            <Button
-                Click="{s:Action CloseApplication}"
-                Content="{x:Static resx:Resources.Close}" />
-            <Button
-                Click="{s:Action LaunchBrickScanHomepage}"
-                ToolTip="{x:Static resx:Resources.BrickScanHomepage}">
+            <Button Click="{s:Action CloseApplication}" Content="{x:Static resx:Resources.Close}" />
+            <Button Click="{s:Action LaunchBrickScanHomepage}" ToolTip="{x:Static resx:Resources.BrickScanHomepage}">
                 <Image
                     Width="22"
                     Height="22"
                     Source="pack://application:,,,/BrickScan.WpfClient;component/icon.png" />
             </Button>
-            <Button
-                Click="{s:Action LaunchBrickScanOnGithub}"
-                ToolTip="{x:Static resx:Resources.BrickScanOnGithub}">
+            <Button Click="{s:Action LaunchBrickScanOnGithub}" ToolTip="{x:Static resx:Resources.BrickScanOnGithub}">
                 <iconPacks:Material
                     Width="22"
                     Height="22"
@@ -109,9 +103,7 @@
     <Grid>
         <Grid.Resources>
             <converter:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
-            <DataTemplate
-                x:Key="MenuItemTemplate"
-                DataType="{x:Type mah:HamburgerMenuIconItem}">
+            <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type mah:HamburgerMenuIconItem}">
                 <Grid
                     x:Name="RootGrid"
                     Height="48"
@@ -135,9 +127,7 @@
                         Text="{Binding Label, Mode=OneTime}" />
                 </Grid>
             </DataTemplate>
-            <Style
-                BasedOn="{StaticResource {x:Type mah:HamburgerMenu}}"
-                TargetType="{x:Type mah:HamburgerMenu}">
+            <Style BasedOn="{StaticResource {x:Type mah:HamburgerMenu}}" TargetType="{x:Type mah:HamburgerMenu}">
                 <Setter Property="HamburgerButtonTemplate">
                     <Setter.Value>
                         <DataTemplate>
@@ -193,9 +183,7 @@
                             <RowDefinition Height="48" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <Border
-                            Grid.Row="0"
-                            Background="{DynamicResource MahApps.Brushes.Gray8}">
+                        <Border Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Gray8}">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -211,8 +199,6 @@
                 </DataTemplate>
             </mah:HamburgerMenu.ContentTemplate>
         </mah:HamburgerMenu>
-        <ContentControl
-            Grid.Row="1"
-            s:View.Model="{Binding StatusBarViewModel, Mode=OneTime}" />
+        <ContentControl Grid.Row="1" s:View.Model="{Binding StatusBarViewModel, Mode=OneTime}" />
     </Grid>
 </mah:MetroWindow>
