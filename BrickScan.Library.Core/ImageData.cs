@@ -23,24 +23,18 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.Library.Core;
-using Microsoft.AspNetCore.Mvc;
-
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.Library.Core
 {
-    public class ImageConversionResult
+    public class ImageData
     {
-        public IActionResult? ActionResult { get; }
+        public byte[] RawBytes { get; }
 
-        public bool Success { get; }
+        public ImageFormat Format { get; }
 
-        public ImageData? ImageData { get; }
-
-        internal ImageConversionResult(bool success, ImageData? imageData, IActionResult? actionResult)
+        public ImageData(byte[] rawBytes, ImageFormat format)
         {
-            Success = success;
-            ImageData = imageData;
-            ActionResult = actionResult;
+            RawBytes = rawBytes;
+            Format = format;
         }
     }
 }

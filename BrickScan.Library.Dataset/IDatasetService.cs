@@ -23,22 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.IO;
+using System.Threading.Tasks;
+using BrickScan.Library.Core;
+using BrickScan.Library.Dataset.Model;
 
-namespace BrickScan.WebApi
+namespace BrickScan.Library.Dataset
 {
-    internal static class PathHelpers
-    {
-        //internal static string GetAbsolutePath(string relativePath, string baseDirectory)
-        //{
-        //    var uri = new Uri(absoluteOrRelativePath, UriKind.RelativeOrAbsolute);
-
-        //    var path = uri.IsAbsoluteUri ?
-        //        uri.AbsolutePath :
-        //        Path.Combine(baseDirectory, uri.OriginalString);
-
-        //    return path;
-        //}
+    public interface IDatasetService
+    { 
+        Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData);
     }
 }

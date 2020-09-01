@@ -23,24 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.Library.Core;
-using Microsoft.AspNetCore.Mvc;
-
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.Library.Dataset.Model
 {
-    public class ImageConversionResult
+    public class DatasetColor : DatasetEntity
     {
-        public IActionResult? ActionResult { get; }
+        public int BricklinkColorId { get; set; }
 
-        public bool Success { get; }
+        public string BricklinkColorName { get; set; } = null!;
 
-        public ImageData? ImageData { get; }
+        public string BricklinkColorType { get; set; } = null!;
 
-        internal ImageConversionResult(bool success, ImageData? imageData, IActionResult? actionResult)
-        {
-            Success = success;
-            ImageData = imageData;
-            ActionResult = actionResult;
-        }
+        public string BricklinkColorHtmlCode { get; set; } = null!;
     }
 }

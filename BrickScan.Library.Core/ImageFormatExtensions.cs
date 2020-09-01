@@ -23,24 +23,20 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.Library.Core;
-using Microsoft.AspNetCore.Mvc;
+using System;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.Library.Core
 {
-    public class ImageConversionResult
+    public static class ImageFormatExtensions
     {
-        public IActionResult? ActionResult { get; }
-
-        public bool Success { get; }
-
-        public ImageData? ImageData { get; }
-
-        internal ImageConversionResult(bool success, ImageData? imageData, IActionResult? actionResult)
+        public static string ToFileExtension(this ImageFormat imageFormat)
         {
-            Success = success;
-            ImageData = imageData;
-            ActionResult = actionResult;
+            if (imageFormat == ImageFormat.Unknown)
+            {
+                throw new ArgumentException($"Cannot convert {nameof(imageFormat)} = {imageFormat} to file extension.");
+            }
+
+            return $".{imageFormat.ToString().ToLowerInvariant()}";
         }
     }
 }

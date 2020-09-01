@@ -30,6 +30,6 @@ namespace BrickScan.WebApi.Prediction
 {
     public interface IImageFileConverter
     {
-        Task<ImageConversionResult> TryConvertAsync(IFormFile imageFile);
+        Task<ImageConversionResult> TryConvertAsync(IFormFile? imageFile);
     }
 }

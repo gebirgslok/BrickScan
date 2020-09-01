@@ -23,21 +23,38 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using BrickScan.WebApi.Extensions;
+using BrickScan.Library.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace BrickScan.WebApi.Prediction
 {
     internal class ImageFileConverter : IImageFileConverter
     {
         private static readonly string[] _allowedImageContentTypes = { "image/png", "image/jpeg" };
+        private readonly IConfiguration _configuration;
 
-        public async Task<ImageConversionResult> TryConvertAsync(IFormFile imageFile)
+        private static ImageFormat[]? _supportedImageFormats;
+
+        public ImageFileConverter(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        private ImageFormat[] GetSupportedImageFormats()
+        {
+            _supportedImageFormats ??= _configuration.GetValue<string[]>("SupportedImageFormats")
+                .Select(Enum.Parse<ImageFormat>).ToArray();
+            return _supportedImageFormats;
+        }
+
+        public async Task<ImageConversionResult> TryConvertAsync(IFormFile? imageFile)
         {
             if (imageFile == null)
             {
@@ -70,14 +87,22 @@ namespace BrickScan.WebApi.Prediction
 
             await using var imageMemoryStream = new MemoryStream();
             await imageFile.CopyToAsync(imageMemoryStream);
-            var imageData = imageMemoryStream.ToArray();
+            var rawBytes = imageMemoryStream.ToArray();
+            var imageFormat = ImageHelper.GetImageFormat(rawBytes);
 
-            if (!imageData.IsValidImage(out var errors))
+            if (!GetSupportedImageFormats().Contains(imageFormat))
             {
-                return new ImageConversionResult(false, null, new ObjectResult(new ApiResponse(415, errors: errors)) { StatusCode = 415 });
+                var errors = new List<string>
+                {
+                    $"Image format '{imageFormat}' is not supported. Supported image formats: {string.Join(",", GetSupportedImageFormats())}."
+                };
+
+                return new ImageConversionResult(false, null, new ObjectResult(new ApiResponse(415, errors: errors))
+                {
+                    StatusCode = 415
+                });
             }
 
-            return new ImageConversionResult(true, imageData, null);
-        }
+            return new ImageConversionResult(true, new ImageData(rawBytes, imageFormat), null); }
     }
 }
