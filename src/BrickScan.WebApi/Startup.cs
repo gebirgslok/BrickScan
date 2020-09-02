@@ -27,6 +27,7 @@ using System;
 using System.IO;
 using BrickScan.Library.Dataset;
 using BrickScan.Library.Dataset.Model;
+using BrickScan.WebApi.Images;
 using BrickScan.WebApi.Prediction;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

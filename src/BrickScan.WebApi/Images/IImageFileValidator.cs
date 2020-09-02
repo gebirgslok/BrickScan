@@ -23,13 +23,15 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.WebApi.Images
 {
-    public interface IImageFileConverter
+    internal interface IImageFileValidator
     {
-        Task<ImageConversionResult> TryConvertAsync(IFormFile? imageFile);
+        ImageValidationResult ValidateImageFiles(IEnumerable<IFormFile> imageFile);
+
+        ImageValidationResult ValidateImageFile(IFormFile? imageFile);
     }
 }

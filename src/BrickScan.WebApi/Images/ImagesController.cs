@@ -23,24 +23,36 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.Library.Core;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BrickScan.WebApi.Prediction;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.WebApi.Images
 {
-    public class ImageConversionResult
+    [ApiVersion("1.0")]
+    [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    public class ImagesController : ControllerBase
     {
-        public IActionResult? ActionResult { get; }
+        private readonly IImageFileConverter _imageFileConverter;
 
-        public bool Success { get; }
-
-        public ImageData? ImageData { get; }
-
-        internal ImageConversionResult(bool success, ImageData? imageData, IActionResult? actionResult)
+        public ImagesController(IImageFileConverter imageFileConverter)
         {
-            Success = success;
-            ImageData = imageData;
-            ActionResult = actionResult;
+            _imageFileConverter = imageFileConverter;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Upload(IEnumerable<IFormFile> images)
+        {
+            await Task.Delay(500);
+
+
+            //multipartContent.Add(byteArrayContent, "csvFile", "filename");
+            //var postResponse = await _client.PostAsync("offers", multipartContent);
+
+            return Ok();
         }
     }
 }

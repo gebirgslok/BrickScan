@@ -23,8 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Dataset;
+using BrickScan.WebApi.Images;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -62,14 +64,14 @@ namespace BrickScan.WebApi.Prediction
                 return result.ActionResult!;
             }
 
-            var predictionResult = _imagePredictor.Predict(result.ImageData!.RawBytes);
+            var predictionResult = _imagePredictor.Predict(result.ImageDataList.First().RawBytes);
 
             var scoreT = _configuration.GetValue<double>("AddImageScoreThreshold");
             var score = 0.4;
 
             if (score < scoreT)
             {
-                var datasetImage = _datasetService.AddUnclassifiedImageAsync(result.ImageData!);
+                var datasetImage = _datasetService.AddUnclassifiedImageAsync(result.ImageDataList.First());
             }
 
             return new OkObjectResult(new ApiResponse(200, data: predictionResult));

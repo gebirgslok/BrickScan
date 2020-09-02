@@ -33,18 +33,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.WebApi.Images
 {
     internal class ImageFileConverter : IImageFileConverter
     {
-        private static readonly string[] _allowedImageContentTypes = { "image/png", "image/jpeg" };
+        private static ImageFormat[]? _supportedImageFormats;
+        private readonly IImageFileValidator _imageFileValidator;
         private readonly IConfiguration _configuration;
 
-        private static ImageFormat[]? _supportedImageFormats;
-
-        public ImageFileConverter(IConfiguration configuration)
+        public ImageFileConverter(IConfiguration configuration, IImageFileValidator imageFileValidator)
         {
             _configuration = configuration;
+            _imageFileValidator = imageFileValidator;
         }
 
         private ImageFormat[] GetSupportedImageFormats()
@@ -56,37 +56,18 @@ namespace BrickScan.WebApi.Prediction
 
         public async Task<ImageConversionResult> TryConvertAsync(IFormFile? imageFile)
         {
-            if (imageFile == null)
-            {
-                return new ImageConversionResult(false, null, new BadRequestObjectResult(new ApiResponse(400, errors: new List<string>
-                {
-                    "No image specified."
+            var validationResult = _imageFileValidator.ValidateImageFile(imageFile);
 
+            if (!validationResult.Success)
+            {
+                return new ImageConversionResult(false, null, new BadRequestObjectResult(new ApiResponse(validationResult.StatusCode, errors: new List<string>
+                {
+                    validationResult.Message
                 })));
-            }
-
-            if (imageFile.Length == 0)
-            {
-                return new ImageConversionResult(false, null, new BadRequestObjectResult(new ApiResponse(400, errors: new List<string>
-                {
-                    "Empty image."
-
-                })));
-            }
-
-            if (!_allowedImageContentTypes.Contains(imageFile.ContentType))
-            {
-                return new ImageConversionResult(false, null, new ObjectResult(new ApiResponse(415, errors: new List<string>
-                {
-                    $"Image content type '{imageFile.ContentType}' is not supported. Supported content types: {string.Join(',', _allowedImageContentTypes)}"
-                }))
-                {
-                    StatusCode = 415
-                });
             }
 
             await using var imageMemoryStream = new MemoryStream();
-            await imageFile.CopyToAsync(imageMemoryStream);
+            await imageFile!.CopyToAsync(imageMemoryStream);
             var rawBytes = imageMemoryStream.ToArray();
             var imageFormat = ImageHelper.GetImageFormat(rawBytes);
 
@@ -103,6 +84,26 @@ namespace BrickScan.WebApi.Prediction
                 });
             }
 
-            return new ImageConversionResult(true, new ImageData(rawBytes, imageFormat), null); }
+            return new ImageConversionResult(true, new ImageData(rawBytes, imageFormat), null);
+        }
+
+        public Task<ImageConversionResult> TryConvertManyAsync(IEnumerable<IFormFile> imageFiles)
+        {
+            //foreach (var imageFile in imageFiles)
+            //{
+            //    var validationResult = ValidateImageFile(imageFile);
+
+            //    if (!validationResult.Success)
+            //    {
+            //        return new ImageConversionResult(false, null, new BadRequestObjectResult(new ApiResponse(validationResult.StatusCode, errors: new List<string>
+            //        {
+            //            validationResult.Message
+            //        })));
+            //    }
+            //}
+
+
+            throw new NotImplementedException();
+        }
     }
 }
