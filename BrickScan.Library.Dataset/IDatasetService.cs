@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
 using BrickScan.Library.Dataset.Model;
@@ -32,5 +33,7 @@ namespace BrickScan.Library.Dataset
     public interface IDatasetService
     { 
         Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData);
+
+        Task<List<DatasetImage>> AddUnclassifiedImagesAsync(List<ImageData> imageDataList);
     }
 }

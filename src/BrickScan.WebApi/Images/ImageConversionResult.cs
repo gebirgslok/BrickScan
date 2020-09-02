@@ -37,6 +37,13 @@ namespace BrickScan.WebApi.Images
 
         public IEnumerable<ImageData> ImageDataList { get; }
 
+        public ImageConversionResult(bool success, IEnumerable<ImageData> imageData, IActionResult? actionResult)
+        {
+            Success = success;
+            ImageDataList = imageData;
+            ActionResult = actionResult;
+        }
+
         internal ImageConversionResult(bool success, ImageData? imageData, IActionResult? actionResult)
         {
             Success = success;

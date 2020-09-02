@@ -23,6 +23,8 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Collections.Generic;
+
 namespace BrickScan.WebApi.Images
 {
     internal class ImageValidationResult
@@ -31,13 +33,13 @@ namespace BrickScan.WebApi.Images
 
         public int StatusCode { get; }
 
-        public string Message { get; }
+        public IEnumerable<string> Errors { get; }
 
-        public ImageValidationResult(bool success, int statusCode, string message)
+        public ImageValidationResult(bool success, int statusCode, string errorMessage)
         {
             Success = success;
             StatusCode = statusCode;
-            Message = message;
+            Errors = new[] { errorMessage };
         }
     }
 }

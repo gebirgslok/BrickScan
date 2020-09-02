@@ -24,8 +24,9 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using BrickScan.WebApi.Prediction;
+using BrickScan.Library.Dataset;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,20 +38,20 @@ namespace BrickScan.WebApi.Images
     public class ImagesController : ControllerBase
     {
         private readonly IImageFileConverter _imageFileConverter;
+        private readonly IDatasetService _datasetService;
 
-        public ImagesController(IImageFileConverter imageFileConverter)
+        public ImagesController(IImageFileConverter imageFileConverter,
+            IDatasetService datasetService)
         {
             _imageFileConverter = imageFileConverter;
+            _datasetService = datasetService;
         }
 
         [HttpPost]
         public async Task<IActionResult> Upload(IEnumerable<IFormFile> images)
         {
-            await Task.Delay(500);
-
-
-            //multipartContent.Add(byteArrayContent, "csvFile", "filename");
-            //var postResponse = await _client.PostAsync("offers", multipartContent);
+            var conversionResult = await _imageFileConverter.TryConvertManyAsync(images.ToList());
+            var datasetImages = await _datasetService.AddUnclassifiedImagesAsync(conversionResult.ImageDataList.ToList());
 
             return Ok();
         }

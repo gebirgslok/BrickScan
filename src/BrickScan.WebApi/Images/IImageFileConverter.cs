@@ -33,6 +33,6 @@ namespace BrickScan.WebApi.Images
     {
         Task<ImageConversionResult> TryConvertAsync(IFormFile? imageFile);
 
-        Task<ImageConversionResult> TryConvertManyAsync(IEnumerable<IFormFile?> imageFiles);
+        Task<ImageConversionResult> TryConvertManyAsync(List<IFormFile> imageFiles);
     }
 }

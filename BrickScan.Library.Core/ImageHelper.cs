@@ -23,13 +23,35 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace BrickScan.Library.Core
 {
-    public static class ImageHelper
+    public  static class ImageHelper
     {
+        public static int GetTotalByteCount(this List<ImageData> imageDataList)
+        {
+            return imageDataList.Sum(imageData => imageData.RawBytes.Length);
+        }
+
+        public static string GetIncludedFormatsString(this List<ImageData> imageDataList)
+        {
+            return string.Join(",", imageDataList.Select(imageData => imageData.Format.ToString()).Distinct());
+        }
+
+        public static string ToFileExtension(this ImageFormat imageFormat)
+        {
+            if (imageFormat == ImageFormat.Unknown)
+            {
+                throw new ArgumentException($"Cannot convert {nameof(imageFormat)} = {imageFormat} to file extension.");
+            }
+
+            return $".{imageFormat.ToString().ToLowerInvariant()}";
+        }
+
         public static ImageFormat GetImageFormat(byte[] bytes)
         {
             var bmp = Encoding.ASCII.GetBytes("BM");

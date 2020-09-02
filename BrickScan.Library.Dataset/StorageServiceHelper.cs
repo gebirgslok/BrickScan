@@ -23,15 +23,15 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
+using System;
 
-namespace BrickScan.WebApi.Images
+namespace BrickScan.Library.Dataset
 {
-    internal interface IImageFileValidator
+    internal static class StorageServiceHelper
     {
-        ImageValidationResult ValidateImageFiles(IEnumerable<IFormFile> imageFile);
-
-        ImageValidationResult ValidateImageFile(IFormFile? imageFile);
+        public static string GenerateImageFilename()
+        {
+            return $"img-{DateTime.UtcNow:yyyyMMdd_HHmmssfff}-{Guid.NewGuid().ToString().Substring(0, 4)}";
+        }
     }
 }

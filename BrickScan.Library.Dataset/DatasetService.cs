@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
@@ -38,8 +39,8 @@ namespace BrickScan.Library.Dataset
         private readonly DatasetDbContext _datasetDbContext;
         private readonly ILogger<DatasetService> _logger;
 
-        public DatasetService(IStorageService storageService, 
-            DatasetDbContext datasetDbContext, 
+        public DatasetService(IStorageService storageService,
+            DatasetDbContext datasetDbContext,
             ILogger<DatasetService> logger)
         {
             _storageService = storageService;
@@ -49,12 +50,10 @@ namespace BrickScan.Library.Dataset
 
         public async Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData)
         {
-            var filenameWithoutExt = $"img-{DateTime.UtcNow:yyyyMMdd_HHmmssfff}-{Guid.NewGuid().ToString().Take(4)}";
+            _logger.LogDebug("Adding unclassified image data ({ByteCount} bytes, format: {ImageFormat}).",
+                    imageData.RawBytes.Length, imageData.Format);
 
-            _logger.LogDebug("Adding unclassified image data ({ByteCount} bytes, format: {ImageFormat}, created filename: {Filename}).", 
-                imageData.RawBytes.Length, imageData.Format, filenameWithoutExt);
-
-            var uri = await _storageService.StoreImageAsync(imageData, filenameWithoutExt);
+            var uri = await _storageService.StoreImageAsync(imageData);
             var datasetImage = new DatasetImage
             {
                 CreatedOn = DateTime.UtcNow,
@@ -67,6 +66,18 @@ namespace BrickScan.Library.Dataset
             var entry = await _datasetDbContext.DatasetImages.AddAsync(datasetImage);
             await _datasetDbContext.SaveChangesAsync();
             return entry.Entity;
+        }
+
+        public async Task<List<DatasetImage>> AddUnclassifiedImagesAsync(List<ImageData> imageDataList)
+        {
+            _logger.LogDebug("Adding {NumOfImages} unclassified images (total {TotalByteCount} bytes, contained formats: {ImageFormats}).",
+                imageDataList.Count,
+                imageDataList.GetTotalByteCount(),
+                imageDataList.GetIncludedFormatsString());
+
+            var uris = await _storageService.StoreImagesAsync(imageDataList);
+            
+            return new List<DatasetImage>();
         }
     }
 }
