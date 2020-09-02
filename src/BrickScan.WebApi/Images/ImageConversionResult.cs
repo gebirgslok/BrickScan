@@ -24,17 +24,24 @@
 #endregion
 
 using System.Collections.Generic;
-// ReSharper disable UnusedAutoPropertyAccessor.Global
+using BrickScan.Library.Core;
+using Microsoft.AspNetCore.Mvc;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.WebApi.Images
 {
-    public class ImagePredictionResult
+    public class ImageConversionResult
     {
-        public Dictionary<string, float> ScoredLabels { get; set; }
+        public IActionResult? ActionResult { get; }
 
-        public ImagePredictionResult(Dictionary<string, float> scoredLabels)
+        public bool Success { get; }
+
+        public IEnumerable<ImageData> ImageDataList { get; }
+
+        internal ImageConversionResult(bool success, ImageData? imageData, IActionResult? actionResult)
         {
-            ScoredLabels = scoredLabels;
+            Success = success;
+            ImageDataList = imageData == null ? new ImageData[0] : new[] { imageData };
+            ActionResult = actionResult;
         }
     }
 }

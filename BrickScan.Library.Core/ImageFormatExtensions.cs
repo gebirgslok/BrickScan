@@ -23,18 +23,20 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
-// ReSharper disable UnusedAutoPropertyAccessor.Global
+using System;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.Library.Core
 {
-    public class ImagePredictionResult
+    public static class ImageFormatExtensions
     {
-        public Dictionary<string, float> ScoredLabels { get; set; }
-
-        public ImagePredictionResult(Dictionary<string, float> scoredLabels)
+        public static string ToFileExtension(this ImageFormat imageFormat)
         {
-            ScoredLabels = scoredLabels;
+            if (imageFormat == ImageFormat.Unknown)
+            {
+                throw new ArgumentException($"Cannot convert {nameof(imageFormat)} = {imageFormat} to file extension.");
+            }
+
+            return $".{imageFormat.ToString().ToLowerInvariant()}";
         }
     }
 }

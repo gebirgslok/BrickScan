@@ -24,17 +24,15 @@
 #endregion
 
 using System.Collections.Generic;
-// ReSharper disable UnusedAutoPropertyAccessor.Global
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.WebApi.Images
 {
-    public class ImagePredictionResult
+    public interface IImageFileConverter
     {
-        public Dictionary<string, float> ScoredLabels { get; set; }
+        Task<ImageConversionResult> TryConvertAsync(IFormFile? imageFile);
 
-        public ImagePredictionResult(Dictionary<string, float> scoredLabels)
-        {
-            ScoredLabels = scoredLabels;
-        }
+        Task<ImageConversionResult> TryConvertManyAsync(IEnumerable<IFormFile?> imageFiles);
     }
 }

@@ -24,17 +24,14 @@
 #endregion
 
 using System.Collections.Generic;
-// ReSharper disable UnusedAutoPropertyAccessor.Global
+using Microsoft.AspNetCore.Http;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.WebApi.Images
 {
-    public class ImagePredictionResult
+    internal interface IImageFileValidator
     {
-        public Dictionary<string, float> ScoredLabels { get; set; }
+        ImageValidationResult ValidateImageFiles(IEnumerable<IFormFile> imageFile);
 
-        public ImagePredictionResult(Dictionary<string, float> scoredLabels)
-        {
-            ScoredLabels = scoredLabels;
-        }
+        ImageValidationResult ValidateImageFile(IFormFile? imageFile);
     }
 }

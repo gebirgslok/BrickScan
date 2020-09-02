@@ -23,25 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BrickScan.WebApi.Extensions
+namespace BrickScan.Library.Core
 {
-    internal static class ImageValidationExtensions
+    public static class ImageHelper
     {
-        private enum ImageFormat
-        {
-            Bmp,
-            Jpeg,
-            Gif,
-            Tiff,
-            Png,
-            Unknown
-        }
-
-        private static ImageFormat GetImageFormat(byte[] bytes)
+        public static ImageFormat GetImageFormat(byte[] bytes)
         {
             var bmp = Encoding.ASCII.GetBytes("BM");
             var gif = Encoding.ASCII.GetBytes("GIF");
@@ -87,23 +76,6 @@ namespace BrickScan.WebApi.Extensions
             }
 
             return ImageFormat.Unknown;
-        }
-
-        public static bool IsValidImage(this byte[] image, out List<string> errors)
-        {
-            errors = new List<string>();
-            var imageFormat = GetImageFormat(image);
-            var isJpegOrPng = imageFormat == ImageFormat.Jpeg || imageFormat == ImageFormat.Png;
-            
-            if (isJpegOrPng)
-            {
-                return true;
-            }
-
-            errors.Add($"Image format '{imageFormat}' is not supported. " +
-                       "Supported image formats: " +
-                       $"{ImageFormat.Jpeg}, {ImageFormat.Png}.");
-            return false;
         }
     }
 }

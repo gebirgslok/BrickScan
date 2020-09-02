@@ -23,9 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Linq;
 using System.Threading.Tasks;
+using BrickScan.Library.Dataset;
+using BrickScan.WebApi.Images;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace BrickScan.WebApi.Prediction
 {
@@ -34,14 +38,20 @@ namespace BrickScan.WebApi.Prediction
     [Route("api/v{version:apiVersion}/[controller]")]
     public class PredictController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
         private readonly IImageFileConverter _imageFileConverter;
         private readonly IImagePredictor _imagePredictor;
+        private readonly IDatasetService _datasetService;
 
         public PredictController(IImageFileConverter imageFileConverter, 
-            IImagePredictor imagePredictor)
+            IImagePredictor imagePredictor, 
+            IConfiguration configuration, 
+            IDatasetService datasetService)
         {
             _imageFileConverter = imageFileConverter;
             _imagePredictor = imagePredictor;
+            _configuration = configuration;
+            _datasetService = datasetService;
         }
 
         [HttpPost]
@@ -54,7 +64,16 @@ namespace BrickScan.WebApi.Prediction
                 return result.ActionResult!;
             }
 
-            var predictionResult = _imagePredictor.Predict(result.ImageBytes!);
+            var predictionResult = _imagePredictor.Predict(result.ImageDataList.First().RawBytes);
+
+            var scoreT = _configuration.GetValue<double>("AddImageScoreThreshold");
+            var score = 0.4;
+
+            if (score < scoreT)
+            {
+                var datasetImage = _datasetService.AddUnclassifiedImageAsync(result.ImageDataList.First());
+            }
+
             return new OkObjectResult(new ApiResponse(200, data: predictionResult));
         }
     }

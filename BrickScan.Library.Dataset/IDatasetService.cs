@@ -23,23 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using BrickScan.Library.Core;
+using BrickScan.Library.Dataset.Model;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.Library.Dataset
 {
-    public class ImageConversionResult
-    {
-        public IActionResult? ActionResult { get; }
-
-        public bool Success { get; }
-
-        public byte[]? ImageBytes { get; }
-
-        internal ImageConversionResult(bool success, byte[]? imageBytes, IActionResult? actionResult)
-        {
-            Success = success;
-            ImageBytes = imageBytes;
-            ActionResult = actionResult;
-        }
+    public interface IDatasetService
+    { 
+        Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData);
     }
 }

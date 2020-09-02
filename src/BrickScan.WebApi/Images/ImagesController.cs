@@ -23,22 +23,36 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BrickScan.WebApi.Prediction;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace BrickScan.WebApi
+namespace BrickScan.WebApi.Images
 {
-    internal static class PathHelpers
+    [ApiVersion("1.0")]
+    [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    public class ImagesController : ControllerBase
     {
-        //internal static string GetAbsolutePath(string relativePath, string baseDirectory)
-        //{
-        //    var uri = new Uri(absoluteOrRelativePath, UriKind.RelativeOrAbsolute);
+        private readonly IImageFileConverter _imageFileConverter;
 
-        //    var path = uri.IsAbsoluteUri ?
-        //        uri.AbsolutePath :
-        //        Path.Combine(baseDirectory, uri.OriginalString);
+        public ImagesController(IImageFileConverter imageFileConverter)
+        {
+            _imageFileConverter = imageFileConverter;
+        }
 
-        //    return path;
-        //}
+        [HttpPost]
+        public async Task<IActionResult> Upload(IEnumerable<IFormFile> images)
+        {
+            await Task.Delay(500);
+
+
+            //multipartContent.Add(byteArrayContent, "csvFile", "filename");
+            //var postResponse = await _client.PostAsync("offers", multipartContent);
+
+            return Ok();
+        }
     }
 }

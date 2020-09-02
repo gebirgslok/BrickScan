@@ -25,11 +25,16 @@
 
 using System;
 using System.IO;
+using BrickScan.Library.Dataset;
+using BrickScan.Library.Dataset.Model;
+using BrickScan.WebApi.Images;
 using BrickScan.WebApi.Prediction;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.ML;
 using Serilog;
 
@@ -42,9 +47,12 @@ namespace BrickScan.WebApi
     {
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
+        public IWebHostEnvironment Environment { get; }
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Environment = env;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -61,14 +69,34 @@ namespace BrickScan.WebApi
 
             services.AddTransient<IImageFileConverter, ImageFileConverter>();
             services.AddTransient<IImagePredictor, ImagePredictor>();
+            services.AddTransient<IDatasetService, DatasetService>();
+
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<DatasetDbContext>(options =>
+            {
+                options.UseSqlServer(connectionString,
+                    x => x.MigrationsAssembly(typeof(DatasetDbContext).Assembly.GetName().Name));
+            });
+
+            if (Environment.IsDevelopment())
+            {
+                services.AddTransient<IStorageService, LocalFileStorageService>();
+            }
+            else
+            {
+                services.AddTransient<IStorageService, LocalFileStorageService>();
+            }
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DatasetDbContext context)
         {
             //if (env.IsDevelopment())
             //{
             app.UseDeveloperExceptionPage();
             //}
+
+            //using var context = app.ApplicationServices.GetService<DatasetDbContext>();
+            context.Database.Migrate();
 
             app.UseHttpsRedirection();
             app.UseSerilogRequestLogging();

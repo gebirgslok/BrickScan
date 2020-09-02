@@ -23,18 +23,18 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.Library.Core
 {
-    public class ImagePredictionResult
+    public class ImageData
     {
-        public Dictionary<string, float> ScoredLabels { get; set; }
+        public byte[] RawBytes { get; }
 
-        public ImagePredictionResult(Dictionary<string, float> scoredLabels)
+        public ImageFormat Format { get; }
+
+        public ImageData(byte[] rawBytes, ImageFormat format)
         {
-            ScoredLabels = scoredLabels;
+            RawBytes = rawBytes;
+            Format = format;
         }
     }
 }

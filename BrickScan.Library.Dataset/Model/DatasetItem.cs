@@ -23,13 +23,20 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.Library.Dataset.Model
 {
-    public interface IImageFileConverter
+    public class DatasetItem : DatasetEntity
     {
-        Task<ImageConversionResult> TryConvertAsync(IFormFile imageFile);
+        public string Number { get; set; } = null!;
+
+        public string? AdditionalIdentifier { get; set; }
+
+        public int DatasetClassId { get; set; }
+
+        public DatasetClass? DatasetClass { get; set; }
+
+        public int DatasetColorId { get; set; }
+
+        public DatasetColor? DatasetColor { get; set; }
     }
 }

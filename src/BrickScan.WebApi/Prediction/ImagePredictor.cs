@@ -33,7 +33,33 @@ using Microsoft.ML.Data;
 
 namespace BrickScan.WebApi.Prediction
 {
-    internal class ImagePredictor : IImagePredictor
+    public class ItemDto
+    {
+        public string Number { get; }
+
+        public string? AdditionalIdentifier { get; }
+
+        public string[] DisplayImageUrls { get; }
+
+        public int ColorId { get; }
+
+        public ItemDto(string number, int colorId, string? additionalIdentifier, string[]? displayImageUrls)
+        {
+            Number = number;
+            ColorId = colorId;
+            AdditionalIdentifier = additionalIdentifier;
+            DisplayImageUrls = displayImageUrls ?? new string[0];
+        }
+    }
+
+    public class PredictedClassDto
+    {
+        public float Score { get; }
+
+
+    }
+
+    public class ImagePredictor : IImagePredictor
     {
         private readonly PredictionEnginePool<ModelInput, ModelOutput> _predictionEnginePool;
         private readonly IConfiguration _configuration;
