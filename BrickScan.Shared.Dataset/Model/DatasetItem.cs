@@ -23,18 +23,20 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Xunit;
+using System.ComponentModel.DataAnnotations;
 
-namespace BrickScan.WpfClient.Tests
+namespace BrickScan.Shared.Dataset.Model
 {
-    public class LanguageOptionTests
+    public class DatasetItem : DatabaseEntity
     {
-        [Fact]
-        public void ToStringReturnsDisplayName()
-        {
-            var option = new LanguageOption("en-US", "English");
+        [MaxLength(32), Required]
+        public string ItemNumber { get; set; }
 
-            Assert.Equal(option.DisplayName, option.ToString());
-        }
+        [MaxLength(20)]
+        public string AdditionalIdentifier { get; set; }
+
+        public int ColorId { get; set; }
+
+        public DatasetColor Color { get; set; }
     }
 }

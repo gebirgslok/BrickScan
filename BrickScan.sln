@@ -11,7 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPF", "WPF", "{1D2F4074-41D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickScan.WpfClient", "src\BrickScan.WpfClient\BrickScan.WpfClient.csproj", "{84695259-E20C-44B4-8948-A2252D112D41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickScan.WpfClient.Tests", "src\BrickScan.WpfClient.Tests\BrickScan.WpfClient.Tests.csproj", "{4804F843-1703-4C68-B2FE-A2CA62A5D124}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickScan.WpfClient.Tests", "src\BrickScan.WpfClient.Tests\BrickScan.WpfClient.Tests.csproj", "{4804F843-1703-4C68-B2FE-A2CA62A5D124}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{BCCF2F91-00FE-486B-9110-F92C141E54FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickScan.Shared.Dataset", "BrickScan.Shared.Dataset\BrickScan.Shared.Dataset.csproj", "{E6544412-AE3A-4752-BE3C-F65204AE327D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +35,10 @@ Global
 		{4804F843-1703-4C68-B2FE-A2CA62A5D124}.Debug|x64.Build.0 = Debug|x64
 		{4804F843-1703-4C68-B2FE-A2CA62A5D124}.Release|x64.ActiveCfg = Release|x64
 		{4804F843-1703-4C68-B2FE-A2CA62A5D124}.Release|x64.Build.0 = Release|x64
+		{E6544412-AE3A-4752-BE3C-F65204AE327D}.Debug|x64.ActiveCfg = Debug|x64
+		{E6544412-AE3A-4752-BE3C-F65204AE327D}.Debug|x64.Build.0 = Debug|x64
+		{E6544412-AE3A-4752-BE3C-F65204AE327D}.Release|x64.ActiveCfg = Release|x64
+		{E6544412-AE3A-4752-BE3C-F65204AE327D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +47,7 @@ Global
 		{65057694-429E-43A7-B3F4-CF420F0C3FE5} = {6350A85C-BA46-4072-A2CC-443E00FD7B2B}
 		{84695259-E20C-44B4-8948-A2252D112D41} = {1D2F4074-41D8-4C8F-A771-AE007D768704}
 		{4804F843-1703-4C68-B2FE-A2CA62A5D124} = {1D2F4074-41D8-4C8F-A771-AE007D768704}
+		{E6544412-AE3A-4752-BE3C-F65204AE327D} = {BCCF2F91-00FE-486B-9110-F92C141E54FB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {21FCB532-B7D0-459F-920F-03D58C73C127}

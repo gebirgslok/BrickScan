@@ -23,18 +23,9 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Xunit;
-
-namespace BrickScan.WpfClient.Tests
+namespace BrickScan.Shared.Dataset
 {
-    public class LanguageOptionTests
+    public interface IDatasetService
     {
-        [Fact]
-        public void ToStringReturnsDisplayName()
-        {
-            var option = new LanguageOption("en-US", "English");
-
-            Assert.Equal(option.DisplayName, option.ToString());
-        }
     }
 }

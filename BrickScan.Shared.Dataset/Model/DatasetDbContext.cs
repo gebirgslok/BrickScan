@@ -23,18 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Xunit;
+using Microsoft.EntityFrameworkCore;
 
-namespace BrickScan.WpfClient.Tests
+namespace BrickScan.Shared.Dataset.Model
 {
-    public class LanguageOptionTests
+    public class DatasetDbContext : DbContext
     {
-        [Fact]
-        public void ToStringReturnsDisplayName()
+        public DatasetDbContext(DbContextOptions<DatasetDbContext> options) : base(options)
         {
-            var option = new LanguageOption("en-US", "English");
-
-            Assert.Equal(option.DisplayName, option.ToString());
         }
     }
 }

@@ -54,7 +54,7 @@ namespace BrickScan.WpfClient.ViewModels
         public Rectangle Rectangle { get; private set; }
 
         [DependsOn(nameof(Frame), nameof(Rectangle))]
-        public bool CanPredict => true;//Frame != null && !Frame.Empty() && !Rectangle.IsEmpty;
+        public bool CanPredict => Frame != null && !Frame.Empty() && !Rectangle.IsEmpty;
 
         public PredictViewModel(CameraSetupViewModel cameraSetupViewModel, 
             IVideoCapture videoCapture, 
@@ -104,8 +104,7 @@ namespace BrickScan.WpfClient.ViewModels
             var rect = Rectangle.ToRect();
             try
             {
-                var imageSegment = new Mat(@"C:\Users\eisenbach\Pictures\doge.png");
-                //var imageSegment = new Mat(Frame!, rect);
+                var imageSegment = new Mat(Frame!, rect);
                 _eventAggregator.PublishOnUIThread(new OnPredictionRequested(imageSegment));
             }
             catch (Exception exception)
