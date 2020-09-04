@@ -58,7 +58,7 @@ namespace BrickScan.Library.Dataset
             {
                 CreatedOn = DateTime.UtcNow,
                 Status = EntityStatus.Unclassified,
-                Url = uri.AbsolutePath,
+                Url = uri.AbsoluteUri
             };
 
             _logger.LogDebug("Adding unclassified datasetImage {@DatasetImage} into database.", datasetImage);
@@ -75,9 +75,27 @@ namespace BrickScan.Library.Dataset
                 imageDataList.GetTotalByteCount(),
                 imageDataList.GetIncludedFormatsString());
 
+            var utcNow = DateTime.UtcNow;
             var uris = await _storageService.StoreImagesAsync(imageDataList);
+
+            var datasetImages = uris.Select(uri => new DatasetImage 
+                {
+                    CreatedOn = utcNow, 
+                    Status = EntityStatus.Unclassified, 
+                    Url = uri.AbsoluteUri
+                })
+                .ToList();
+
+            _logger.LogDebug("Created dataset images {@DatasetImages}. Inserting them into database).", datasetImages);
+                
+            await _datasetDbContext.AddRangeAsync(datasetImages);
+            _logger.LogDebug($"Calling {nameof(_datasetDbContext.SaveChangesAsync)} on {nameof(_datasetDbContext)}.");
             
-            return new List<DatasetImage>();
+            var numOfAffectedRows = await _datasetDbContext.SaveChangesAsync();
+
+            _logger.LogInformation("Received #{NumOfAffectedRows} affected rows after adding and saving {NumOfDatasetImages}.", 
+                numOfAffectedRows, datasetImages.Count);
+            return datasetImages;
         }
     }
 }

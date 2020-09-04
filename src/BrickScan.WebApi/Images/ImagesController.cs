@@ -48,12 +48,14 @@ namespace BrickScan.WebApi.Images
         }
 
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(415)]
         public async Task<IActionResult> Upload(IEnumerable<IFormFile> images)
         {
             var conversionResult = await _imageFileConverter.TryConvertManyAsync(images.ToList());
             var datasetImages = await _datasetService.AddUnclassifiedImagesAsync(conversionResult.ImageDataList.ToList());
-
-            return Ok();
+            return new OkObjectResult(new ApiResponse(200, data: datasetImages));
         }
     }
 }

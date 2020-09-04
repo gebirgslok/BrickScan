@@ -25,6 +25,7 @@
 
 using System;
 using System.IO;
+using Autofac;
 using BrickScan.Library.Dataset;
 using BrickScan.Library.Dataset.Model;
 using BrickScan.WebApi.Images;
@@ -47,12 +48,21 @@ namespace BrickScan.WebApi
     {
         public IConfiguration Configuration { get; }
 
+        //public ILifetimeScope AutofacContainer { get; private set; }
+
         public IWebHostEnvironment Environment { get; }
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             Environment = env;
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterType<ImageFileConverter>().As<IImageFileConverter>();
+            builder.RegisterType<ImagePredictor>().As<IImagePredictor>();
+            builder.RegisterType<DatasetService>().As<IDatasetService>();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -66,10 +76,6 @@ namespace BrickScan.WebApi
 
             services.AddPredictionEnginePool<ModelInput, ModelOutput>()
                 .FromFile(filePath: modelFilePath, modelName: "BrickScanModel", watchForChanges: true);
-
-            services.AddTransient<IImageFileConverter, ImageFileConverter>();
-            services.AddTransient<IImagePredictor, ImagePredictor>();
-            services.AddTransient<IDatasetService, DatasetService>();
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<DatasetDbContext>(options =>
