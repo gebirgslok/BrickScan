@@ -47,11 +47,47 @@ namespace BrickScan.WebApi.Images
             _datasetService = datasetService;
         }
 
+        /// <summary>
+        /// Deletes the image resource with the posted <paramref name="imageId"/>.
+        /// </summary>
+        /// <param name="imageId">The ID of the image resource to delete.</param>
+        /// <returns>No content (204).</returns>
+        [HttpDelete]
+        [ProducesResponseType(204)]
+        [Route("{imageId}")]
+        public async Task<IActionResult> Delete([FromRoute] int imageId)
+        {
+            await _datasetService.DeleteImageAsync(imageId);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Gets and returns the image resource for the requested ID (<paramref name="imageId"/>).
+        /// </summary>
+        /// <param name="imageId">The ID of the image resource.</param>
+        /// <returns>Returns the found <see cref="BrickScan.Library.Dataset.Model.DatasetImage"/>> or
+        /// <c>null</c> if no resource for <paramref name="imageId"/> was found.</returns>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [Route("{imageId}")]
+        public async Task<IActionResult> Get([FromRoute] int imageId)
+        {
+            var datasetImage = await _datasetService.FindImageByIdAsync(imageId);
+
+            if (datasetImage == null)
+            {
+                return new NotFoundObjectResult(new ApiResponse(404, errors: new[] { $"No image exists with ID = {imageId}." }));
+            }
+
+            return new OkObjectResult(new ApiResponse(200, data: datasetImage));
+        }
+
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(415)]
-        public async Task<IActionResult> Upload(IEnumerable<IFormFile> images)
+        public async Task<IActionResult> Post([FromForm] IEnumerable<IFormFile> images)
         {
             var conversionResult = await _imageFileConverter.TryConvertManyAsync(images.ToList());
             var datasetImages = await _datasetService.AddUnclassifiedImagesAsync(conversionResult.ImageDataList.ToList());

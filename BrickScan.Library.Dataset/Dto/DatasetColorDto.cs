@@ -23,17 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
-
-namespace BrickScan.WebApi.Prediction
-{
-    public class ImagePredictionResult
+namespace BrickScan.Library.Dataset.Dto
+{   
+    public class DatasetColorDto
     {
-        public Dictionary<string, float> ScoredLabels { get; set; }
+        public int BricklinkColorId { get; set; }
 
-        public ImagePredictionResult(Dictionary<string, float> scoredLabels)
-        {
-            ScoredLabels = scoredLabels;
-        }
+        public string BricklinkColorName { get; set; } = null!;
+
+        public string BricklinkColorType { get; set; } = null!;
+
+        public string BricklinkColorHtmlCode { get; set; } = null!;
     }
 }

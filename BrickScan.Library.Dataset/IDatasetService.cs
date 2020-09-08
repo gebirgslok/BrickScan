@@ -35,5 +35,9 @@ namespace BrickScan.Library.Dataset
         Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData);
 
         Task<List<DatasetImage>> AddUnclassifiedImagesAsync(List<ImageData> imageDataList);
+
+        Task<DatasetImage?> FindImageByIdAsync(int imageId);
+
+        Task DeleteImageAsync(int imageId);
     }
 }

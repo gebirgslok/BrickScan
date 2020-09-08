@@ -29,6 +29,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
 using BrickScan.Library.Dataset.Model;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BrickScan.Library.Dataset
@@ -78,24 +79,40 @@ namespace BrickScan.Library.Dataset
             var utcNow = DateTime.UtcNow;
             var uris = await _storageService.StoreImagesAsync(imageDataList);
 
-            var datasetImages = uris.Select(uri => new DatasetImage 
-                {
-                    CreatedOn = utcNow, 
-                    Status = EntityStatus.Unclassified, 
-                    Url = uri.AbsoluteUri
-                })
+            var datasetImages = uris.Select(uri => new DatasetImage
+            {
+                CreatedOn = utcNow,
+                Status = EntityStatus.Unclassified,
+                Url = uri.AbsoluteUri
+            })
                 .ToList();
 
             _logger.LogDebug("Created dataset images {@DatasetImages}. Inserting them into database).", datasetImages);
-                
+
             await _datasetDbContext.AddRangeAsync(datasetImages);
             _logger.LogDebug($"Calling {nameof(_datasetDbContext.SaveChangesAsync)} on {nameof(_datasetDbContext)}.");
-            
+
             var numOfAffectedRows = await _datasetDbContext.SaveChangesAsync();
 
-            _logger.LogInformation("Received #{NumOfAffectedRows} affected rows after adding and saving {NumOfDatasetImages}.", 
+            _logger.LogInformation("Received #{NumOfAffectedRows} affected rows after adding and saving {NumOfDatasetImages}.",
                 numOfAffectedRows, datasetImages.Count);
             return datasetImages;
+        }
+
+        public async Task<DatasetImage?> FindImageByIdAsync(int imageId)
+        {
+            _logger.LogDebug("Retrieving image for {ImageId}.", imageId);
+            var datasetImage = await _datasetDbContext.DatasetImages.FirstOrDefaultAsync(image => image.Id == imageId);
+            _logger.LogDebug("Returned {@Image} for {ImageId}", datasetImage, imageId);
+            return datasetImage;
+        }
+
+        public async Task DeleteImageAsync(int imageId)
+        {
+            var datasetImage = new DatasetImage { Id = imageId };
+            _datasetDbContext.DatasetImages.Attach(datasetImage);
+            _datasetDbContext.DatasetImages.Remove(datasetImage);
+            await _datasetDbContext.SaveChangesAsync();
         }
     }
 }

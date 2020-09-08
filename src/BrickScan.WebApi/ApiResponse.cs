@@ -54,8 +54,9 @@ namespace BrickScan.WebApi
             {
                 200 => "Request successful.",
                 201 => "Resource(s) created.",
+                204 => "No content",
                 400 => "Bad request.",
-                401 => "Resource not found.",
+                404 => "Resource not found.",
                 415 => "Unsupported media type.",
                 500 => "An unhandled error occurred.",
                 _ => "An unknown error occurred."

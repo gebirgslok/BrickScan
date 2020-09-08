@@ -25,6 +25,15 @@
 
 namespace BrickScan.Library.Dataset.Model
 {
+    public class SubmitDatasetItemDto
+    {
+        public string Number { get; set; } = null!;
+
+        public string? AdditionalIdentifier { get; set; }
+
+
+    }
+
     public class DatasetItem : DatasetEntity
     {
         public string Number { get; set; } = null!;
