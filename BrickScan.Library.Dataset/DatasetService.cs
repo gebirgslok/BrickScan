@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
+using BrickScan.Library.Dataset.Dto;
 using BrickScan.Library.Dataset.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -113,6 +114,21 @@ namespace BrickScan.Library.Dataset
             _datasetDbContext.DatasetImages.Attach(datasetImage);
             _datasetDbContext.DatasetImages.Remove(datasetImage);
             await _datasetDbContext.SaveChangesAsync();
+        }
+
+        public async Task<DatasetColor> AddColorAsync(DatasetColorDto color)
+        {
+            var datasetColor = new DatasetColor
+            {
+                BricklinkColorId = color.BricklinkColorId,
+                BricklinkColorName = color.BricklinkColorName,
+                BricklinkColorType = color.BricklinkColorType,
+                BricklinkColorHtmlCode = color.BricklinkColorHtmlCode
+            };
+
+            await _datasetDbContext.DatasetColors.AddAsync(datasetColor);
+            await _datasetDbContext.SaveChangesAsync();
+            return datasetColor;
         }
     }
 }

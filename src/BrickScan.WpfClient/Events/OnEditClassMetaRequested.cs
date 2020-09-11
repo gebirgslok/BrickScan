@@ -23,37 +23,18 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using BrickScan.WpfClient.Events;
-using OpenCvSharp;
-using Stylet;
+using System.Collections.Generic;
+using System.Windows.Media.Imaging;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Events
 {
-    public sealed class PredictionConductorViewModel : Conductor<PropertyChangedBase>, 
-        IHandle<OnPredictionRequested>, 
-        IHandle<OnPredictionResultCloseRequested>
+    public class OnEditClassMetaRequested
     {
-        private readonly PredictViewModel _predictViewModel;
-        private readonly Func<Mat, PredictionResultViewModel> _predictionResultViewModelFunc;
+        public IEnumerable<BitmapSource> Images { get; }
 
-        public PredictionConductorViewModel(PredictViewModel predictViewModel, 
-            Func<Mat, PredictionResultViewModel> predictionResultViewModelFunc)
+        internal OnEditClassMetaRequested(IEnumerable<BitmapSource> images)
         {
-            DisposeChildren = false;
-            _predictViewModel = predictViewModel;
-            _predictionResultViewModelFunc = predictionResultViewModelFunc;
-            ActiveItem = _predictViewModel;
-        }
-
-        public void Handle(OnPredictionRequested message)
-        {
-            ActiveItem = _predictionResultViewModelFunc.Invoke(message.ImageSection);
-        }
-
-        public void Handle(OnPredictionResultCloseRequested message)
-        {
-            ActiveItem = _predictViewModel;
+            Images = images;
         }
     }
 }

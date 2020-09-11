@@ -61,6 +61,24 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add image.
+        /// </summary>
+        public static string AddImage {
+            get {
+                return ResourceManager.GetString("AddImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add parts.
+        /// </summary>
+        public static string AddParts {
+            get {
+                return ResourceManager.GetString("AddParts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
         public static string Back {
@@ -111,6 +129,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string CannotConnectCameraTooltip {
             get {
                 return ResourceManager.GetString("CannotConnectCameraTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        public static string Clear {
+            get {
+                return ResourceManager.GetString("Clear", resourceCulture);
             }
         }
         
@@ -169,6 +196,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Image files.
+        /// </summary>
+        public static string ImageFiles {
+            get {
+                return ResourceManager.GetString("ImageFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image size.
         /// </summary>
         public static string ImageSize {
@@ -214,6 +250,24 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Moves this image to the first position..
+        /// </summary>
+        public static string MoveTopToolTip {
+            get {
+                return ResourceManager.GetString("MoveTopToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string Next {
+            get {
+                return ResourceManager.GetString("Next", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not logged on.
         /// </summary>
         public static string NotLoggedOn {
@@ -246,6 +300,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string RunningIdentificationMessage {
             get {
                 return ResourceManager.GetString("RunningIdentificationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select image....
+        /// </summary>
+        public static string SelectImage {
+            get {
+                return ResourceManager.GetString("SelectImage", resourceCulture);
             }
         }
         

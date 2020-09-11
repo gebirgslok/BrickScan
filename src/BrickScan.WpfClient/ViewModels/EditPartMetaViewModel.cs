@@ -24,36 +24,38 @@
 #endregion
 
 using System;
-using BrickScan.WpfClient.Events;
-using OpenCvSharp;
+using System.Collections.Generic;
+using System.Windows.Media.Imaging;
+using Microsoft.Win32;
 using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    public sealed class PredictionConductorViewModel : Conductor<PropertyChangedBase>, 
-        IHandle<OnPredictionRequested>, 
-        IHandle<OnPredictionResultCloseRequested>
+    public class EditPartMetaViewModel : PropertyChangedBase
     {
-        private readonly PredictViewModel _predictViewModel;
-        private readonly Func<Mat, PredictionResultViewModel> _predictionResultViewModelFunc;
+        public bool UseFirstTrainImageAsDisplayImage { get; set; } = true;
 
-        public PredictionConductorViewModel(PredictViewModel predictViewModel, 
-            Func<Mat, PredictionResultViewModel> predictionResultViewModelFunc)
+        public IEnumerable<BitmapImage> TrainImages { get; }
+
+        public EditPartMetaViewModel(IEnumerable<BitmapImage> trainImages)
         {
-            DisposeChildren = false;
-            _predictViewModel = predictViewModel;
-            _predictionResultViewModelFunc = predictionResultViewModelFunc;
-            ActiveItem = _predictViewModel;
+            TrainImages = trainImages;
         }
 
-        public void Handle(OnPredictionRequested message)
+        public void SelectImage()
         {
-            ActiveItem = _predictionResultViewModelFunc.Invoke(message.ImageSection);
-        }
+            var dialog = new OpenFileDialog
+            {
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                Filter = $"{Properties.Resources.ImageFiles} (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png"
+            };
 
-        public void Handle(OnPredictionResultCloseRequested message)
-        {
-            ActiveItem = _predictViewModel;
+            var wasSelected = dialog.ShowDialog();
+
+            if (wasSelected.HasValue && wasSelected.Value)
+            {
+                var imagePath = dialog.FileName;
+            }
         }
     }
 }

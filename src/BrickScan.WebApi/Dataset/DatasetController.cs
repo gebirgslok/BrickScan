@@ -26,8 +26,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BrickScan.Library.Dataset;
 using BrickScan.Library.Dataset.Dto;
-using BrickScan.Library.Dataset.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BrickScan.WebApi.Dataset
@@ -37,9 +37,11 @@ namespace BrickScan.WebApi.Dataset
     [Route("api/v{version:apiVersion}/[controller]")]
     public class DatasetController : ControllerBase
     {
-        public DatasetController()
-        {
+        private readonly IDatasetService _datasetService;
 
+        public DatasetController(IDatasetService datasetService)
+        {
+            _datasetService = datasetService;
         }
 
         private static bool Validate(DatasetColorDto dto, out List<string> errors)
@@ -67,21 +69,20 @@ namespace BrickScan.WebApi.Dataset
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="datasetColor"></param>
+        /// <param name="color"></param>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [Route("colors")]
-        public async Task<IActionResult> AddDatasetColor([FromBody] DatasetColorDto datasetColor)
+        public async Task<IActionResult> AddDatasetColor([FromBody] DatasetColorDto color)
         {
-            if (Validate(datasetColor, out var errors))
+            if (Validate(color, out var errors))
             {
                 return new BadRequestObjectResult(new ApiResponse(400, errors: errors));
             }
 
-            await Task.Delay(1000);
-
+            await _datasetService.AddColorAsync(color);
             return new CreatedResult("", new ApiResponse(201, data: "foo"));
         }
 

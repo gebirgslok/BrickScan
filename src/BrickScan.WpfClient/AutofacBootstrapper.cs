@@ -34,7 +34,7 @@ using Stylet;
 
 namespace BrickScan.WpfClient
 {
-    class EventAggregationAutoSubscriptionModule : Autofac.Module
+    sealed class EventAggregationAutoSubscriptionModule : Autofac.Module
     {
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration)
         {

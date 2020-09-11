@@ -23,37 +23,39 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using BrickScan.WpfClient.Events;
-using OpenCvSharp;
-using Stylet;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using MahApps.Metro.Controls;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Views
 {
-    public sealed class PredictionConductorViewModel : Conductor<PropertyChangedBase>, 
-        IHandle<OnPredictionRequested>, 
-        IHandle<OnPredictionResultCloseRequested>
+    public partial class AddPartsView
     {
-        private readonly PredictViewModel _predictViewModel;
-        private readonly Func<Mat, PredictionResultViewModel> _predictionResultViewModelFunc;
-
-        public PredictionConductorViewModel(PredictViewModel predictViewModel, 
-            Func<Mat, PredictionResultViewModel> predictionResultViewModelFunc)
+        public AddPartsView()
         {
-            DisposeChildren = false;
-            _predictViewModel = predictViewModel;
-            _predictionResultViewModelFunc = predictionResultViewModelFunc;
-            ActiveItem = _predictViewModel;
+            InitializeComponent();
         }
 
-        public void Handle(OnPredictionRequested message)
+        private static void HandleMouseEnterOrLeave(Border? imageBorder, bool isEnter)
         {
-            ActiveItem = _predictionResultViewModelFunc.Invoke(message.ImageSection);
+            var panel = imageBorder?.FindChildren<StackPanel>().FirstOrDefault(p => p.Name == "ImageButtonsPanel");
+
+            if (panel != null)
+            {
+                panel.Visibility = isEnter ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
-        public void Handle(OnPredictionResultCloseRequested message)
+        private void ImageBorder_OnMouseEnter(object sender, MouseEventArgs e)
         {
-            ActiveItem = _predictViewModel;
+            HandleMouseEnterOrLeave(sender as Border, true);
+        }
+
+        private void ImageBorder_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            HandleMouseEnterOrLeave(sender as Border, false);
         }
     }
 }

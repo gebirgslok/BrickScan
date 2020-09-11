@@ -24,36 +24,24 @@
 #endregion
 
 using System;
-using BrickScan.WpfClient.Events;
-using OpenCvSharp;
-using Stylet;
+using System.Globalization;
+using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Converter
 {
-    public sealed class PredictionConductorViewModel : Conductor<PropertyChangedBase>, 
-        IHandle<OnPredictionRequested>, 
-        IHandle<OnPredictionResultCloseRequested>
+    [ValueConversion(typeof(BitmapSource), typeof(string))]
+    internal class BitmapImageToImageSizeStringConverter : IValueConverter
     {
-        private readonly PredictViewModel _predictViewModel;
-        private readonly Func<Mat, PredictionResultViewModel> _predictionResultViewModelFunc;
-
-        public PredictionConductorViewModel(PredictViewModel predictViewModel, 
-            Func<Mat, PredictionResultViewModel> predictionResultViewModelFunc)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            DisposeChildren = false;
-            _predictViewModel = predictViewModel;
-            _predictionResultViewModelFunc = predictionResultViewModelFunc;
-            ActiveItem = _predictViewModel;
+            var bitmapSource = (BitmapSource) value;
+            return $"({bitmapSource.PixelWidth}×{bitmapSource.PixelHeight})";
         }
 
-        public void Handle(OnPredictionRequested message)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            ActiveItem = _predictionResultViewModelFunc.Invoke(message.ImageSection);
-        }
-
-        public void Handle(OnPredictionResultCloseRequested message)
-        {
-            ActiveItem = _predictViewModel;
+            throw new NotImplementedException();
         }
     }
 }

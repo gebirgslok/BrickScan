@@ -26,6 +26,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
+using BrickScan.Library.Dataset.Dto;
 using BrickScan.Library.Dataset.Model;
 
 namespace BrickScan.Library.Dataset
@@ -35,6 +36,8 @@ namespace BrickScan.Library.Dataset
         Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData);
 
         Task<List<DatasetImage>> AddUnclassifiedImagesAsync(List<ImageData> imageDataList);
+
+        Task<DatasetColor> AddColorAsync(DatasetColorDto color);
 
         Task<DatasetImage?> FindImageByIdAsync(int imageId);
 

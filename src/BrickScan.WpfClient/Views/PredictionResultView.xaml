@@ -103,7 +103,7 @@
             VerticalAlignment="Center"
             mah:ControlsHelper.ContentCharacterCasing="Upper"
             Command="{s:Action NavigateBack}"
-            Style="{DynamicResource MahApps.Styles.Button.Square.Accent}">
+            Style="{StaticResource MahApps.Styles.Button.Square.Accent}">
             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                 <iconPacks:PackIconMaterial
                     Width="20"
