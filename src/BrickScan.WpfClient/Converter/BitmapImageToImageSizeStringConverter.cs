@@ -23,17 +23,25 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
+using System;
+using System.Globalization;
+using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.WpfClient.Converter
 {
-    public class ImagePredictionResult
+    [ValueConversion(typeof(BitmapSource), typeof(string))]
+    internal class BitmapImageToImageSizeStringConverter : IValueConverter
     {
-        public Dictionary<string, float> ScoredLabels { get; set; }
-
-        public ImagePredictionResult(Dictionary<string, float> scoredLabels)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            ScoredLabels = scoredLabels;
+            var bitmapSource = (BitmapSource) value;
+            return $"({bitmapSource.PixelWidth}×{bitmapSource.PixelHeight})";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

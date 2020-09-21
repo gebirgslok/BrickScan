@@ -30,7 +30,7 @@ using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    internal sealed class NotifyTask<TResult> : PropertyChangedBase
+    public sealed class NotifyTask<TResult> : PropertyChangedBase
     {
         private readonly ILogger _logger;
         private readonly TResult _defaultResult;

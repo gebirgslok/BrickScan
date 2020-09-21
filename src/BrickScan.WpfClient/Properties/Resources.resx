@@ -175,4 +175,25 @@
   <data name="Back" xml:space="preserve">
     <value>Back</value>
   </data>
+  <data name="AddParts" xml:space="preserve">
+    <value>Add parts</value>
+  </data>
+  <data name="AddImage" xml:space="preserve">
+    <value>Add image</value>
+  </data>
+  <data name="MoveTopToolTip" xml:space="preserve">
+    <value>Moves this image to the first position.</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="SelectImage" xml:space="preserve">
+    <value>Select image...</value>
+  </data>
+  <data name="ImageFiles" xml:space="preserve">
+    <value>Image files</value>
+  </data>
 </root>

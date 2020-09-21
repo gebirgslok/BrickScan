@@ -23,17 +23,39 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using MahApps.Metro.Controls;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.WpfClient.Views
 {
-    public class ImagePredictionResult
+    public partial class AddPartsView
     {
-        public Dictionary<string, float> ScoredLabels { get; set; }
-
-        public ImagePredictionResult(Dictionary<string, float> scoredLabels)
+        public AddPartsView()
         {
-            ScoredLabels = scoredLabels;
+            InitializeComponent();
+        }
+
+        private static void HandleMouseEnterOrLeave(Border? imageBorder, bool isEnter)
+        {
+            var panel = imageBorder?.FindChildren<StackPanel>().FirstOrDefault(p => p.Name == "ImageButtonsPanel");
+
+            if (panel != null)
+            {
+                panel.Visibility = isEnter ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        private void ImageBorder_OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            HandleMouseEnterOrLeave(sender as Border, true);
+        }
+
+        private void ImageBorder_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            HandleMouseEnterOrLeave(sender as Border, false);
         }
     }
 }

@@ -27,16 +27,13 @@ using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
 using Stylet;
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable MemberCanBePrivate.Global
 
 namespace BrickScan.WpfClient.ViewModels
 {
     internal class MainViewModel : Screen
     {
         private readonly PredictionConductorViewModel _predictionConductorViewModel;
+        private readonly AddPartsConductorViewModel _addPartsConductorViewModel;
         private readonly SettingsViewModel _settingsViewModel;
 
         public StatusBarViewModel StatusBarViewModel { get; }
@@ -49,12 +46,14 @@ namespace BrickScan.WpfClient.ViewModels
 
         public IUserManager UserManager { get; }
 
-        public MainViewModel(PredictionConductorViewModel predictionConductorViewModel, 
-            SettingsViewModel settingsViewModel, 
-            StatusBarViewModel statusBarViewModel, 
+        public MainViewModel(PredictionConductorViewModel predictionConductorViewModel,
+            AddPartsConductorViewModel addPartsConductorViewModel,
+            SettingsViewModel settingsViewModel,
+            StatusBarViewModel statusBarViewModel,
             IUserManager userManager)
         {
             _predictionConductorViewModel = predictionConductorViewModel;
+            _addPartsConductorViewModel = addPartsConductorViewModel;
             _settingsViewModel = settingsViewModel;
             StatusBarViewModel = statusBarViewModel;
             UserManager = userManager;
@@ -73,10 +72,16 @@ namespace BrickScan.WpfClient.ViewModels
                 },
                 new HamburgerMenuIconItem
                 {
+                    Icon = new PackIconMaterial{ Kind = PackIconMaterialKind.CameraPlus },
+                    Label = Properties.Resources.AddParts.ToUpperInvariant(),
+                    Tag = _addPartsConductorViewModel
+                },
+                new HamburgerMenuIconItem
+                {
                     Icon = new PackIconMaterial{ Kind = PackIconMaterialKind.ArmFlex },
                     Label = Properties.Resources.Contribute.ToUpperInvariant(),
                     Tag = null
-                }
+                },
             };
 
             return collection;

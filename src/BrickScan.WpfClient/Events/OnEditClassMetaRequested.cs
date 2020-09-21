@@ -24,16 +24,17 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Windows.Media.Imaging;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.WpfClient.Events
 {
-    public class ImagePredictionResult
+    public class OnEditClassMetaRequested
     {
-        public Dictionary<string, float> ScoredLabels { get; set; }
+        public IEnumerable<BitmapSource> Images { get; }
 
-        public ImagePredictionResult(Dictionary<string, float> scoredLabels)
+        internal OnEditClassMetaRequested(IEnumerable<BitmapSource> images)
         {
-            ScoredLabels = scoredLabels;
+            Images = images;
         }
     }
 }

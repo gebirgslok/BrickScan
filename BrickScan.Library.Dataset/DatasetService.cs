@@ -28,7 +28,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
+using BrickScan.Library.Dataset.Dto;
 using BrickScan.Library.Dataset.Model;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BrickScan.Library.Dataset
@@ -58,7 +60,7 @@ namespace BrickScan.Library.Dataset
             {
                 CreatedOn = DateTime.UtcNow,
                 Status = EntityStatus.Unclassified,
-                Url = uri.AbsolutePath,
+                Url = uri.AbsoluteUri
             };
 
             _logger.LogDebug("Adding unclassified datasetImage {@DatasetImage} into database.", datasetImage);
@@ -75,9 +77,58 @@ namespace BrickScan.Library.Dataset
                 imageDataList.GetTotalByteCount(),
                 imageDataList.GetIncludedFormatsString());
 
+            var utcNow = DateTime.UtcNow;
             var uris = await _storageService.StoreImagesAsync(imageDataList);
-            
-            return new List<DatasetImage>();
+
+            var datasetImages = uris.Select(uri => new DatasetImage
+            {
+                CreatedOn = utcNow,
+                Status = EntityStatus.Unclassified,
+                Url = uri.AbsoluteUri
+            })
+                .ToList();
+
+            _logger.LogDebug("Created dataset images {@DatasetImages}. Inserting them into database).", datasetImages);
+
+            await _datasetDbContext.AddRangeAsync(datasetImages);
+            _logger.LogDebug($"Calling {nameof(_datasetDbContext.SaveChangesAsync)} on {nameof(_datasetDbContext)}.");
+
+            var numOfAffectedRows = await _datasetDbContext.SaveChangesAsync();
+
+            _logger.LogInformation("Received #{NumOfAffectedRows} affected rows after adding and saving {NumOfDatasetImages}.",
+                numOfAffectedRows, datasetImages.Count);
+            return datasetImages;
+        }
+
+        public async Task<DatasetImage?> FindImageByIdAsync(int imageId)
+        {
+            _logger.LogDebug("Retrieving image for {ImageId}.", imageId);
+            var datasetImage = await _datasetDbContext.DatasetImages.FirstOrDefaultAsync(image => image.Id == imageId);
+            _logger.LogDebug("Returned {@Image} for {ImageId}", datasetImage, imageId);
+            return datasetImage;
+        }
+
+        public async Task DeleteImageAsync(int imageId)
+        {
+            var datasetImage = new DatasetImage { Id = imageId };
+            _datasetDbContext.DatasetImages.Attach(datasetImage);
+            _datasetDbContext.DatasetImages.Remove(datasetImage);
+            await _datasetDbContext.SaveChangesAsync();
+        }
+
+        public async Task<DatasetColor> AddColorAsync(DatasetColorDto color)
+        {
+            var datasetColor = new DatasetColor
+            {
+                BricklinkColorId = color.BricklinkColorId,
+                BricklinkColorName = color.BricklinkColorName,
+                BricklinkColorType = color.BricklinkColorType,
+                BricklinkColorHtmlCode = color.BricklinkColorHtmlCode
+            };
+
+            await _datasetDbContext.DatasetColors.AddAsync(datasetColor);
+            await _datasetDbContext.SaveChangesAsync();
+            return datasetColor;
         }
     }
 }

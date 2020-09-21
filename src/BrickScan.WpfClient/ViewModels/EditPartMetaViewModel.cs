@@ -23,17 +23,39 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Windows.Media.Imaging;
+using Microsoft.Win32;
+using Stylet;
 
-namespace BrickScan.WebApi.Prediction
+namespace BrickScan.WpfClient.ViewModels
 {
-    public class ImagePredictionResult
+    public class EditPartMetaViewModel : PropertyChangedBase
     {
-        public Dictionary<string, float> ScoredLabels { get; set; }
+        public bool UseFirstTrainImageAsDisplayImage { get; set; } = true;
 
-        public ImagePredictionResult(Dictionary<string, float> scoredLabels)
+        public IEnumerable<BitmapImage> TrainImages { get; }
+
+        public EditPartMetaViewModel(IEnumerable<BitmapImage> trainImages)
         {
-            ScoredLabels = scoredLabels;
+            TrainImages = trainImages;
+        }
+
+        public void SelectImage()
+        {
+            var dialog = new OpenFileDialog
+            {
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                Filter = $"{Properties.Resources.ImageFiles} (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png"
+            };
+
+            var wasSelected = dialog.ShowDialog();
+
+            if (wasSelected.HasValue && wasSelected.Value)
+            {
+                var imagePath = dialog.FileName;
+            }
         }
     }
 }

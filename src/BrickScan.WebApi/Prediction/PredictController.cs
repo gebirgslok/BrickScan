@@ -36,14 +36,14 @@ namespace BrickScan.WebApi.Prediction
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class PredictController : ControllerBase
+    public class PredictionController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly IImageFileConverter _imageFileConverter;
         private readonly IImagePredictor _imagePredictor;
         private readonly IDatasetService _datasetService;
 
-        public PredictController(IImageFileConverter imageFileConverter, 
+        public PredictionController(IImageFileConverter imageFileConverter, 
             IImagePredictor imagePredictor, 
             IConfiguration configuration, 
             IDatasetService datasetService)
@@ -54,8 +54,14 @@ namespace BrickScan.WebApi.Prediction
             _datasetService = datasetService;
         }
 
+        /// <summary>
+        /// Predicts the posted <paramref name="imageFile"/>.
+        /// </summary>
+        /// <param name="imageFile">Image to to predict.</param>
+        /// <remarks>Supported image file formats: <b>JPEG</b> and <b>PNG</b>.</remarks>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Predict(IFormFile imageFile)
+        public async Task<IActionResult> Predict([FromForm] IFormFile imageFile)
         {
             var result = await _imageFileConverter.TryConvertAsync(imageFile);
 

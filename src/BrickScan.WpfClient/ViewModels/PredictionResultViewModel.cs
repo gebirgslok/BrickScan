@@ -26,27 +26,25 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using BrickScan.WpfClient.Events;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using Stylet;
 
-// ReSharper disable once UnusedAutoPropertyAccessor.Global
-// ReSharper disable once MemberCanBePrivate.Global
 namespace BrickScan.WpfClient.ViewModels
 {
-    internal class PredictionResultViewModel : PropertyChangedBase
+    public class PredictionResultViewModel : PropertyChangedBase
     {
         private readonly IEventAggregator _eventAggregator;
 
         public string? Test { get; set; }
 
-        public ImageSource ImageSource { get; }
+        public BitmapSource ImageSource { get; }
 
         public NotifyTask<string> InitializationNotifier { get; }
 
-        public string ImageSizeString => $"{ImageSource.Width}×{ImageSource.Height}";
+        public string ImageSizeString => $"{ImageSource.PixelWidth}×{ImageSource.PixelHeight}";
 
         public PredictionResultViewModel(Mat imageSection, 
             Func<Task<string>, string, NotifyTask<string>> notifyTaskFactory, 

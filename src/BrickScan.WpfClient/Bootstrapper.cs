@@ -41,6 +41,7 @@ namespace BrickScan.WpfClient
         public static void RegisterViewModels(this ContainerBuilder builder)
         {
             builder.RegisterType<PredictionConductorViewModel>().AsSelf();
+            builder.RegisterType<AddPartsConductorViewModel>().AsSelf();
             builder.RegisterType<PredictionResultViewModel>().AsSelf();
             builder.RegisterType<PredictViewModel>().AsSelf();
             builder.RegisterType<MainViewModel>().AsSelf();
