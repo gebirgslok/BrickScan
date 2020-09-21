@@ -53,7 +53,7 @@ namespace BrickScan.WebApi.Images
             var conversionResult = await _imageFileConverter.TryConvertManyAsync(images.ToList());
             var datasetImages = await _datasetService.AddUnclassifiedImagesAsync(conversionResult.ImageDataList.ToList());
 
-            return Ok();
+            return Ok(new ApiResponse(200, data: datasetImages));
         }
     }
 }
