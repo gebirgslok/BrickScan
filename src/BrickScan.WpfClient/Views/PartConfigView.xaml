@@ -28,6 +28,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:BrickScan.WpfClient.Views"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -47,6 +48,7 @@
                 <RowDefinition Height="Auto" SharedSizeGroup="InputRow" />
                 <RowDefinition Height="Auto" SharedSizeGroup="InputRow" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -74,22 +76,43 @@
                 VerticalAlignment="Center"
                 mah:TextBoxHelper.Watermark="'back', 'top', etc."
                 Text="{Binding Path=AdditionalIdentifier, Mode=TwoWay, TargetNullValue={x:Null}}" />
-            <Button
-                Grid.Row="0"
-                Grid.Column="1"
-                Margin="2"
-                Padding="10,5,10,5"
-                VerticalAlignment="Center"
-                Command="{s:Action SelectImage}"
-                Content="{x:Static resx:Resources.SelectImage}" />
             <Image
-                Grid.Row="1"
+                Grid.Row="0"
                 Grid.RowSpan="3"
                 Grid.Column="1"
                 Margin="5,5,5,2"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Source="{Binding Path=SpecificDisplayImage, Mode=OneTime}" />
+            <StackPanel
+                Grid.Row="4"
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <Button
+                    Width="36"
+                    Height="36"
+                    Margin="2,2,2,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Command="{s:Action DeleteImage}"
+                    Style="{DynamicResource MahApps.Styles.Button.Circle}"
+                    ToolTip="FOOBAR2">
+                    <iconPacks:Material Kind="Delete" />
+                </Button>
+                <Button
+                    Width="36"
+                    Height="36"
+                    Margin="2,2,2,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Command="{s:Action SelectImage}"
+                    Style="{DynamicResource MahApps.Styles.Button.Circle}"
+                    ToolTip="FOOBAR">
+                    <iconPacks:Material Kind="Image" />
+                </Button>
+            </StackPanel>
         </Grid>
     </Border>
 </UserControl>

@@ -24,6 +24,7 @@
 #endregion
 
 using System.Windows.Media.Imaging;
+using PropertyChanged;
 using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
@@ -36,9 +37,17 @@ namespace BrickScan.WpfClient.ViewModels
 
         public BitmapSource? SpecificDisplayImage { get; set; }
 
+        [DependsOn(nameof(SpecificDisplayImage))]
+        public bool CanDeleteImage => SpecificDisplayImage != null;
+
         public void SelectImage()
         {
 
+        }
+
+        public void DeleteImage()
+        {
+            SpecificDisplayImage = null;
         }
     }
 }
