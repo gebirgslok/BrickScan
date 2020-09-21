@@ -23,39 +23,22 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Input;
-using MahApps.Metro.Controls;
-using System.Windows;
+using System.Windows.Media.Imaging;
+using Stylet;
 
-namespace BrickScan.WpfClient.Views
+namespace BrickScan.WpfClient.ViewModels
 {
-    public partial class EditPartMetaView
+    public class PartConfigViewModel : PropertyChangedBase
     {
-        public EditPartMetaView()
-        {
-            InitializeComponent();
-        }
+        public string? PartNo { get; set; }
 
-        private static void HandleMouseEnterOrLeave(Border? imageBorder, bool isEnter)
-        {
-            var panel = imageBorder?.FindChildren<StackPanel>().FirstOrDefault(p => p.Name == "ImageButtonsPanel");
+        public string? AdditionalIdentifier { get; set; }
 
-            if (panel != null)
-            {
-                panel.Visibility = isEnter ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
+        public BitmapSource? SpecificDisplayImage { get; set; }
 
-        private void ImageBorder_OnMouseEnter(object sender, MouseEventArgs e)
+        public void SelectImage()
         {
-            HandleMouseEnterOrLeave(sender as Border, true);
-        }
 
-        private void ImageBorder_OnMouseLeave(object sender, MouseEventArgs e)
-        {
-            HandleMouseEnterOrLeave(sender as Border, false);
         }
     }
 }

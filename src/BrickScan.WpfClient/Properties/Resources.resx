@@ -196,4 +196,19 @@
   <data name="ImageFiles" xml:space="preserve">
     <value>Image files</value>
   </data>
+  <data name="TrainImages" xml:space="preserve">
+    <value>Training images</value>
+  </data>
+  <data name="DisplayImages" xml:space="preserve">
+    <value>Display images</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Parts" xml:space="preserve">
+    <value>Parts</value>
+  </data>
+  <data name="PartNo" xml:space="preserve">
+    <value>Part number</value>
+  </data>
 </root>

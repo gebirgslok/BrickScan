@@ -25,8 +25,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
+using PropertyChanged;
 using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
@@ -35,11 +37,49 @@ namespace BrickScan.WpfClient.ViewModels
     {
         public bool UseFirstTrainImageAsDisplayImage { get; set; } = true;
 
-        public IEnumerable<BitmapImage> TrainImages { get; }
+        public BindableCollection<BitmapSource> TrainImages { get; }
 
-        public EditPartMetaViewModel(IEnumerable<BitmapImage> trainImages)
+        [DependsOn(nameof(UseFirstTrainImageAsDisplayImage), nameof(ExtraDisplayImage))]
+        public IEnumerable<BitmapSource> DisplayImages => GetDisplayImages();
+
+        public BitmapSource? ExtraDisplayImage { get; private set; }
+
+        [DependsOn(nameof(ExtraDisplayImage), nameof(UseFirstTrainImageAsDisplayImage))]
+        public bool CanRemoveExtraDisplayImage => ExtraDisplayImage != null && UseFirstTrainImageAsDisplayImage;
+
+        [DependsOn(nameof(UseFirstTrainImageAsDisplayImage), nameof(ExtraDisplayImage))]
+        public bool CanToggleUseFirstTrainImageAsDisplayImage =>
+            !UseFirstTrainImageAsDisplayImage || ExtraDisplayImage != null;
+
+        public BindableCollection<PartConfigViewModel> PartConfigViewModels { get; }
+
+        public EditPartMetaViewModel(IEnumerable<BitmapSource> trainImages)
         {
-            TrainImages = trainImages;
+            TrainImages = new BindableCollection<BitmapSource>(trainImages);
+            PartConfigViewModels = new BindableCollection<PartConfigViewModel>();
+            PartConfigViewModels.Add(new PartConfigViewModel());
+        }
+
+        private IEnumerable<BitmapSource> GetDisplayImages()
+        {
+            var displayImages = new List<BitmapSource>();
+
+            if (UseFirstTrainImageAsDisplayImage)
+            {
+                displayImages.Add(TrainImages.First());
+            }
+
+            if (ExtraDisplayImage != null)
+            {
+                displayImages.Add(ExtraDisplayImage);
+            }
+
+            return displayImages;
+        }
+
+        public void RemoveExtraDisplayImage()
+        {
+            ExtraDisplayImage = null;
         }
 
         public void SelectImage()
@@ -55,6 +95,7 @@ namespace BrickScan.WpfClient.ViewModels
             if (wasSelected.HasValue && wasSelected.Value)
             {
                 var imagePath = dialog.FileName;
+                ExtraDisplayImage = new BitmapImage(new Uri(imagePath));
             }
         }
     }

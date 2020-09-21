@@ -178,6 +178,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display images.
+        /// </summary>
+        public static string DisplayImages {
+            get {
+                return ResourceManager.GetString("DisplayImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
         public static string Home {
@@ -286,11 +295,38 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Part number.
+        /// </summary>
+        public static string PartNo {
+            get {
+                return ResourceManager.GetString("PartNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parts.
+        /// </summary>
+        public static string Parts {
+            get {
+                return ResourceManager.GetString("Parts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Program version.
         /// </summary>
         public static string ProgramVersion {
             get {
                 return ResourceManager.GetString("ProgramVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        public static string Remove {
+            get {
+                return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
         
@@ -345,6 +381,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string Stop {
             get {
                 return ResourceManager.GetString("Stop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Training images.
+        /// </summary>
+        public static string TrainImages {
+            get {
+                return ResourceManager.GetString("TrainImages", resourceCulture);
             }
         }
         

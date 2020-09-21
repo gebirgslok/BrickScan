@@ -30,8 +30,6 @@ namespace BrickScan.Library.Dataset.Model
         public string Number { get; set; } = null!;
 
         public string? AdditionalIdentifier { get; set; }
-
-
     }
 
     public class DatasetItem : DatasetEntity

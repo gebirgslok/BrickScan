@@ -48,7 +48,7 @@ namespace BrickScan.WpfClient.ViewModels
             ILogger logger) : base(videoCapture, cameraSetupViewModel)
         {
             _eventAggregator = eventAggregator;
-            _logger = logger; ;
+            _logger = logger;
         }
 
         public void Predict()

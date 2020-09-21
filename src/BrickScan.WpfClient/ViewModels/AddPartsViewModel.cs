@@ -27,9 +27,13 @@ using System;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using BrickScan.WpfClient.Events;
+using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.Model;
 using Microsoft.Xaml.Behaviors.Core;
+using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
 using PropertyChanged;
+using Serilog;
 using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
@@ -39,13 +43,12 @@ namespace BrickScan.WpfClient.ViewModels
         private const int MIN_IMAGES_COUNT_TO_PROCEED = 2;
         private const int MAX_IMAGES_COUNT_TO_PROCEED = 20;
         private readonly IEventAggregator _eventAggregator;
-        
-        static readonly Random _random = new Random();
+        private readonly ILogger _logger;
 
         public BindableCollection<BitmapSource> Images { get; } = new BindableCollection<BitmapSource>();
 
         [DependsOn(nameof(Frame), nameof(Rectangle))]
-        public bool CanAddImage => true; //Frame != null && !Frame.Empty() && !Rectangle.IsEmpty;
+        public bool CanAddImage => Frame != null && !Frame.Empty() && !Rectangle.IsEmpty;
 
         public bool CanClear => Images.Any();
 
@@ -58,9 +61,11 @@ namespace BrickScan.WpfClient.ViewModels
 
         public AddPartsViewModel(IVideoCapture videoCapture, 
             CameraSetupViewModel cameraSetupViewModel, 
-            IEventAggregator eventAggregator) : base(videoCapture, cameraSetupViewModel)
+            IEventAggregator eventAggregator, 
+            ILogger logger) : base(videoCapture, cameraSetupViewModel)
         {
             _eventAggregator = eventAggregator;
+            _logger = logger;
         }
 
         public void Clear()
@@ -72,16 +77,20 @@ namespace BrickScan.WpfClient.ViewModels
 
         public void AddImage()
         {
-            var paths = new string[]
+            var rect = Rectangle.ToRect();
+            try
             {
-                @"C:\Users\eisenbach\Pictures\doge.png",
-                @"C:\Users\eisenbach\Pictures\csm_8-sge-borussiaglad118326.03.14aw_220bd1006d.jpg",
-                @"C:\Users\eisenbach\Pictures\MX590-P Maske.jpg",
-                @"C:\Users\eisenbach\Pictures\label_bsp.png"
-            };
+                var imageSegment = new Mat(Frame!, rect); 
+                Images.Add(imageSegment.ToBitmapSource());
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to add a new image " +
+                                         "(frame = {Frame}, rect = {Rect}). " +
+                                         "Message {Message",
+                    Frame?.ToString() ?? "null", rect.ToString());
+            }
 
-            var image = new BitmapImage(new Uri(paths[_random.Next(paths.Length)]));
-            Images.Add(image);
             NotifyOfPropertyChange(nameof(CanClear)); 
             NotifyOfPropertyChange(nameof(CanProceed));
         }

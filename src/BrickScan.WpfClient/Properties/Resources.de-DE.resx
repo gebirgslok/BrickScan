@@ -211,9 +211,24 @@
     <value>Weiter</value>
   </data>
   <data name="SelectImage" xml:space="preserve">
-    <value>Biild auswählen...</value>
+    <value>Bild auswählen...</value>
   </data>
   <data name="ImageFiles" xml:space="preserve">
     <value>Bilddateien</value>
+  </data>
+  <data name="TrainImages" xml:space="preserve">
+    <value>Trainingsbilder</value>
+  </data>
+  <data name="DisplayImages" xml:space="preserve">
+    <value>Anzeigebilder</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="Parts" xml:space="preserve">
+    <value>Teile</value>
+  </data>
+  <data name="PartNo" xml:space="preserve">
+    <value>Teilenummer</value>
   </data>
 </root>
