@@ -19,6 +19,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickScan.Library.Dataset",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickScan.Library.Core", "BrickScan.Library.Core\BrickScan.Library.Core.csproj", "{DB19968C-673E-435C-88DD-91B17850AA45}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CLI", "CLI", "{234C8335-7AF9-4987-85F7-C705A3944EDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickScan.Training", "BrickScan.Training\BrickScan.Training.csproj", "{A9D08B79-02BE-4F70-9653-4268818D3297}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -43,6 +47,9 @@ Global
 		{DB19968C-673E-435C-88DD-91B17850AA45}.Debug|x64.ActiveCfg = Debug|x64
 		{DB19968C-673E-435C-88DD-91B17850AA45}.Debug|x64.Build.0 = Debug|x64
 		{DB19968C-673E-435C-88DD-91B17850AA45}.Release|x64.ActiveCfg = Release|x64
+		{A9D08B79-02BE-4F70-9653-4268818D3297}.Debug|x64.ActiveCfg = Debug|x64
+		{A9D08B79-02BE-4F70-9653-4268818D3297}.Debug|x64.Build.0 = Debug|x64
+		{A9D08B79-02BE-4F70-9653-4268818D3297}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +60,7 @@ Global
 		{4804F843-1703-4C68-B2FE-A2CA62A5D124} = {1D2F4074-41D8-4C8F-A771-AE007D768704}
 		{1D783942-6EBE-4136-9028-9BAD34DCBA9C} = {6350A85C-BA46-4072-A2CC-443E00FD7B2B}
 		{DB19968C-673E-435C-88DD-91B17850AA45} = {968C51FD-313B-4D49-9B25-B9861DE6CFC9}
+		{A9D08B79-02BE-4F70-9653-4268818D3297} = {234C8335-7AF9-4987-85F7-C705A3944EDA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {21FCB532-B7D0-459F-920F-03D58C73C127}
