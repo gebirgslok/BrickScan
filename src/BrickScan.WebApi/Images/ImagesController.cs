@@ -33,7 +33,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace BrickScan.WebApi.Images
 {
     [ApiVersion("1.0")]
-    [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class ImagesController : ControllerBase
     {

@@ -32,7 +32,6 @@ using BrickScan.WpfClient.Model;
 using Microsoft.Xaml.Behaviors.Core;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
-using PropertyChanged;
 using Serilog;
 using Stylet;
 
@@ -46,9 +45,6 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly ILogger _logger;
 
         public BindableCollection<BitmapSource> Images { get; } = new BindableCollection<BitmapSource>();
-
-        [DependsOn(nameof(Frame), nameof(Rectangle))]
-        public bool CanAddImage => Frame != null && !Frame.Empty() && !Rectangle.IsEmpty;
 
         public bool CanClear => Images.Any();
 

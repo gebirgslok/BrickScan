@@ -61,6 +61,24 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use 1st train image to display images.
+        /// </summary>
+        public static string Add1stTrainImageToDisplayImages {
+            get {
+                return ResourceManager.GetString("Add1stTrainImageToDisplayImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adds a new complementary part..
+        /// </summary>
+        public static string AddComplementaryPartToolTip {
+            get {
+                return ResourceManager.GetString("AddComplementaryPartToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add image.
         /// </summary>
         public static string AddImage {
@@ -349,6 +367,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sending data to the server....
+        /// </summary>
+        public static string SendingData {
+            get {
+                return ResourceManager.GetString("SendingData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sensitivity.
         /// </summary>
         public static string Sensitivity {
@@ -385,11 +412,38 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Submission successful. Thank you!.
+        /// </summary>
+        public static string SubmissionSuccessfulMessage {
+            get {
+                return ResourceManager.GetString("SubmissionSuccessfulMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Submit.
+        /// </summary>
+        public static string Submit {
+            get {
+                return ResourceManager.GetString("Submit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Training images.
         /// </summary>
         public static string TrainImages {
             get {
                 return ResourceManager.GetString("TrainImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload.
+        /// </summary>
+        public static string Upload {
+            get {
+                return ResourceManager.GetString("Upload", resourceCulture);
             }
         }
         

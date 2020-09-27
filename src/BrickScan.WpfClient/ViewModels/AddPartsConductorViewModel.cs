@@ -6,7 +6,9 @@ using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    public sealed class AddPartsConductorViewModel : Conductor<PropertyChangedBase>, IHandle<OnEditClassMetaRequested>
+    public sealed class AddPartsConductorViewModel : Conductor<PropertyChangedBase>, 
+        IHandle<OnEditClassMetaRequested>, 
+        IHandle<OnEditPartMetaCloseRequested>
     {
         private readonly AddPartsViewModel _addPartsViewModel;
         private readonly Func<IEnumerable<BitmapSource>, EditPartMetaViewModel> _editPartMetaViewModelFactory;
@@ -24,6 +26,21 @@ namespace BrickScan.WpfClient.ViewModels
         {
             var viewModel = _editPartMetaViewModelFactory.Invoke(_addPartsViewModel.Images);
             ActiveItem = viewModel;
+        }
+
+        public void Handle(OnEditPartMetaCloseRequested message)
+        {
+            if (ActiveItem is EditPartMetaViewModel editPartMetaViewModel)
+            {
+                editPartMetaViewModel.Dispose();
+            }
+
+            if (message.ClearExistingImages)
+            {
+                _addPartsViewModel.Clear();
+            }
+
+            ActiveItem = _addPartsViewModel;
         }
     }
 }

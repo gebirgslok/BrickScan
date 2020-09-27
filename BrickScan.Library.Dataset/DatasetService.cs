@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
-using BrickScan.Library.Dataset.Dto;
+using BrickScan.Library.Core.Dto;
 using BrickScan.Library.Dataset.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -48,6 +48,105 @@ namespace BrickScan.Library.Dataset
             _storageService = storageService;
             _datasetDbContext = datasetDbContext;
             _logger = logger;
+        }
+
+        public async Task<DatasetClass?> GetClassByIdAsync(int id)
+        {
+            _logger.LogDebug($"Trying to find {nameof(DatasetClass)} for {nameof(id)}: {{Id}}.", id);
+            var datasetClass = await _datasetDbContext.DatasetClasses.FindAsync(id);
+
+            if (datasetClass == null)
+            {
+                _logger.LogInformation($"No {nameof(DatasetClass)} found for {nameof(id)}: {{Id}}.", id);
+
+                return null;
+            }
+
+            return datasetClass;
+        }
+
+        public async Task<DatasetClass> AddClassCandidateAsync(DatasetClassDto datasetClassDto, string createdBy)
+        {
+            _logger.LogInformation($"Adding candidate {nameof(DatasetClass)} with {{NumOfTrainImages}} train images from user = {{CreatedBy}}.",
+                datasetClassDto.TrainingImageIds.Count,
+                createdBy);
+
+            var allImageIds = new List<int>(datasetClassDto.TrainingImageIds);
+
+            allImageIds.AddRange(datasetClassDto.DisplayImageIds);
+            allImageIds.AddRange(datasetClassDto.Items.SelectMany(i => i.DisplayImageIds));
+
+            var distinctImageIds = allImageIds
+                .Distinct()
+                .ToArray();
+
+            _logger.LogInformation($"{nameof(DatasetClass)} candidate contains these distinct IDs: {{@distinctImageIds}}.",
+                string.Join(",", distinctImageIds));
+
+            //TODO: validate that every ID passed in the datasetClassDto is contained in 'distinctImageIds'.
+
+            var datasetImages = _datasetDbContext
+                .DatasetImages
+                .Where(img => distinctImageIds.Contains(img.Id));
+
+            var map = datasetImages
+                .ToDictionary(img => img.Id, img => img);
+
+            var datasetClass = new DatasetClass
+            {
+                CreatedOn = DateTime.Now,
+                Status = EntityStatus.Unclassified,
+                CreatedBy = createdBy
+            };
+
+            foreach (var trainingImageId in datasetClassDto.TrainingImageIds)
+            {
+                datasetClass.TrainingImages.Add(map[trainingImageId]);
+            }
+
+            foreach (var displayImageId in datasetClassDto.DisplayImageIds)
+            {
+                datasetClass.DisplayImages.Add(map[displayImageId]);
+            }
+
+            foreach (var itemDto in datasetClassDto.Items)
+            {
+                var datasetItem = new DatasetItem
+                {
+                    AdditionalIdentifier = itemDto.AdditionalIdentifier,
+                    Number = itemDto.Number,
+                    DatasetColorId = itemDto.DatasetColorId,
+                    DatasetClass = datasetClass
+                };
+
+                foreach (var imageId in itemDto.DisplayImageIds)
+                {
+                    datasetItem.DisplayImages.Add(map[imageId]);
+                }
+
+                datasetClass.DatasetItems.Add(datasetItem);
+            }
+
+            _logger.LogTrace($"Adding {nameof(DatasetClass)} async...");
+            await _datasetDbContext.DatasetClasses.AddAsync(datasetClass);
+
+
+            foreach (var datasetImage in datasetImages)
+            {
+                _logger.LogDebug($"Setting {nameof(DatasetImage.Status)} of {nameof(DatasetImage)} (ID = {{Id}}) to {{Status}}.", 
+                    datasetImage.Id,
+                    EntityStatus.Inherited);
+                datasetImage.Status = EntityStatus.Inherited;
+            }
+
+            _logger.LogTrace($"Calling {nameof(DbContext.SaveChangesAsync)} on {nameof(DatasetDbContext)}...");
+            var numOfWrittenStateEntries = await _datasetDbContext.SaveChangesAsync();
+
+            _logger.LogInformation($"{nameof(numOfWrittenStateEntries)} = " +
+                                   $"{{NumOfWrittenStateEntries}} after calling {nameof(DbContext.SaveChangesAsync)}.",
+                numOfWrittenStateEntries);
+
+            return datasetClass;
         }
 
         public async Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData)
@@ -100,6 +199,36 @@ namespace BrickScan.Library.Dataset
             return datasetImages;
         }
 
+        public async Task<List<DatasetColor>> AddColorsAsync(List<DatasetColor> colors)
+        {
+            await _datasetDbContext.DatasetColors.AddRangeAsync(colors);
+            await _datasetDbContext.SaveChangesAsync();
+            return colors;
+        }
+
+        public async Task<List<DatasetColor>> GetColorsAsync()
+        {
+            //return await Task.FromResult(new List<DatasetColor>
+            //{
+            //    new DatasetColor
+            //    {
+            //        BricklinkColorId = 1,
+            //        BricklinkColorType = "foo",
+            //        BricklinkColorName = "Black",
+            //        BricklinkColorHtmlCode = "542323FF"
+            //    },            
+            //    new DatasetColor
+            //    {
+            //        BricklinkColorId = 2,
+            //        BricklinkColorType = "foo",
+            //        BricklinkColorName = "White",
+            //        BricklinkColorHtmlCode = "18B343FF"
+            //    }
+            //});
+
+            return await _datasetDbContext.DatasetColors.ToListAsync();
+        }
+
         public async Task<DatasetImage?> FindImageByIdAsync(int imageId)
         {
             _logger.LogDebug("Retrieving image for {ImageId}.", imageId);
@@ -116,7 +245,7 @@ namespace BrickScan.Library.Dataset
             await _datasetDbContext.SaveChangesAsync();
         }
 
-        public async Task<DatasetColor> AddColorAsync(DatasetColorDto color)
+        public async Task<DatasetColor> AddColorAsync(ColorDto color)
         {
             var datasetColor = new DatasetColor
             {
@@ -125,7 +254,6 @@ namespace BrickScan.Library.Dataset
                 BricklinkColorType = color.BricklinkColorType,
                 BricklinkColorHtmlCode = color.BricklinkColorHtmlCode
             };
-
             await _datasetDbContext.DatasetColors.AddAsync(datasetColor);
             await _datasetDbContext.SaveChangesAsync();
             return datasetColor;

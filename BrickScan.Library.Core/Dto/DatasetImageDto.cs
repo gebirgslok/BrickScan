@@ -24,22 +24,17 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 
-namespace BrickScan.Library.Dataset.Model
+namespace BrickScan.Library.Core.Dto
 {
-    public class DatasetClass : DatasetEntity
+    public class DatasetImageDto
     {
-        public EntityStatus Status { get; set; }
+        public int Id { get; set; }
 
-        public string CreatedBy { get; set; } = null!;
+        public string Url { get; set; } = null!;
+
+        public string Status { get; set; } = null!;
 
         public DateTime CreatedOn { get; set; }
-
-        public List<DatasetImage> TrainingImages { get; set; } = new List<DatasetImage>();
-
-        public List<DatasetImage> DisplayImages { get; set; } = new List<DatasetImage>();
-
-        public List<DatasetItem> DatasetItems { get; set; } = new List<DatasetItem>();
     }
 }

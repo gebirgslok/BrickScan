@@ -26,18 +26,26 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
-using BrickScan.Library.Dataset.Dto;
+using BrickScan.Library.Core.Dto;
 using BrickScan.Library.Dataset.Model;
 
 namespace BrickScan.Library.Dataset
 {
     public interface IDatasetService
-    { 
+    {
+        Task<DatasetClass?> GetClassByIdAsync(int id);
+
+        Task<DatasetClass> AddClassCandidateAsync(DatasetClassDto datasetClassDto, string createdBy);
+
         Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData);
 
         Task<List<DatasetImage>> AddUnclassifiedImagesAsync(List<ImageData> imageDataList);
 
-        Task<DatasetColor> AddColorAsync(DatasetColorDto color);
+        Task<DatasetColor> AddColorAsync(ColorDto color);
+
+        Task<List<DatasetColor>> AddColorsAsync(List<DatasetColor> colors);
+
+        Task<List<DatasetColor>> GetColorsAsync();
 
         Task<DatasetImage?> FindImageByIdAsync(int imageId);
 

@@ -211,4 +211,22 @@
   <data name="PartNo" xml:space="preserve">
     <value>Part number</value>
   </data>
+  <data name="AddComplementaryPartToolTip" xml:space="preserve">
+    <value>Adds a new complementary part.</value>
+  </data>
+  <data name="Add1stTrainImageToDisplayImages" xml:space="preserve">
+    <value>Use 1st train image to display images</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Upload</value>
+  </data>
+  <data name="SendingData" xml:space="preserve">
+    <value>Sending data to the server...</value>
+  </data>
+  <data name="SubmissionSuccessfulMessage" xml:space="preserve">
+    <value>Submission successful. Thank you!</value>
+  </data>
 </root>

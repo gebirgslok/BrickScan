@@ -52,14 +52,14 @@
     </mah:MetroWindow.Resources>
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
-            <Button Click="{s:Action CloseApplication}" Content="{x:Static resx:Resources.Close}" />
-            <Button Click="{s:Action LaunchBrickScanHomepage}" ToolTip="{x:Static resx:Resources.BrickScanHomepage}">
+            <Button Command="{s:Action CloseApplication}" Content="{x:Static resx:Resources.Close}" />
+            <Button Command="{s:Action LaunchBrickScanHomepage}" ToolTip="{x:Static resx:Resources.BrickScanHomepage}">
                 <Image
                     Width="22"
                     Height="22"
                     Source="pack://application:,,,/BrickScan.WpfClient;component/icon.png" />
             </Button>
-            <Button Click="{s:Action LaunchBrickScanOnGithub}" ToolTip="{x:Static resx:Resources.BrickScanOnGithub}">
+            <Button Command="{s:Action LaunchBrickScanOnGithub}" ToolTip="{x:Static resx:Resources.BrickScanOnGithub}">
                 <iconPacks:Material
                     Width="22"
                     Height="22"
@@ -81,7 +81,7 @@
                 Content="{Binding UserManager.Username, Mode=OneWay}"
                 Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" />
             <Button
-                Click="{s:Action LogOn}"
+                Command="{s:Action LogOn}"
                 ToolTip="{x:Static resx:Resources.LogOn}"
                 Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource InvBoolToVisibilityConverter}, Mode=OneWay}">
                 <iconPacks:Material
@@ -90,7 +90,7 @@
                     Kind="Login" />
             </Button>
             <Button
-                Click="{s:Action LogOff}"
+                Command="{s:Action LogOff}"
                 ToolTip="{x:Static resx:Resources.LogOff}"
                 Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
                 <iconPacks:Material

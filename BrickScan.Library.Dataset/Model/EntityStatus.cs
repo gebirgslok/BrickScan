@@ -5,6 +5,7 @@
         Classified = 0,
         Unclassified = 1,
         MarkedForDeletion = 2,
-        MarkedForMerge = 3
+        MarkedForMerge = 3,
+        Inherited = 4
     }
 }

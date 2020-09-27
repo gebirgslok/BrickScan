@@ -23,28 +23,94 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BricklinkSharp.Client;
+using BrickScan.Library.Core.Dto;
 using BrickScan.Library.Dataset;
-using BrickScan.Library.Dataset.Dto;
+using BrickScan.Library.Dataset.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 
 namespace BrickScan.WebApi.Dataset
 {
-    [ApiVersion("1.0")]
-    [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    public class DatasetController : ControllerBase
+    class DatasetColorComparer : IEqualityComparer<DatasetColor>
     {
-        private readonly IDatasetService _datasetService;
-
-        public DatasetController(IDatasetService datasetService)
+        public bool Equals(DatasetColor? x, DatasetColor? y)
         {
-            _datasetService = datasetService;
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(x, null))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(y, null))
+            {
+                return false;
+            }
+
+            if (x.GetType() != y.GetType())
+            {
+                return false;
+            }
+
+            return x.BricklinkColorId == y.BricklinkColorId;
         }
 
-        private static bool Validate(DatasetColorDto dto, out List<string> errors)
+        public int GetHashCode(DatasetColor obj)
+        {
+            return obj.BricklinkColorId;
+        }
+    }
+
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    //[Route("api/v1/[controller]")]
+    public class DatasetController : ControllerBase
+    {
+        private const int MIN_NUM_OF_TRAIN_IMAGES = 2;
+        private readonly IDatasetService _datasetService;
+        private readonly ILogger<DatasetController> _logger;
+
+        public DatasetController(IDatasetService datasetService, ILogger<DatasetController> logger)
+        {
+            _datasetService = datasetService;
+            _logger = logger;
+        }
+
+        private static bool Validate(DatasetClassDto dto, out List<string> errors)
+        {
+            errors = new List<string>();
+
+            if (!dto.Items.Any())
+            {
+                errors.Add($"Dataset class must contain at least one item (see {nameof(dto.Items)}).");
+            }
+
+            if (dto.TrainingImageIds.Count < MIN_NUM_OF_TRAIN_IMAGES)
+            {
+                errors.Add($"Dataset class must contain at least {MIN_NUM_OF_TRAIN_IMAGES} of train images ({nameof(dto.TrainingImageIds)}), " +
+                           $"but received only {dto.TrainingImageIds.Count}.");
+            }
+
+            if (dto.Items.Any(i => string.IsNullOrEmpty(i.Number)))
+            {
+                errors.Add($"Each dataset class item must contain a valid item number (see {nameof(DatasetItemDto.Number)}), " +
+                           "but received at least one item with an empty or Null entry.");
+            }
+
+            return !errors.Any();
+        }
+
+        private static bool Validate(ColorDto dto, out List<string> errors)
         {
             errors = new List<string>();
 
@@ -75,7 +141,7 @@ namespace BrickScan.WebApi.Dataset
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [Route("colors")]
-        public async Task<IActionResult> AddDatasetColor([FromBody] DatasetColorDto color)
+        public async Task<IActionResult> AddDatasetColor([FromBody] ColorDto color)
         {
             if (Validate(color, out var errors))
             {
@@ -86,10 +152,106 @@ namespace BrickScan.WebApi.Dataset
             return new CreatedResult("", new ApiResponse(201, data: "foo"));
         }
 
-        //public async Task<IActionResult> SubmitDatasetClass([FromBody] SubmitDatasetClassDto datasetClass)
-        //{
-        //    await Task.Delay(1000);
-        //    return new OkObjectResult(new ApiResponse(200, data: "foo"));
-        //}
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [Route("colors")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDatasetColors()
+        {
+            _logger.LogDebug("Retrieving colors from DB.");
+
+            var colors = await _datasetService.GetColorsAsync();
+
+            _logger.LogDebug("Retrieved {NumOfColors} from DB.", colors.Count);
+
+            return new OkObjectResult(new ApiResponse(200, data: colors));
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [Route("colors/update")]
+        public async Task<IActionResult> UpdateDatasetColorsFromBricklink()
+        {
+            BricklinkClientConfiguration.Instance.TokenValue = "2EBD09FD75BE4A3BBA9E556B297D0CAF";
+            BricklinkClientConfiguration.Instance.TokenSecret = "95F3584C389340CBB20965839D1B737D";
+            BricklinkClientConfiguration.Instance.ConsumerKey = "67BD8A6AD39E441D855DBDA9613DBE0B";
+            BricklinkClientConfiguration.Instance.ConsumerSecret = "E36EADA87AC342D2AFD345E2769FD31A";
+
+            var client = BricklinkClientFactory.Build();
+            var blColorList = await client.GetColorListAsync();
+            var blColors = blColorList.Select(blColor => new DatasetColor
+            {
+                BricklinkColorId = blColor.ColorId,
+                BricklinkColorName = blColor.Name,
+                BricklinkColorType = blColor.Type,
+                BricklinkColorHtmlCode = blColor.HtmlCode.StartsWith("#") ? blColor.HtmlCode : $"#{blColor.HtmlCode}"
+            });
+
+            var storedColors = await _datasetService.GetColorsAsync();
+
+            var newColors = blColors
+                .Except(storedColors, new DatasetColorComparer())
+                .ToList();
+
+            if (newColors.Any())
+            {
+                await _datasetService.AddColorsAsync(newColors);
+            }
+
+            return NoContent();
+        }
+
+        //[HttpGet("classes/{id:int}")]
+        [HttpGet("classes/{id}", Name = nameof(GetDatasetClass))]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetDatasetClass(int id)
+        {
+            var datasetClass = await _datasetService.GetClassByIdAsync(id);
+
+            if (datasetClass == null)
+            {
+                var errors = new List<string>
+                {
+                    $"No {nameof(DatasetClass)} found for {nameof(id)} = {id}."
+                };
+                return new NotFoundObjectResult(new ApiResponse(404, errors: errors));
+            }
+
+            return new OkObjectResult(new ApiResponse(200, data: datasetClass));
+        }
+
+        [HttpPost("classes/submit")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> SubmitDatasetClass([FromBody] DatasetClassDto datasetClassDto, ApiVersion apiVersion)
+        {
+            if (!Validate(datasetClassDto, out var errors))
+            {
+                return new BadRequestObjectResult(new ApiResponse(400, errors: errors));
+            }
+
+            //TODO: set this using the real user.
+            var isModerator = false;
+
+            //Todo: add class directory; if exists, try auto merge, if auto merge fails, set status to merged
+            //if (isModerator)
+            //{
+            //    
+            //}
+            //else
+            //{
+            var createdBy = HttpContext.User?.Identity?.Name ?? "Unknown";
+            var datasetClass = await _datasetService.AddClassCandidateAsync(datasetClassDto, createdBy);
+            //}
+
+            return CreatedAtRoute(nameof(GetDatasetClass),
+                new
+                {
+                    id = datasetClass.Id,
+                    version = apiVersion.ToString()
+                },
+                new ApiResponse(201, data: datasetClass));
+        }
     }
 }

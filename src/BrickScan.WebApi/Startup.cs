@@ -75,8 +75,6 @@ namespace BrickScan.WebApi
     {
         public IConfiguration Configuration { get; }
 
-        //public ILifetimeScope AutofacContainer { get; private set; }
-
         public IWebHostEnvironment Environment { get; }
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)

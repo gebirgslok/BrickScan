@@ -29,7 +29,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-    xmlns:local="clr-namespace:BrickScan.WpfClient.Views"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:BrickScan.WpfClient.Properties"
@@ -37,82 +36,130 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="Cvs" Source="{Binding Path=GetColorsNotifier.Result, Mode=OneWay}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="BricklinkColorType" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+    </UserControl.Resources>
     <Border
         Margin="5,5,0,5"
         Background="Transparent"
         BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
         BorderThickness="1">
         <Grid IsSharedSizeScope="True">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" SharedSizeGroup="InputRow" />
-                <RowDefinition Height="Auto" SharedSizeGroup="InputRow" />
-                <RowDefinition Height="Auto" SharedSizeGroup="InputRow" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBox
-                Grid.Row="0"
-                Grid.Column="0"
-                Margin="2"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
-                mah:TextBoxHelper.Watermark="{x:Static resx:Resources.PartNo}"
-                Text="{Binding Path=PartNo, Mode=TwoWay, TargetNullValue={x:Null}}" />
-            <ComboBox
-                Grid.Row="1"
-                Grid.Column="0"
-                Margin="2"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center" />
-            <TextBox
-                Grid.Row="2"
-                Grid.Column="0"
-                Margin="2"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
-                mah:TextBoxHelper.Watermark="'back', 'top', etc."
-                Text="{Binding Path=AdditionalIdentifier, Mode=TwoWay, TargetNullValue={x:Null}}" />
-            <Image
-                Grid.Row="0"
-                Grid.RowSpan="3"
-                Grid.Column="1"
-                Margin="5,5,5,2"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
-                Source="{Binding Path=SpecificDisplayImage, Mode=OneTime}" />
-            <StackPanel
-                Grid.Row="4"
-                Grid.Column="1"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Orientation="Horizontal">
-                <Button
-                    Width="36"
-                    Height="36"
-                    Margin="2,2,2,0"
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    mah:TextBoxHelper.Watermark="{x:Static resx:Resources.PartNo}"
+                    Text="{Binding Path=PartNo, Mode=TwoWay, TargetNullValue={x:Null}, UpdateSourceTrigger=PropertyChanged}" />
+                <ComboBox
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    mah:TextBoxHelper.Watermark="Farbe"
+                    ItemsSource="{Binding Source={StaticResource Cvs}}"
+                    SelectedItem="{Binding Path=SelectedColor, Mode=TwoWay}">
+                    <ComboBox.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Label
+                                        Margin="2"
+                                        Content="{Binding Path=Name, Mode=OneTime}"
+                                        FontWeight="SemiBold" />
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ComboBox.GroupStyle>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <Rectangle
+                                    Width="18"
+                                    Height="12"
+                                    Fill="{Binding Path=BricklinkColorHtmlCode, Mode=OneTime}"
+                                    Stroke="Black"
+                                    StrokeThickness="1" />
+                                <TextBlock
+                                    Margin="5,1,1,1"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Path=BricklinkColorName, Mode=OneTime}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBox
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    mah:TextBoxHelper.Watermark="'back', 'top', etc."
+                    Text="{Binding Path=AdditionalIdentifier, Mode=TwoWay, TargetNullValue={x:Null}}" />
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Image
+                    Grid.Column="0"
+                    Margin="5,5,5,2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Source="{Binding Path=SpecificDisplayImage, Mode=OneWay}"
+                    Stretch="UniformToFill" />
+                <StackPanel
+                    Grid.Row="1"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
-                    Command="{s:Action DeleteImage}"
-                    Style="{DynamicResource MahApps.Styles.Button.Circle}"
-                    ToolTip="FOOBAR2">
-                    <iconPacks:Material Kind="Delete" />
-                </Button>
-                <Button
-                    Width="36"
-                    Height="36"
-                    Margin="2,2,2,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Command="{s:Action SelectImage}"
-                    Style="{DynamicResource MahApps.Styles.Button.Circle}"
-                    ToolTip="FOOBAR">
-                    <iconPacks:Material Kind="Image" />
-                </Button>
-            </StackPanel>
+                    Orientation="Horizontal">
+                    <Button
+                        Width="36"
+                        Height="36"
+                        Margin="2,2,2,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Command="{s:Action DeleteImage}"
+                        Style="{DynamicResource MahApps.Styles.Button.Circle}">
+                        <iconPacks:Material Kind="Delete" />
+                    </Button>
+                    <Button
+                        Width="36"
+                        Height="36"
+                        Margin="2,2,2,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Command="{s:Action SelectImage}"
+                        Style="{DynamicResource MahApps.Styles.Button.Circle}">
+                        <iconPacks:Material Kind="Image" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
         </Grid>
     </Border>
 </UserControl>

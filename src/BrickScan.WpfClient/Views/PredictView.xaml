@@ -60,7 +60,8 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             mah:ControlsHelper.ContentCharacterCasing="Upper"
-            Click="{s:Action Predict}"
+            Command="{s:Action Predict}"
+            IsEnabled="{Binding Path=HasValidFrame, Mode=OneWay}"
             Style="{DynamicResource MahApps.Styles.Button.Square.Accent}">
             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                 <iconPacks:PackIconMaterial

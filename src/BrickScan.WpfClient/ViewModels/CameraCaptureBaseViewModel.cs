@@ -29,6 +29,7 @@ using System.Windows.Media;
 using BrickScan.WpfClient.Model;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
+using PropertyChanged;
 using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
@@ -45,6 +46,9 @@ namespace BrickScan.WpfClient.ViewModels
         public ImageSource? ImageSource { get; private set; }
 
         public Rectangle Rectangle { get; private set; }
+
+        [DependsOn(nameof(Frame), nameof(Rectangle))]
+        public bool HasValidFrame => Frame != null && !Frame.Empty() && !Rectangle.IsEmpty;
 
         protected CameraCaptureBaseViewModel(IVideoCapture videoCapture, CameraSetupViewModel cameraSetupViewModel)
         {

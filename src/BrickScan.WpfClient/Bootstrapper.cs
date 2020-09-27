@@ -23,7 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using System.Configuration;
 using System.Globalization;
+using System.Net.Http;
 using System.Threading;
 using System.Windows.Threading;
 using Autofac;
@@ -31,6 +34,7 @@ using AutofacSerilogIntegration;
 using BrickScan.WpfClient.Model;
 using BrickScan.WpfClient.Properties;
 using BrickScan.WpfClient.ViewModels;
+using MahApps.Metro.Controls.Dialogs;
 using Serilog;
 using VideoCapture = BrickScan.WpfClient.Model.VideoCapture;
 
@@ -40,14 +44,14 @@ namespace BrickScan.WpfClient
     {
         public static void RegisterViewModels(this ContainerBuilder builder)
         {
-            builder.RegisterType<PredictionConductorViewModel>().AsSelf();
-            builder.RegisterType<AddPartsConductorViewModel>().AsSelf();
-            builder.RegisterType<PredictionResultViewModel>().AsSelf();
-            builder.RegisterType<PredictViewModel>().AsSelf();
-            builder.RegisterType<MainViewModel>().AsSelf();
-            builder.RegisterType<StatusBarViewModel>().AsSelf();
-            builder.RegisterType<CameraSetupViewModel>().AsSelf().SingleInstance();
-            builder.RegisterGeneric(typeof(NotifyTask<>)).AsSelf();
+            //builder.RegisterType<PredictionConductorViewModel>().AsSelf();
+            //builder.RegisterType<AddPartsConductorViewModel>().AsSelf();
+            //builder.RegisterType<PredictionResultViewModel>().AsSelf();
+            //builder.RegisterType<PredictViewModel>().AsSelf();
+            //builder.RegisterType<MainViewModel>().AsSelf();
+            //builder.RegisterType<StatusBarViewModel>().AsSelf();
+            //builder.RegisterType<CameraSetupViewModel>().AsSelf().SingleInstance();
+
         }
     }
 
@@ -89,6 +93,13 @@ namespace BrickScan.WpfClient
             builder.RegisterType<UserManager>().As<IUserManager>().SingleInstance();
             builder.RegisterType<VideoCapture>().As<IVideoCapture>().SingleInstance();
             builder.RegisterType<RoiDetector>().As<IRoiDetector>();
+            builder.Register(c => DialogCoordinator.Instance).As<IDialogCoordinator>();
+            builder.RegisterGeneric(typeof(NotifyTask<>)).AsSelf();
+
+            builder.Register(c => new HttpClient{ BaseAddress = new Uri(ConfigurationManager.AppSettings["BrickScanApiBaseUrl"]) })
+                .AsSelf()
+                .SingleInstance();
+
             builder.Register(c => UserConfiguration.Instance).As<IUserConfiguration>();
             builder.RegisterLogger();
         }

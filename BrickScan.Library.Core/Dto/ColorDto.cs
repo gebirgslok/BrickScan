@@ -23,23 +23,18 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
-
-namespace BrickScan.Library.Dataset.Model
+namespace BrickScan.Library.Core.Dto
 {
-    public class DatasetClass : DatasetEntity
+    public class ColorDto
     {
-        public EntityStatus Status { get; set; }
+        public int Id { get; set; }
 
-        public string CreatedBy { get; set; } = null!;
+        public int BricklinkColorId { get; set; }
 
-        public DateTime CreatedOn { get; set; }
+        public string BricklinkColorName { get; set; } = null!;
 
-        public List<DatasetImage> TrainingImages { get; set; } = new List<DatasetImage>();
+        public string BricklinkColorType { get; set; } = null!;
 
-        public List<DatasetImage> DisplayImages { get; set; } = new List<DatasetImage>();
-
-        public List<DatasetItem> DatasetItems { get; set; } = new List<DatasetItem>();
+        public string BricklinkColorHtmlCode { get; set; } = null!;
     }
 }

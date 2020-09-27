@@ -23,15 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
 namespace BrickScan.Library.Dataset.Model
 {
-    public class SubmitDatasetItemDto
-    {
-        public string Number { get; set; } = null!;
-
-        public string? AdditionalIdentifier { get; set; }
-    }
-
     public class DatasetItem : DatasetEntity
     {
         public string Number { get; set; } = null!;
@@ -40,10 +36,13 @@ namespace BrickScan.Library.Dataset.Model
 
         public int DatasetClassId { get; set; }
 
+        [JsonIgnore]
         public DatasetClass? DatasetClass { get; set; }
 
         public int DatasetColorId { get; set; }
 
         public DatasetColor? DatasetColor { get; set; }
+
+        public List<DatasetImage> DisplayImages { get; set; } = new List<DatasetImage>();
     }
 }

@@ -23,7 +23,15 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using BrickScan.Library.Core.Dto;
+using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using PropertyChanged;
 using Stylet;
 
@@ -31,6 +39,8 @@ namespace BrickScan.WpfClient.ViewModels
 {
     public class PartConfigViewModel : PropertyChangedBase
     {
+        private static IEnumerable<ColorDto>? _cachedColors;
+
         public string? PartNo { get; set; }
 
         public string? AdditionalIdentifier { get; set; }
@@ -40,9 +50,48 @@ namespace BrickScan.WpfClient.ViewModels
         [DependsOn(nameof(SpecificDisplayImage))]
         public bool CanDeleteImage => SpecificDisplayImage != null;
 
+        public ColorDto? SelectedColor { get; set; }
+
+        public NotifyTask<IEnumerable<ColorDto>> GetColorsNotifier { get; }
+
+        [DependsOn(nameof(PartNo), nameof(SelectedColor))]
+        public bool IsValid => !string.IsNullOrEmpty(PartNo) && SelectedColor != null;
+
+        public PartConfigViewModel(Func<Task<IEnumerable<ColorDto>>, IEnumerable<ColorDto>, NotifyTask<IEnumerable<ColorDto>>> notifierTaskFunc, 
+        HttpClient httpClient)
+        {
+            var task = GetColorsAsnc(httpClient);
+            GetColorsNotifier = notifierTaskFunc.Invoke(task, new List<ColorDto>());
+        }
+
+        private async Task<IEnumerable<ColorDto>> GetColorsAsnc(HttpClient httpClient)
+        {
+            if (_cachedColors == null)
+            {
+                var response = await httpClient.GetAsync("dataset/colors");
+                var responseString = await response.Content.ReadAsStringAsync();
+                var json = JObject.Parse(responseString);
+                _cachedColors = json["data"]?.ToObject<List<ColorDto>>() ?? new List<ColorDto>();
+            }
+
+            return _cachedColors;
+        }
+
         public void SelectImage()
         {
+            var dialog = new OpenFileDialog
+            {
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                Filter = $"{Properties.Resources.ImageFiles} (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png"
+            };
 
+            var wasSelected = dialog.ShowDialog();
+
+            if (wasSelected.HasValue && wasSelected.Value)
+            {
+                var imagePath = dialog.FileName;
+                SpecificDisplayImage = new BitmapImage(new Uri(imagePath));
+            }
         }
 
         public void DeleteImage()

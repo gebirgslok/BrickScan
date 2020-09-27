@@ -71,7 +71,7 @@
             Grid.Column="1"
             Margin="2"
             VerticalAlignment="Center"
-            Click="{s:Action RefreshCameraList}"
+            Command="{s:Action RefreshCameraList}"
             Style="{DynamicResource MahApps.Styles.Button.Circle}">
             <iconPacks:Material
                 Width="20"

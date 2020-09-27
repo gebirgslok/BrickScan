@@ -29,15 +29,23 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converter="clr-namespace:BrickScan.WpfClient.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:BrickScan.WpfClient.Properties"
     xmlns:s="https://github.com/canton7/Stylet"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    dialog:DialogParticipation.Register="{Binding Path=.}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <converter:BitmapImageToImageSizeStringConverter x:Key="BitmapImageToImageSizeStringConverter" />
+        <s:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <s:BoolToVisibilityConverter
+            x:Key="InvertedBoolToVisibilityConverter"
+            FalseVisibility="Visible"
+            TrueVisibility="Collapsed" />
     </UserControl.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -45,6 +53,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -60,7 +69,7 @@
                 <Label
                     Margin="2"
                     VerticalAlignment="Center"
-                    Content="Add 1st train image to display images" />
+                    Content="{x:Static resx:Resources.Add1stTrainImageToDisplayImages}" />
                 <CheckBox
                     Margin="0,2,2,2"
                     VerticalAlignment="Center"
@@ -158,21 +167,49 @@
                 VerticalAlignment="Stretch"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Disabled">
-                <ItemsControl ItemsSource="{Binding Path=PartConfigViewModels, Mode=OneTime}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Stretch"
-                                Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ContentControl Width="320" s:View.Model="{Binding ., Mode=OneTime}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                <StackPanel
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Stretch"
+                    Orientation="Horizontal">
+                    <ItemsControl ItemsSource="{Binding Path=PartConfigViewModels, Mode=OneTime}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Stretch"
+                                    Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Width="320" s:View.Model="{Binding ., Mode=OneTime}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <StackPanel VerticalAlignment="Top" Orientation="Vertical">
+                        <Button
+                            Width="42"
+                            Height="42"
+                            Margin="2,2,2,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Command="{s:Action AddComplementaryPart}"
+                            Style="{DynamicResource MahApps.Styles.Button.Circle}"
+                            ToolTip="{x:Static resx:Resources.AddComplementaryPartToolTip}">
+                            <iconPacks:Material Kind="Plus" />
+                        </Button>
+                        <Button
+                            Width="42"
+                            Height="42"
+                            Margin="2,2,2,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Command="{s:Action RemoveComplementaryPart}"
+                            Style="{DynamicResource MahApps.Styles.Button.Circle}">
+                            <iconPacks:Material Kind="Delete" />
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
             </ScrollViewer>
         </Grid>
 
@@ -232,6 +269,86 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
+        </Grid>
+
+        <Grid
+            Grid.Row="4"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="1"
+                Margin="10"
+                Padding="10,5,10,5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                mah:ControlsHelper.ContentCharacterCasing="Normal"
+                Command="{s:Action NavigateBack}"
+                Style="{DynamicResource MahApps.Styles.Button.Square}">
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial
+                        Width="20"
+                        Height="20"
+                        Margin="5,1,5,1"
+                        Kind="BackspaceOutline" />
+                    <TextBlock
+                        Margin="1,1,5,1"
+                        VerticalAlignment="Center"
+                        Text="{x:Static resx:Resources.Back}" />
+                </StackPanel>
+            </Button>
+            <Button
+                Grid.Column="2"
+                Margin="10"
+                Padding="10,5,10,5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                mah:ControlsHelper.ContentCharacterCasing="Upper"
+                Command="{s:Action SubmitAsync}"
+                Style="{StaticResource MahApps.Styles.Button.Square.Accent}">
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial
+                        Width="20"
+                        Height="20"
+                        Margin="5,1,5,1"
+                        Kind="Send" />
+                    <TextBlock
+                        Margin="1,1,5,1"
+                        VerticalAlignment="Center"
+                        Text="{x:Static resx:Resources.Submit}" />
+                </StackPanel>
+            </Button>
+            <StackPanel
+                Grid.Column="3"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Visibility="{Binding Path=IsSubmitted, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+                <iconPacks:PackIconMaterial
+                    Width="20"
+                    Height="20"
+                    Margin="5,1,5,1"
+                    Foreground="LimeGreen"
+                    Kind="CheckBold"
+                    Visibility="{Binding Path=WasSubmissionSuccessful, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                <iconPacks:PackIconMaterial
+                    Width="20"
+                    Height="20"
+                    Margin="5,1,5,1"
+                    Foreground="OrangeRed"
+                    Kind="MessageAlert"
+                    Visibility="{Binding Path=WasSubmissionSuccessful, Converter={StaticResource InvertedBoolToVisibilityConverter}, Mode=OneWay}" />
+                <TextBlock
+                    Margin="1"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource MahApps.Brushes.Text}"
+                    Text="{Binding Path=SubmissionMessage, Mode=OneWay, TargetNullValue={x:Null}}" />
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

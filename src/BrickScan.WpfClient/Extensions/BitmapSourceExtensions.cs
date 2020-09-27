@@ -23,23 +23,21 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
+using System.IO;
+using System.Windows.Media.Imaging;
 
-namespace BrickScan.Library.Dataset.Model
+namespace BrickScan.WpfClient.Extensions
 {
-    public class DatasetClass : DatasetEntity
+    internal static class BitmapSourceExtensions
     {
-        public EntityStatus Status { get; set; }
+        public static byte[] ToByteArray(this BitmapSource bitmapSource)
+        {
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
 
-        public string CreatedBy { get; set; } = null!;
-
-        public DateTime CreatedOn { get; set; }
-
-        public List<DatasetImage> TrainingImages { get; set; } = new List<DatasetImage>();
-
-        public List<DatasetImage> DisplayImages { get; set; } = new List<DatasetImage>();
-
-        public List<DatasetItem> DatasetItems { get; set; } = new List<DatasetItem>();
+            using var stream = new MemoryStream();
+            encoder.Save(stream);
+            return stream.ToArray();
+        }
     }
 }
