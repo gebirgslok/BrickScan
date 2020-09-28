@@ -73,7 +73,6 @@ namespace BrickScan.WebApi.Dataset
 
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    //[Route("api/v1/[controller]")]
     public class DatasetController : ControllerBase
     {
         private const int MIN_NUM_OF_TRAIN_IMAGES = 2;
@@ -201,11 +200,11 @@ namespace BrickScan.WebApi.Dataset
             return NoContent();
         }
 
-        //[HttpGet("classes/{id:int}")]
-        [HttpGet("classes/{id}", Name = nameof(GetDatasetClass))]
+        [HttpGet("classes/{id:int}", Name = nameof(GetDatasetClass))]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetDatasetClass(int id)
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetDatasetClass([FromRoute] int id)
         {
             var datasetClass = await _datasetService.GetClassByIdAsync(id);
 
@@ -219,6 +218,18 @@ namespace BrickScan.WebApi.Dataset
             }
 
             return new OkObjectResult(new ApiResponse(200, data: datasetClass));
+        }
+
+        //TODO: XML Doc
+        [HttpGet("classes/training-images", Name = nameof(GetDatasetTrainingImages))]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetDatasetTrainingImages([FromQuery]int page = 1, 
+            [FromQuery]int pageSize = 200)
+        {
+            var map = await _datasetService.GetClassTrainImagesMapAsync(page, pageSize);
+            return new OkObjectResult(new ApiResponse(200, data: map));
         }
 
         [HttpPost("classes/submit")]

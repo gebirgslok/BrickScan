@@ -26,6 +26,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using CommandLine;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -83,6 +84,7 @@ namespace BrickScan.Training
         static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
             services.AddTransient<ITrainService, TrainService>();
+            services.AddHttpClient();
             services.AddSingleton<IConsoleWriter, ConsoleWriter>();
         }
 

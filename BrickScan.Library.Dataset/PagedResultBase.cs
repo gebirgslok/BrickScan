@@ -23,37 +23,22 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using System;
 
-namespace BrickScan.Training
+namespace BrickScan.Library.Dataset
 {
-    public class TrainService : ITrainService
+    public abstract class PagedResultBase
     {
-        private readonly ILogger<TrainService> _logger;
-        private readonly IConsoleWriter _writer;
+        public int CurrentPage { get; set; }
 
-        public TrainService(ILogger<TrainService> logger, IConsoleWriter writer)
-        {
-            _logger = logger;
-            _writer = writer;
-        }
+        public int PageCount { get; set; }
 
-        public void Train(TrainOptions options)
-        {
-            //TODO: Download dataset / API CALL to classes w/ pagination / download images
+        public int PageSize { get; set; }
 
-            //TODO: Generate TSV file from structure
+        public int RowCount { get; set; }
 
-            //TODO: Run training
+        public int FirstRowOnPage => (CurrentPage - 1) * PageSize + 1;
 
-            //TODO: Compute stats, write to result file
-
-            _logger.LogInformation("Training with {Parameter}.", "foo");
-            _writer.WriteLine("Starting training ...");
-            _writer.WriteLineIfVerbose("Verbose message LOL");
-            Task.Delay(1000).Wait();
-            _writer.WriteLine("Training finished. WOW");
-        }
+        public int LastRowOnPage => Math.Min(CurrentPage * PageSize, RowCount);
     }
 }

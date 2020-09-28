@@ -24,46 +24,16 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using BrickScan.Library.Core;
-using BrickScan.Library.Core.Dto;
-using BrickScan.Library.Dataset.Model;
 
 namespace BrickScan.Library.Dataset
 {
-    public class DatasetClassTrainImagesMap
+    public class PagedResult<T> : PagedResultBase where T : class
     {
-        public int ClassId { get; }
+        public List<T> Results { get; set; }
 
-        public List<string> ImageUrls { get; }
-
-        internal DatasetClassTrainImagesMap(int classId, List<string> imageUrls)
+        public PagedResult()
         {
-            ClassId = classId;
-            ImageUrls = imageUrls;
+            Results = new List<T>();
         }
-    }
-
-    public interface IDatasetService
-    {
-        Task<PagedResult<DatasetClassTrainImagesMap>> GetClassTrainImagesMapAsync(int page = 1, int pageSize = 200);
-
-        Task<DatasetClass?> GetClassByIdAsync(int id);
-
-        Task<DatasetClass> AddClassCandidateAsync(DatasetClassDto datasetClassDto, string createdBy);
-
-        Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData);
-
-        Task<List<DatasetImage>> AddUnclassifiedImagesAsync(List<ImageData> imageDataList);
-
-        Task<DatasetColor> AddColorAsync(ColorDto color);
-
-        Task<List<DatasetColor>> AddColorsAsync(List<DatasetColor> colors);
-
-        Task<List<DatasetColor>> GetColorsAsync();
-
-        Task<DatasetImage?> FindImageByIdAsync(int imageId);
-
-        Task DeleteImageAsync(int imageId);
     }
 }

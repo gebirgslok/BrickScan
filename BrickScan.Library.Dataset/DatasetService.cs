@@ -50,6 +50,36 @@ namespace BrickScan.Library.Dataset
             _logger = logger;
         }
 
+        public async Task<PagedResult<DatasetClassTrainImagesMap>> GetClassTrainImagesMapAsync(int page = 1, int pageSize = 200)
+        {
+            //TODO: VALIDATE page and pageSize
+
+            //TODO: LOG
+
+            var result = new PagedResult<DatasetClassTrainImagesMap>
+            {
+                CurrentPage = page,
+                PageSize = pageSize,
+                RowCount = await _datasetDbContext.DatasetClasses.CountAsync(c =>
+                    c.Status == EntityStatus.Classified)
+            };
+
+            var pageCount = (double)result.RowCount / pageSize;
+            result.PageCount = (int)Math.Ceiling(pageCount);
+
+            var skip = (page - 1) * pageSize;
+
+            result.Results = await _datasetDbContext.DatasetClasses
+                .Where(c => c.Status == EntityStatus.Classified)
+                .Skip(skip)
+                .Take(pageSize)
+                .Select(c => new DatasetClassTrainImagesMap(c.Id, 
+                    c.TrainingImages.Select(img => img.Url).ToList()))
+                .ToListAsync();
+
+            return result;
+        }
+
         public async Task<DatasetClass?> GetClassByIdAsync(int id)
         {
             _logger.LogDebug($"Trying to find {nameof(DatasetClass)} for {nameof(id)}: {{Id}}.", id);
@@ -95,7 +125,7 @@ namespace BrickScan.Library.Dataset
             var datasetClass = new DatasetClass
             {
                 CreatedOn = DateTime.Now,
-                Status = EntityStatus.Unclassified,
+                Status = EntityStatus.Classified, //TODO; Classified / unclassified depending on user level
                 CreatedBy = createdBy
             };
 
@@ -130,10 +160,9 @@ namespace BrickScan.Library.Dataset
             _logger.LogTrace($"Adding {nameof(DatasetClass)} async...");
             await _datasetDbContext.DatasetClasses.AddAsync(datasetClass);
 
-
             foreach (var datasetImage in datasetImages)
             {
-                _logger.LogDebug($"Setting {nameof(DatasetImage.Status)} of {nameof(DatasetImage)} (ID = {{Id}}) to {{Status}}.", 
+                _logger.LogDebug($"Setting {nameof(DatasetImage.Status)} of {nameof(DatasetImage)} (ID = {{Id}}) to {{Status}}.",
                     datasetImage.Id,
                     EntityStatus.Inherited);
                 datasetImage.Status = EntityStatus.Inherited;
