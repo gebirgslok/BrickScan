@@ -2,7 +2,7 @@
   "profiles": {
     "BrickScan.Training": {
       "commandName": "Project",
-      "commandLineArgs": "train",
+      "commandLineArgs": "train1",
       "environmentVariables": {
         "BRICKSCANTRAIN_ENVIRONMENT": "Development"
       }

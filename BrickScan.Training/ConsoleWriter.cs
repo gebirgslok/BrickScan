@@ -23,14 +23,25 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+
 namespace BrickScan.Training
 {
-    public interface IConsoleWriter
+    public class ConsoleWriter : IConsoleWriter
     {
-        bool Verbose { get; set; }
+        public bool Verbose { get; set; }
 
-        void WriteLine(string line);
+        public void WriteLine(string line)
+        {
+            Console.WriteLine(line);
+        }
 
-        void WriteLineIfVerbose(string line);
+        public void WriteLineIfVerbose(string line)
+        {
+            if (Verbose)
+            {
+                WriteLine(line);
+            }
+        }
     }
 }

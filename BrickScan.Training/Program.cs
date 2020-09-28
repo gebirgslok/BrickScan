@@ -25,6 +25,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using CommandLine;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,7 +45,7 @@ namespace BrickScan.Training
                 .ReadFrom.Configuration(builder.Build())
                 .CreateLogger();
 
-            Log.ForContext(typeof(Program)).Information("Starting application with {Args}.", args);
+            Log.ForContext(typeof(Program)).Information("Starting application with args = {Args}.", args);
 
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices(ConfigureServices)
@@ -65,7 +66,16 @@ namespace BrickScan.Training
                     trainService.Train(options);
                 })
                 .WithParsed<DownloadDatasetOptions>(options => Console.WriteLine(options))
-                .WithNotParsed(errors => Console.WriteLine(string.Join(",", errors)));
+                .WithNotParsed(errors =>
+                {
+                    errors = errors as Error[] ?? errors.ToArray();
+
+                    if (errors.Any(e =>
+                        e.Tag != ErrorType.HelpRequestedError && e.Tag != ErrorType.HelpVerbRequestedError))
+                    {
+                        Log.ForContext(typeof(Program)).Error("Failed to parse args = {Args}, received errors = {@Errors}.", args, errors);
+                    }
+                });
 
             Console.ReadLine();
         }
