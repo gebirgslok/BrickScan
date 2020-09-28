@@ -24,8 +24,12 @@
 #endregion
 
 using System;
-using System.Threading.Tasks;
+using System.IO;
 using CommandLine;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace BrickScan.Training
 {
@@ -33,18 +37,51 @@ namespace BrickScan.Training
     {
         static void Main(string[] args)
         {
-            Parser.Default
-                .ParseArguments<TrainOptions, DownloadDatasetOptions>(args)
-                .WithParsed<TrainOptions>(Train)
+            var builder = new ConfigurationBuilder();
+            BuildConfiguration(builder);
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Build())
+                .CreateLogger();
+
+            Log.ForContext(typeof(Program)).Information("Starting application with {Args}.", args);
+
+            var host = Host.CreateDefaultBuilder()
+                .ConfigureServices(ConfigureServices)
+                .UseSerilog()
+                .Build();
+
+            var parserResult = Parser.Default
+                .ParseArguments<TrainOptions, DownloadDatasetOptions>(args);
+
+            parserResult.WithParsed<Options>(options =>
+                {
+                    var writer = host.Services.GetService<IConsoleWriter>();
+                    writer.Verbose = options.Verbose;
+                })
+                .WithParsed<TrainOptions>(options =>
+                {
+                    var trainService = host.Services.GetService<ITrainService>();
+                    trainService.Train(options);
+                })
                 .WithParsed<DownloadDatasetOptions>(options => Console.WriteLine(options))
                 .WithNotParsed(errors => Console.WriteLine(string.Join(",", errors)));
+
+            Console.ReadLine();
         }
 
-        static void Train(TrainOptions options)
+        static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
-            Console.WriteLine("Starting training ...");
-            Task.Delay(1000).Wait();
-            Console.WriteLine("Training finished. WOW");
+            services.AddTransient<ITrainService, TrainService>();
+            services.AddSingleton<IConsoleWriter, ConsoleWriter>();
+        }
+
+        static void BuildConfiguration(IConfigurationBuilder builder)
+        {
+            var env = Environment.GetEnvironmentVariable("BRICKSCANTRAIN_ENVIRONMENT");
+            builder.SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env ?? "Production"}.json", optional: true);
         }
     }
 }

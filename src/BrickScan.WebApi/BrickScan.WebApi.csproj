@@ -46,4 +46,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BrickScan.Library.Dataset\BrickScan.Library.Dataset.csproj" />
   </ItemGroup>
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1development_1json__JsonSchema="https://json.schemastore.org/appsettings" /></VisualStudio></ProjectExtensions>
 </Project>

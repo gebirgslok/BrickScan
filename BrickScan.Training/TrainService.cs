@@ -23,13 +23,29 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using CommandLine;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace BrickScan.Training
 {
-    public abstract class Options
+    public class TrainService : ITrainService
     {
-        [Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.", Default = false)]
-        public bool Verbose { get; set; }
+        private readonly ILogger<TrainService> _logger;
+        private readonly IConsoleWriter _writer;
+
+        public TrainService(ILogger<TrainService> logger, IConsoleWriter writer)
+        {
+            _logger = logger;
+            _writer = writer;
+        }
+
+        public void Train(TrainOptions options)
+        {
+            _logger.LogInformation("Training with {Parameter}.", "foo");
+            _writer.WriteLine("Starting training ...");
+            _writer.WriteLineIfVerbose("Verbose message LOL");
+            Task.Delay(1000).Wait();
+            _writer.WriteLine("Training finished. WOW");
+        }
     }
 }
