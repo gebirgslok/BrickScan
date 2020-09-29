@@ -32,16 +32,21 @@ namespace BrickScan.Training
     {
         private readonly ILogger<TrainService> _logger;
         private readonly IConsoleWriter _writer;
+        private readonly IDownloadService _downloadService;
 
-        public TrainService(ILogger<TrainService> logger, IConsoleWriter writer)
+        public TrainService(ILogger<TrainService> logger, 
+            IConsoleWriter writer, 
+            IDownloadService downloadService)
         {
             _logger = logger;
             _writer = writer;
+            _downloadService = downloadService;
         }
 
-        public void Train(TrainOptions options)
+        public async Task TrainAsync(TrainOptions options)
         {
             //TODO: Download dataset / API CALL to classes w/ pagination / download images
+            await _downloadService.DownloadAsync(options.DestinationDirectory);
 
             //TODO: Generate TSV file from structure
 
@@ -52,7 +57,7 @@ namespace BrickScan.Training
             _logger.LogInformation("Training with {Parameter}.", "foo");
             _writer.WriteLine("Starting training ...");
             _writer.WriteLineIfVerbose("Verbose message LOL");
-            Task.Delay(1000).Wait();
+            await Task.Delay(1000);
             _writer.WriteLine("Training finished. WOW");
         }
     }

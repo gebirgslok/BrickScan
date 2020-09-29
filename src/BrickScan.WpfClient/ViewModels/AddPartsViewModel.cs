@@ -39,6 +39,8 @@ namespace BrickScan.WpfClient.ViewModels
 {
     public class AddPartsViewModel : CameraCaptureBaseViewModel
     {
+        private static readonly Random _random = new Random();
+
         private const int MIN_IMAGES_COUNT_TO_PROCEED = 2;
         private const int MAX_IMAGES_COUNT_TO_PROCEED = 20;
         private readonly IEventAggregator _eventAggregator;
@@ -55,9 +57,9 @@ namespace BrickScan.WpfClient.ViewModels
 
         public ActionCommand MoveTopCommand => new ActionCommand(MoveTop);
 
-        public AddPartsViewModel(IVideoCapture videoCapture, 
-            CameraSetupViewModel cameraSetupViewModel, 
-            IEventAggregator eventAggregator, 
+        public AddPartsViewModel(IVideoCapture videoCapture,
+            CameraSetupViewModel cameraSetupViewModel,
+            IEventAggregator eventAggregator,
             ILogger logger) : base(videoCapture, cameraSetupViewModel)
         {
             _eventAggregator = eventAggregator;
@@ -73,21 +75,34 @@ namespace BrickScan.WpfClient.ViewModels
 
         public void AddImage()
         {
-            var rect = Rectangle.ToRect();
-            try
+            var files = new[]
             {
-                var imageSegment = new Mat(Frame!, rect); 
-                Images.Add(imageSegment.ToBitmapSource());
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "Failed to add a new image " +
-                                         "(frame = {Frame}, rect = {Rect}). " +
-                                         "Message {Message",
-                    Frame?.ToString() ?? "null", rect.ToString());
-            }
+                @"C:\Users\eisenbach\Pictures\2000px-Eintracht_Frankfurt_Logo.svg.png",
+                @"C:\Users\eisenbach\Pictures\attila.jpg",
+                @"C:\Users\eisenbach\Pictures\doge.png",
+                @"C:\Users\eisenbach\Pictures\d6c09037-7d0e-471c-a23d-de1ff5af4d22-banner.jpg",
+                @"C:\Users\eisenbach\Pictures\CSharpUtils.png"
+            };
 
-            NotifyOfPropertyChange(nameof(CanClear)); 
+            var file = files[_random.Next(files.Length)];
+
+            Images.Add(new BitmapImage(new Uri(file)));
+
+            //var rect = Rectangle.ToRect();
+            //try
+            //{
+            //    var imageSegment = new Mat(Frame!, rect); 
+            //    Images.Add(imageSegment.ToBitmapSource());
+            //}
+            //catch (Exception exception)
+            //{
+            //    _logger.Error(exception, "Failed to add a new image " +
+            //                             "(frame = {Frame}, rect = {Rect}). " +
+            //                             "Message {Message",
+            //        Frame?.ToString() ?? "null", rect.ToString());
+            //}
+
+            NotifyOfPropertyChange(nameof(CanClear));
             NotifyOfPropertyChange(nameof(CanProceed));
         }
 
@@ -96,7 +111,7 @@ namespace BrickScan.WpfClient.ViewModels
             if (obj is BitmapSource image)
             {
                 Images.Remove(image);
-                NotifyOfPropertyChange(nameof(CanClear)); 
+                NotifyOfPropertyChange(nameof(CanClear));
                 NotifyOfPropertyChange(nameof(CanProceed));
             }
         }

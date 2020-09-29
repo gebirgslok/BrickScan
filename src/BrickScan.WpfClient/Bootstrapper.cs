@@ -26,6 +26,7 @@
 using System;
 using System.Configuration;
 using System.Globalization;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Windows.Threading;
@@ -96,7 +97,12 @@ namespace BrickScan.WpfClient
             builder.Register(c => DialogCoordinator.Instance).As<IDialogCoordinator>();
             builder.RegisterGeneric(typeof(NotifyTask<>)).AsSelf();
 
-            builder.Register(c => new HttpClient{ BaseAddress = new Uri(ConfigurationManager.AppSettings["BrickScanApiBaseUrl"]) })
+            builder.Register(c =>
+                {
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+                    return new HttpClient
+                            {BaseAddress = new Uri(ConfigurationManager.AppSettings["BrickScanApiBaseUrl"])};
+                })
                 .AsSelf()
                 .SingleInstance();
 

@@ -31,5 +31,8 @@ namespace BrickScan.Training
     {
         [Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.", Default = false)]
         public bool Verbose { get; set; }
+
+        [Option('d', "dest", Required = true, HelpText = "Destination directory into which the dataset will be saved.")]
+        public string DestinationDirectory { get; set; } = null!;
     }
 }

@@ -48,7 +48,7 @@ namespace BrickScan.WpfClient.ViewModels
         public Rectangle Rectangle { get; private set; }
 
         [DependsOn(nameof(Frame), nameof(Rectangle))]
-        public bool HasValidFrame => Frame != null && !Frame.Empty() && !Rectangle.IsEmpty;
+        public bool HasValidFrame => true;//Frame != null && !Frame.Empty() && !Rectangle.IsEmpty;
 
         protected CameraCaptureBaseViewModel(IVideoCapture videoCapture, CameraSetupViewModel cameraSetupViewModel)
         {

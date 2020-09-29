@@ -34,5 +34,13 @@ namespace BrickScan.Library.Dataset.Model
         public EntityStatus Status { get; set; }
 
         public DateTime CreatedOn { get; set; }
+
+        public int? TrainDatasetClassId { get; set; }
+
+        public DatasetClass? TrainDatasetClass { get; set; }
+
+        public int? DisplayDatasetClassId { get; set; }
+
+        public DatasetClass? DisplayDatasetClass { get; set; }
     }
 }

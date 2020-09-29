@@ -23,22 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
+using System.Text.Json;
 
-namespace BrickScan.Library.Dataset
+namespace BrickScan.Training.Extensions
 {
-    public abstract class PagedResultBase
+    internal static class JsonExtensions
     {
-        public int CurrentPage { get; set; }
-
-        public int PageCount { get; set; }
-
-        public int PageSize { get; set; }
-
-        public int RowCount { get; set; }
-
-        public int FirstRowOnPage => (CurrentPage - 1) * PageSize + 1;
-
-        public int LastRowOnPage => Math.Min(CurrentPage * PageSize, RowCount);
+        internal static T ToObject<T>(this JsonElement element)
+        {
+            var json = element.GetRawText();
+            return JsonSerializer.Deserialize<T>(json);
+        }
     }
 }

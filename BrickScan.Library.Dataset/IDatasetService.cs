@@ -31,22 +31,9 @@ using BrickScan.Library.Dataset.Model;
 
 namespace BrickScan.Library.Dataset
 {
-    public class DatasetClassTrainImagesMap
-    {
-        public int ClassId { get; }
-
-        public List<string> ImageUrls { get; }
-
-        internal DatasetClassTrainImagesMap(int classId, List<string> imageUrls)
-        {
-            ClassId = classId;
-            ImageUrls = imageUrls;
-        }
-    }
-
     public interface IDatasetService
     {
-        Task<PagedResult<DatasetClassTrainImagesMap>> GetClassTrainImagesMapAsync(int page = 1, int pageSize = 200);
+        Task<PagedResult<DatasetClassTrainImagesDto>> GetClassTrainImagesListAsync(int page = 1, int pageSize = 200);
 
         Task<DatasetClass?> GetClassByIdAsync(int id);
 

@@ -23,13 +23,24 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 
-using System.Threading.Tasks;
-
-namespace BrickScan.Training
+namespace BrickScan.Library.Core
 {
-    public interface ITrainService
+    public abstract class PagedResultBase
     {
-        Task TrainAsync(TrainOptions options);
+        public int CurrentPage { get; set; }
+
+        public int PageCount { get; set; }
+
+        public int PageSize { get; set; }
+
+        public int RowCount { get; set; }
+
+        public int FirstRowOnPage => (CurrentPage - 1) * PageSize + 1;
+
+        public int LastRowOnPage => Math.Min(CurrentPage * PageSize, RowCount);
+
+        public bool HasNextPage => CurrentPage < PageCount;
     }
 }

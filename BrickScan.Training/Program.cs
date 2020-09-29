@@ -26,7 +26,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using CommandLine;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,9 +34,16 @@ using Serilog;
 
 namespace BrickScan.Training
 {
+    static class ReturnCodes
+    {
+        public static int Success => 0;
+        public static int ParseArgsFailed => -1;
+        public static int UnhandledException => -2;
+    }
+
     static class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             var builder = new ConfigurationBuilder();
             BuildConfiguration(builder);
@@ -48,42 +54,60 @@ namespace BrickScan.Training
 
             Log.ForContext(typeof(Program)).Information("Starting application with args = {Args}.", args);
 
-            var host = Host.CreateDefaultBuilder()
-                .ConfigureServices(ConfigureServices)
-                .UseSerilog()
-                .Build();
+            try
+            {
+                var host = Host.CreateDefaultBuilder()
+                    .ConfigureServices(ConfigureServices)
+                    .UseSerilog()
+                    .Build();
 
-            var parserResult = Parser.Default
-                .ParseArguments<TrainOptions, DownloadDatasetOptions>(args);
+                var parserResult = Parser.Default
+                    .ParseArguments<TrainOptions, DownloadOptions>(args);
 
-            parserResult.WithParsed<Options>(options =>
-                {
-                    var writer = host.Services.GetService<IConsoleWriter>();
-                    writer.Verbose = options.Verbose;
-                })
-                .WithParsed<TrainOptions>(options =>
-                {
-                    var trainService = host.Services.GetService<ITrainService>();
-                    trainService.Train(options);
-                })
-                .WithParsed<DownloadDatasetOptions>(options => Console.WriteLine(options))
-                .WithNotParsed(errors =>
-                {
-                    errors = errors as Error[] ?? errors.ToArray();
-
-                    if (errors.Any(e =>
-                        e.Tag != ErrorType.HelpRequestedError && e.Tag != ErrorType.HelpVerbRequestedError))
+                var returnCode = ReturnCodes.Success;
+                parserResult.WithParsed<Options>(options =>
                     {
-                        Log.ForContext(typeof(Program)).Error("Failed to parse args = {Args}, received errors = {@Errors}.", args, errors);
-                    }
-                });
+                        var writer = host.Services.GetService<IConsoleWriter>();
+                        writer.Verbose = options.Verbose;
+                    })
+                    .WithParsed<TrainOptions>(async options =>
+                    {
+                        var trainService = host.Services.GetService<ITrainService>();
+                        await trainService.TrainAsync(options);
+                    })
+                    .WithParsed<DownloadOptions>(async options =>
+                    {
+                        var downloadService = host.Services.GetService<IDownloadService>();
+                        await downloadService.DownloadAsync(options.DestinationDirectory);
+                    })
+                    .WithNotParsed(errors =>
+                    {
+                        errors = errors as Error[] ?? errors.ToArray();
 
-            Console.ReadLine();
+                        if (errors.Any(e =>
+                            e.Tag != ErrorType.HelpRequestedError && e.Tag != ErrorType.HelpVerbRequestedError))
+                        {
+                            returnCode = ReturnCodes.ParseArgsFailed;
+                            Log.ForContext(typeof(Program)).Error("Failed to parse args = {Args}, received errors = {@Errors}.", args, errors);
+                        }
+
+                    });
+
+                Console.ReadLine();
+                //TODO: error codes:
+                return returnCode;
+            }
+            catch (Exception e)
+            {
+                Log.ForContext(typeof(Program)).Fatal(e.Message, e);
+                return ReturnCodes.UnhandledException;
+            }
         }
 
         static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
             services.AddTransient<ITrainService, TrainService>();
+            services.AddTransient<IDownloadService, DownloadService>();
             services.AddHttpClient();
             services.AddSingleton<IConsoleWriter, ConsoleWriter>();
         }

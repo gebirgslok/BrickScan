@@ -25,7 +25,7 @@
 
 using System.Collections.Generic;
 
-namespace BrickScan.Library.Dataset
+namespace BrickScan.Library.Core
 {
     public class PagedResult<T> : PagedResultBase where T : class
     {

@@ -50,13 +50,15 @@ namespace BrickScan.Library.Dataset
             _logger = logger;
         }
 
-        public async Task<PagedResult<DatasetClassTrainImagesMap>> GetClassTrainImagesMapAsync(int page = 1, int pageSize = 200)
+        public async Task<PagedResult<DatasetClassTrainImagesDto>> GetClassTrainImagesListAsync(int page = 1, int pageSize = 200)
         {
             //TODO: VALIDATE page and pageSize
 
             //TODO: LOG
 
-            var result = new PagedResult<DatasetClassTrainImagesMap>
+            //TODO: 
+
+            var result = new PagedResult<DatasetClassTrainImagesDto>
             {
                 CurrentPage = page,
                 PageSize = pageSize,
@@ -73,7 +75,7 @@ namespace BrickScan.Library.Dataset
                 .Where(c => c.Status == EntityStatus.Classified)
                 .Skip(skip)
                 .Take(pageSize)
-                .Select(c => new DatasetClassTrainImagesMap(c.Id, 
+                .Select(c => new DatasetClassTrainImagesDto(c.Id, 
                     c.TrainingImages.Select(img => img.Url).ToList()))
                 .ToListAsync();
 

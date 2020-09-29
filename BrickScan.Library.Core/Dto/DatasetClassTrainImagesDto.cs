@@ -23,13 +23,23 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Collections.Generic;
 
-using System.Threading.Tasks;
-
-namespace BrickScan.Training
+namespace BrickScan.Library.Core.Dto
 {
-    public interface ITrainService
+    /// <summary>
+    /// Provides a <c>DTO</c> to encapsulate a class (ID) and its associated images (URLs).
+    /// </summary>
+    public class DatasetClassTrainImagesDto
     {
-        Task TrainAsync(TrainOptions options);
+        public int ClassId { get; }
+
+        public List<string> ImageUrls { get; }
+
+        public DatasetClassTrainImagesDto(int classId, List<string> imageUrls)
+        {
+            ClassId = classId;
+            ImageUrls = imageUrls;
+        }
     }
 }

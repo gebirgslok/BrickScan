@@ -28,7 +28,8 @@ using CommandLine;
 namespace BrickScan.Training
 {
     [Verb("download", HelpText = "TODO")]
-    public class DownloadDatasetOptions : Options
+    public class DownloadOptions : Options
     {
+
     }
 }

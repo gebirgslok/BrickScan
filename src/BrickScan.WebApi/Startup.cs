@@ -149,12 +149,12 @@ namespace BrickScan.WebApi
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "BrickScan API");
             });
 
-            //using var context = app.ApplicationServices.GetService<DatasetDbContext>();
             context.Database.Migrate();
 
             app.UseHttpsRedirection();
             app.UseSerilogRequestLogging();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

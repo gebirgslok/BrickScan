@@ -82,6 +82,13 @@ namespace BrickScan.Library.Dataset.Model
                 .HasMaxLength(32)
                 .IsRequired()
                 .IsUnicode(false);
+
+            modelBuilder.Entity<DatasetClass>().HasMany(c => c.DisplayImages)
+                .WithOne(d => d.DisplayDatasetClass!)
+                .HasForeignKey(d => d.DisplayDatasetClassId);
+            modelBuilder.Entity<DatasetClass>().HasMany(c => c.TrainingImages)
+                .WithOne(t => t.TrainDatasetClass!)
+                .HasForeignKey(t => t.TrainDatasetClassId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

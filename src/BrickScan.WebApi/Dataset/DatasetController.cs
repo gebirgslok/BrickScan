@@ -221,14 +221,13 @@ namespace BrickScan.WebApi.Dataset
         }
 
         //TODO: XML Doc
-        [HttpGet("classes/training-images", Name = nameof(GetDatasetTrainingImages))]
+        [HttpGet("classes/training-images", Name = nameof(GetDatasetTrainingImagesList))]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetDatasetTrainingImages([FromQuery]int page = 1, 
-            [FromQuery]int pageSize = 200)
+        public async Task<IActionResult> GetDatasetTrainingImagesList(int page = 1, int pageSize = 200)
         {
-            var map = await _datasetService.GetClassTrainImagesMapAsync(page, pageSize);
+            var map = await _datasetService.GetClassTrainImagesListAsync(page, pageSize);
             return new OkObjectResult(new ApiResponse(200, data: map));
         }
 
