@@ -33,47 +33,48 @@ using Microsoft.ML.Data;
 
 namespace BrickScan.WebApi.Prediction
 {
-    public class ItemDto
-    {
-        public string Number { get; }
-
-        public string? AdditionalIdentifier { get; }
-
-        public string[] DisplayImageUrls { get; }
-
-        public int ColorId { get; }
-
-        public ItemDto(string number, int colorId, string? additionalIdentifier, string[]? displayImageUrls)
-        {
-            Number = number;
-            ColorId = colorId;
-            AdditionalIdentifier = additionalIdentifier;
-            DisplayImageUrls = displayImageUrls ?? new string[0];
-        }
-    }
-
-    public class PredictedClassDto
-    {
-        public float Score { get; }
-
-
-    }
-
     public class ImagePredictor : IImagePredictor
     {
-        private readonly PredictionEnginePool<ModelInput, ModelOutput> _predictionEnginePool;
+        private readonly PredictionEnginePool<ModelImageInput, ModelImagePrediction> _predictionEnginePool;
         private readonly IConfiguration _configuration;
 
-        public ImagePredictor(PredictionEnginePool<ModelInput, ModelOutput> predictionEnginePool, 
+        public ImagePredictor(PredictionEnginePool<ModelImageInput, ModelImagePrediction> predictionEnginePool,
             IConfiguration configuration)
         {
             _predictionEnginePool = predictionEnginePool;
             _configuration = configuration;
         }
 
-        private static Dictionary<string, float> GetScoresWithLabelsSorted(DataViewSchema schema, string name, IReadOnlyList<float> scores, int n)
+        private void FilterScoredLabels(List<ScoredLabel> scoredLabels)
         {
-            var result = new Dictionary<string, float>();
+            if (scoredLabels.Count < 2)
+            {
+                return;
+            }
+
+            var minScoreThreshold = _configuration.GetValue<double>("Prediction:MinScoreThreshold");
+            var uniqueItemScoreDifference = _configuration.GetValue<double>("Prediction:UniqueItemScoreDifference");
+
+            if (scoredLabels[0].Score - scoredLabels[1].Score > uniqueItemScoreDifference)
+            {
+                scoredLabels.RemoveRange(1, scoredLabels.Count - 1);
+            }
+
+            for (var i = scoredLabels.Count - 1; i >= 0 ; i--)
+            {
+                if (scoredLabels[i].Score < minScoreThreshold)
+                {
+                    scoredLabels.RemoveAt(i);
+                }
+            }
+        }
+
+        private static List<ScoredLabel> GetLabelsWithScoresSorted(DataViewSchema schema, string name, IReadOnlyList<float> scores, int n)
+        {
+            var topScoresWithIndexes = scores.Select((s, i) => new {index = i, score = s})
+                .OrderByDescending(x => x.score)
+                .Take(n);
+
             var column = schema.GetColumnOrNull(name);
             var slotNames = new VBuffer<ReadOnlyMemory<char>>();
 
@@ -83,30 +84,28 @@ namespace BrickScan.WebApi.Prediction
             }
 
             column.Value.GetSlotNames(ref slotNames);
-            var num = 0;
 
-            foreach (var denseValue in slotNames.DenseValues())
-            {
-                result.Add(denseValue.ToString(), scores[num++]);
-            }
-
-            return result.OrderByDescending(c => c.Value)
-                .Take(n)
-                .ToDictionary(i => i.Key, i => i.Value);
+            var arr = slotNames.DenseValues().ToArray();
+            return topScoresWithIndexes
+                .Select(x => new ScoredLabel(arr[x.index].ToString(), x.score))
+                .ToList();
         }
 
-        public ImagePredictionResult Predict(byte[] image)
+        public List<ScoredLabel> Predict(byte[] image)
         {
             var predicationEngine = _predictionEnginePool.GetPredictionEngine("BrickScanModel");
-            var output = predicationEngine.Predict(new ModelInput(image));
-            var maxPredictionMatches = _configuration.GetValue<int>("MaxPredictionMatches");
 
-            var scoredLabels = GetScoresWithLabelsSorted(predicationEngine.OutputSchema, 
-                nameof(output.Score), 
-                output.Score, 
+            var output = predicationEngine.Predict(new ModelImageInput(image));
+            var maxPredictionMatches = _configuration.GetValue<int>("Prediction:MaxNumOfMatches");
+
+            var scoredLabels = GetLabelsWithScoresSorted(predicationEngine.OutputSchema,
+                nameof(output.Score),
+                output.Score,
                 maxPredictionMatches);
 
-            return new ImagePredictionResult(scoredLabels);
+            FilterScoredLabels(scoredLabels);
+
+            return scoredLabels;
         }
     }
 }

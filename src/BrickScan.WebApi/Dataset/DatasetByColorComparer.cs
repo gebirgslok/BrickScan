@@ -23,44 +23,41 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using BrickScan.WpfClient.Events;
-using BrickScan.WpfClient.Extensions;
-using BrickScan.WpfClient.Model;
-using OpenCvSharp;
-using Serilog;
-using Stylet;
+using System.Collections.Generic;
+using BrickScan.Library.Dataset.Model;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WebApi.Dataset
 {
-    public class PredictViewModel : CameraCaptureBaseViewModel
+    internal class DatasetByColorComparer : IEqualityComparer<DatasetColor>
     {
-        private readonly IEventAggregator _eventAggregator;
-        private readonly ILogger _logger;
-
-        public PredictViewModel(CameraSetupViewModel cameraSetupViewModel, 
-            IVideoCapture videoCapture, 
-            IEventAggregator eventAggregator, 
-            ILogger logger) : base(videoCapture, cameraSetupViewModel)
+        public bool Equals(DatasetColor? x, DatasetColor? y)
         {
-            _eventAggregator = eventAggregator;
-            _logger = logger;
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(x, null))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(y, null))
+            {
+                return false;
+            }
+
+            if (x.GetType() != y.GetType())
+            {
+                return false;
+            }
+
+            return x.BricklinkColorId == y.BricklinkColorId;
         }
 
-        public void Predict()
+        public int GetHashCode(DatasetColor obj)
         {
-            var rect = Rectangle.ToRect();
-            try
-            {
-                var imageSegment = new Mat(Frame!, rect);
-                _eventAggregator.PublishOnUIThread(new OnPredictionRequested(imageSegment));
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "Failed to publish new prediction request " +
-                                         "(frame = {Frame}, rect = {Rect}). Message {Message", 
-                    Frame?.ToString() ?? "null", rect.ToString());
-            }
+            return obj.BricklinkColorId;
         }
     }
 }

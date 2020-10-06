@@ -23,41 +23,27 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
+using System;
+using System.Text.Json.Serialization;
 
-namespace BrickScan.WebApi
+namespace BrickScan.Library.Dataset.Model
 {
-    public class ApiResponse
+    public class DatasetImage : DatasetEntity
     {
-        public int StatusCode { get; }
+        public string Url { get; set; } = null!;
 
-        public IEnumerable<string> Errors { get; }
+        public EntityStatus Status { get; set; }
 
-        public string Message { get; }
+        public DateTime CreatedOn { get; set; }
 
-        public object? Data { get; }
+        public int? TrainDatasetClassId { get; set; }
 
-        internal ApiResponse(int statusCode, string? message = null, object? data = null, IEnumerable<string>? errors = null)
-        {
-            StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageForStatusCode(StatusCode);
-            Data = data;
-            Errors = errors ?? new List<string>();
-        }
+        [JsonIgnore]
+        public DatasetClass? TrainDatasetClass { get; set; }
 
-        private static string GetDefaultMessageForStatusCode(int statusCode)
-        {
-            return statusCode switch
-            {
-                200 => "Request successful.",
-                201 => "Resource(s) created.",
-                204 => "No content",
-                400 => "Bad request.",
-                404 => "Resource not found.",
-                415 => "Unsupported media type.",
-                500 => "An internal server error occurred.",
-                _ => "An unknown error occurred."
-            };
-        }
+        public int? DisplayDatasetClassId { get; set; }
+
+        [JsonIgnore]
+        public DatasetClass? DisplayDatasetClass { get; set; }
     }
 }

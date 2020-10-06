@@ -23,41 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
+using Microsoft.ML.Data;
 
-namespace BrickScan.WebApi
+namespace BrickScan.Training
 {
-    public class ApiResponse
+    public class ImageData
     {
-        public int StatusCode { get; }
+        [LoadColumn(0)] 
+        public string Label { get; set; } = null!;
 
-        public IEnumerable<string> Errors { get; }
-
-        public string Message { get; }
-
-        public object? Data { get; }
-
-        internal ApiResponse(int statusCode, string? message = null, object? data = null, IEnumerable<string>? errors = null)
-        {
-            StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageForStatusCode(StatusCode);
-            Data = data;
-            Errors = errors ?? new List<string>();
-        }
-
-        private static string GetDefaultMessageForStatusCode(int statusCode)
-        {
-            return statusCode switch
-            {
-                200 => "Request successful.",
-                201 => "Resource(s) created.",
-                204 => "No content",
-                400 => "Bad request.",
-                404 => "Resource not found.",
-                415 => "Unsupported media type.",
-                500 => "An internal server error occurred.",
-                _ => "An unknown error occurred."
-            };
-        }
+        [LoadColumn(1)]
+        public string ImagePath { get; set; } = null!;
     }
 }

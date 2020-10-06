@@ -23,43 +23,19 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Diagnostics;
-using System.Reflection;
-using BrickScan.WpfClient.Events;
-using PropertyChanged;
-using Stylet;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable MemberCanBePrivate.Global
-
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.Library.Core
 {
-    public class StatusBarViewModel : PropertyChangedBase, IHandle<OnStatusBarMessageChanged>
+    public class PagedResult<T> : PagedResultBase where T : class
     {
-        public string AssemblyFileVersion { get; }
+        [JsonPropertyName("results")]
+        public List<T> Results { get; set; }
 
-        public string? Message { get; set; }
-
-        [DependsOn(nameof(Message))]
-        public bool HasMessage => !string.IsNullOrEmpty(Message);
-
-        public StatusBarViewModel(IEventAggregator eventAggregator)
+        public PagedResult()
         {
-            eventAggregator.Subscribe(this);
-            var assembly = Assembly.GetExecutingAssembly();
-            var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            AssemblyFileVersion = $"{Properties.Resources.ProgramVersion}: {fileVersionInfo.FileVersion}";
-        }
-
-        public void Handle(OnStatusBarMessageChanged message)
-        {
-            if (message.ClearMessage)
-            {
-                Message = null;
-                return;
-            }
-
-            Message = message.Message;
+            Results = new List<T>();
         }
     }
 }

@@ -23,43 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Diagnostics;
-using System.Reflection;
-using BrickScan.WpfClient.Events;
-using PropertyChanged;
-using Stylet;
-
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable MemberCanBePrivate.Global
-
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Events
 {
-    public class StatusBarViewModel : PropertyChangedBase, IHandle<OnStatusBarMessageChanged>
+    public class OnImageConfirmed
     {
-        public string AssemblyFileVersion { get; }
-
-        public string? Message { get; set; }
-
-        [DependsOn(nameof(Message))]
-        public bool HasMessage => !string.IsNullOrEmpty(Message);
-
-        public StatusBarViewModel(IEventAggregator eventAggregator)
+        internal OnImageConfirmed()
         {
-            eventAggregator.Subscribe(this);
-            var assembly = Assembly.GetExecutingAssembly();
-            var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            AssemblyFileVersion = $"{Properties.Resources.ProgramVersion}: {fileVersionInfo.FileVersion}";
-        }
-
-        public void Handle(OnStatusBarMessageChanged message)
-        {
-            if (message.ClearMessage)
-            {
-                Message = null;
-                return;
-            }
-
-            Message = message.Message;
         }
     }
 }

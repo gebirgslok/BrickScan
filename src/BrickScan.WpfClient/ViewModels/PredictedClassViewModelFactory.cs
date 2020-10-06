@@ -24,43 +24,29 @@
 #endregion
 
 using System;
-using BrickScan.WpfClient.Events;
-using BrickScan.WpfClient.Extensions;
-using BrickScan.WpfClient.Model;
-using OpenCvSharp;
-using Serilog;
-using Stylet;
+using BrickScan.Library.Core.Dto;
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    public class PredictViewModel : CameraCaptureBaseViewModel
+    public class PredictedClassViewModelFactory : IPredictedClassViewModelFactory
     {
-        private readonly IEventAggregator _eventAggregator;
-        private readonly ILogger _logger;
+        private readonly Func<PredictedDatasetClassDto, SingleItemPredictedClassViewModel>
+            _singleItemPredictedClassVmFactory;
 
-        public PredictViewModel(CameraSetupViewModel cameraSetupViewModel, 
-            IVideoCapture videoCapture, 
-            IEventAggregator eventAggregator, 
-            ILogger logger) : base(videoCapture, cameraSetupViewModel)
+        public PredictedClassViewModelFactory(Func<PredictedDatasetClassDto, SingleItemPredictedClassViewModel> singleItemPredictedClassVmFactory)
         {
-            _eventAggregator = eventAggregator;
-            _logger = logger;
+            _singleItemPredictedClassVmFactory = singleItemPredictedClassVmFactory;
         }
 
-        public void Predict()
+        public PredictedClassViewModelBase Create(PredictedDatasetClassDto predictedDatasetClassDto)
         {
-            var rect = Rectangle.ToRect();
-            try
+            if (predictedDatasetClassDto.Items.Count == 1)
             {
-                var imageSegment = new Mat(Frame!, rect);
-                _eventAggregator.PublishOnUIThread(new OnPredictionRequested(imageSegment));
+                return _singleItemPredictedClassVmFactory.Invoke(predictedDatasetClassDto);
             }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "Failed to publish new prediction request " +
-                                         "(frame = {Frame}, rect = {Rect}). Message {Message", 
-                    Frame?.ToString() ?? "null", rect.ToString());
-            }
+
+            //TODO: Multi items predicted class vm.
+            return _singleItemPredictedClassVmFactory.Invoke(predictedDatasetClassDto);
         }
     }
 }

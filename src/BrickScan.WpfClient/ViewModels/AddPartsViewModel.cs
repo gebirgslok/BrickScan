@@ -75,32 +75,32 @@ namespace BrickScan.WpfClient.ViewModels
 
         public void AddImage()
         {
-            var files = new[]
+            //var files = new[]
+            //{
+            //    @"C:\Users\eisenbach\Pictures\2000px-Eintracht_Frankfurt_Logo.svg.png",
+            //    @"C:\Users\eisenbach\Pictures\attila.jpg",
+            //    @"C:\Users\eisenbach\Pictures\doge.png",
+            //    @"C:\Users\eisenbach\Pictures\d6c09037-7d0e-471c-a23d-de1ff5af4d22-banner.jpg",
+            //    @"C:\Users\eisenbach\Pictures\CSharpUtils.png"
+            //};
+
+            //var file = files[_random.Next(files.Length)];
+
+            //Images.Add(new BitmapImage(new Uri(file)));
+
+            var rect = Rectangle.ToRect();
+            try
             {
-                @"C:\Users\eisenbach\Pictures\2000px-Eintracht_Frankfurt_Logo.svg.png",
-                @"C:\Users\eisenbach\Pictures\attila.jpg",
-                @"C:\Users\eisenbach\Pictures\doge.png",
-                @"C:\Users\eisenbach\Pictures\d6c09037-7d0e-471c-a23d-de1ff5af4d22-banner.jpg",
-                @"C:\Users\eisenbach\Pictures\CSharpUtils.png"
-            };
-
-            var file = files[_random.Next(files.Length)];
-
-            Images.Add(new BitmapImage(new Uri(file)));
-
-            //var rect = Rectangle.ToRect();
-            //try
-            //{
-            //    var imageSegment = new Mat(Frame!, rect); 
-            //    Images.Add(imageSegment.ToBitmapSource());
-            //}
-            //catch (Exception exception)
-            //{
-            //    _logger.Error(exception, "Failed to add a new image " +
-            //                             "(frame = {Frame}, rect = {Rect}). " +
-            //                             "Message {Message",
-            //        Frame?.ToString() ?? "null", rect.ToString());
-            //}
+                var imageSegment = new Mat(Frame!, rect);
+                Images.Add(imageSegment.ToBitmapSource());
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to add a new image " +
+                                         "(frame = {Frame}, rect = {Rect}). " +
+                                         "Message {Message",
+                    Frame?.ToString() ?? "null", rect.ToString());
+            }
 
             NotifyOfPropertyChange(nameof(CanClear));
             NotifyOfPropertyChange(nameof(CanProceed));

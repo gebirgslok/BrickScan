@@ -32,6 +32,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BrickScan.WebApi.Images
 {
+    //TODO: XML doc
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class ImagesController : ControllerBase
@@ -52,7 +53,8 @@ namespace BrickScan.WebApi.Images
         /// <param name="imageId">The ID of the image resource to delete.</param>
         /// <returns>No content (204).</returns>
         [HttpDelete]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Route("{imageId}")]
         public async Task<IActionResult> Delete([FromRoute] int imageId)
         {
@@ -67,8 +69,9 @@ namespace BrickScan.WebApi.Images
         /// <returns>Returns the found <see cref="BrickScan.Library.Dataset.Model.DatasetImage"/>> or
         /// <c>null</c> if no resource for <paramref name="imageId"/> was found.</returns>
         [HttpGet]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Route("{imageId}")]
         public async Task<IActionResult> Get([FromRoute] int imageId)
         {
@@ -83,9 +86,9 @@ namespace BrickScan.WebApi.Images
         }
 
         [HttpPost]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(415)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         public async Task<IActionResult> Post([FromForm] IEnumerable<IFormFile> images)
         {
             var conversionResult = await _imageFileConverter.TryConvertManyAsync(images.ToList());

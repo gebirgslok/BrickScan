@@ -23,10 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Collections.Generic;
+
 namespace BrickScan.WebApi.Prediction
 {
     public interface IImagePredictor
     {
-        ImagePredictionResult Predict(byte[] image);
+        List<ScoredLabel> Predict(byte[] image);
     }
 }

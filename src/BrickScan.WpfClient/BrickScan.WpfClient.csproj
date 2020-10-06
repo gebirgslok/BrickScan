@@ -68,7 +68,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BrickScan.Library.Core\BrickScan.Library.Core.csproj" />
+    <ProjectReference Include="..\BrickScan.Library.Core\BrickScan.Library.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net.Http" />

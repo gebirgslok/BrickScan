@@ -45,6 +45,7 @@ namespace BrickScan.WpfClient
     {
         public static void RegisterViewModels(this ContainerBuilder builder)
         {
+            //TODO: remove this method?
             //builder.RegisterType<PredictionConductorViewModel>().AsSelf();
             //builder.RegisterType<AddPartsConductorViewModel>().AsSelf();
             //builder.RegisterType<PredictionResultViewModel>().AsSelf();
@@ -52,7 +53,6 @@ namespace BrickScan.WpfClient
             //builder.RegisterType<MainViewModel>().AsSelf();
             //builder.RegisterType<StatusBarViewModel>().AsSelf();
             //builder.RegisterType<CameraSetupViewModel>().AsSelf().SingleInstance();
-
         }
     }
 
@@ -66,7 +66,7 @@ namespace BrickScan.WpfClient
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
-            Log.ForContext<Bootstrapper>().Information("Set up culture = {CultureName}.", 
+            Log.ForContext<Bootstrapper>().Information("Set up culture = {CultureName}.",
                 Settings.Default.SelectedCultureKey);
         }
 
@@ -101,12 +101,13 @@ namespace BrickScan.WpfClient
                 {
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
                     return new HttpClient
-                            {BaseAddress = new Uri(ConfigurationManager.AppSettings["BrickScanApiBaseUrl"])};
+                    { BaseAddress = new Uri(ConfigurationManager.AppSettings["BrickScanApiBaseUrl"]) };
                 })
                 .AsSelf()
                 .SingleInstance();
 
             builder.Register(c => UserConfiguration.Instance).As<IUserConfiguration>();
+            builder.RegisterType<PredictedClassViewModelFactory>().As<IPredictedClassViewModelFactory>().SingleInstance();
             builder.RegisterLogger();
         }
     }

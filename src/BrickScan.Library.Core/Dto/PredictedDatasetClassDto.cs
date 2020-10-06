@@ -25,39 +25,18 @@
 
 using System.Collections.Generic;
 
-namespace BrickScan.WebApi
+namespace BrickScan.Library.Core.Dto
 {
-    public class ApiResponse
+    public class PredictedDatasetClassDto
     {
-        public int StatusCode { get; }
+        public int Id { get; set; }
 
-        public IEnumerable<string> Errors { get; }
+        public float Score { get; set; }
 
-        public string Message { get; }
+        public int? UnconfirmedImageId { get; set; }
 
-        public object? Data { get; }
+        public List<string>? DisplayImageUrls { get; set; }
 
-        internal ApiResponse(int statusCode, string? message = null, object? data = null, IEnumerable<string>? errors = null)
-        {
-            StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageForStatusCode(StatusCode);
-            Data = data;
-            Errors = errors ?? new List<string>();
-        }
-
-        private static string GetDefaultMessageForStatusCode(int statusCode)
-        {
-            return statusCode switch
-            {
-                200 => "Request successful.",
-                201 => "Resource(s) created.",
-                204 => "No content",
-                400 => "Bad request.",
-                404 => "Resource not found.",
-                415 => "Unsupported media type.",
-                500 => "An internal server error occurred.",
-                _ => "An unknown error occurred."
-            };
-        }
+        public List<PredictedDatasetItemDto> Items { get; set; } = null!;
     }
 }

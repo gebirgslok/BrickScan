@@ -88,11 +88,29 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Addition.
+        /// </summary>
+        public static string Addition {
+            get {
+                return ResourceManager.GetString("Addition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add parts.
         /// </summary>
         public static string AddParts {
             get {
                 return ResourceManager.GetString("AddParts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opens a dialog to add this part to your inventory..
+        /// </summary>
+        public static string AddToInventoryToolTip {
+            get {
+                return ResourceManager.GetString("AddToInventoryToolTip", resourceCulture);
             }
         }
         
@@ -169,6 +187,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Color.
+        /// </summary>
+        public static string Color {
+            get {
+                return ResourceManager.GetString("Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Color scheme.
         /// </summary>
         public static string ColorScheme {
@@ -178,20 +205,29 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirmation.
+        /// </summary>
+        public static string Confirmation {
+            get {
+                return ResourceManager.GetString("Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm that the input image is this part..
+        /// </summary>
+        public static string ConfirmImageBelongsToClassToolTip {
+            get {
+                return ResourceManager.GetString("ConfirmImageBelongsToClassToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connects the selected USB camera..
         /// </summary>
         public static string ConnectCameraTooltip {
             get {
                 return ResourceManager.GetString("ConnectCameraTooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Contribute.
-        /// </summary>
-        public static string Contribute {
-            get {
-                return ResourceManager.GetString("Contribute", resourceCulture);
             }
         }
         
@@ -313,6 +349,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Opens the Bricklink page of this part..
+        /// </summary>
+        public static string OpenOnBricklinkToolTip {
+            get {
+                return ResourceManager.GetString("OpenOnBricklinkToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Part number.
         /// </summary>
         public static string PartNo {
@@ -349,11 +394,29 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Results.
+        /// </summary>
+        public static string Results {
+            get {
+                return ResourceManager.GetString("Results", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Running identification....
         /// </summary>
         public static string RunningIdentificationMessage {
             get {
                 return ResourceManager.GetString("RunningIdentificationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Score.
+        /// </summary>
+        public static string Score {
+            get {
+                return ResourceManager.GetString("Score", resourceCulture);
             }
         }
         
@@ -453,6 +516,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string UserInterface {
             get {
                 return ResourceManager.GetString("UserInterface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Waiting for confirmation....
+        /// </summary>
+        public static string WaitingForConfirmationResponse {
+            get {
+                return ResourceManager.GetString("WaitingForConfirmationResponse", resourceCulture);
             }
         }
     }

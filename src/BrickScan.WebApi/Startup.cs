@@ -25,7 +25,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Autofac;
 using BrickScan.Library.Dataset;
@@ -42,35 +41,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.ML;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Swashbuckle.AspNetCore.SwaggerGen;
-
-// ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace BrickScan.WebApi
 {
-    public class RemoveVersionFromParameter : IOperationFilter
-    {
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
-        {
-            var versionParameter = operation.Parameters.Single(p => p.Name == "version");
-            operation.Parameters.Remove(versionParameter);
-        }
-    }
-
-    public class ReplaceVersionWithExactValueInPath : IDocumentFilter
-    {
-        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-        {
-            var paths = new OpenApiPaths();
-            foreach (var path in swaggerDoc.Paths)
-            {
-                paths.Add(path.Key.Replace("v{version}", swaggerDoc.Info.Version), path.Value);
-            }
-            swaggerDoc.Paths = paths;
-        }
-    }
-
     public class Startup
     {
         public IConfiguration Configuration { get; }
@@ -104,10 +77,11 @@ namespace BrickScan.WebApi
             var modelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!,
                 Configuration.GetValue<string>("ModelFilePath"));
 
-            services.AddPredictionEnginePool<ModelInput, ModelOutput>()
+            services.AddPredictionEnginePool<ModelImageInput, ModelImagePrediction>()
                 .FromFile(filePath: modelFilePath, modelName: "BrickScanModel", watchForChanges: true);
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            
             services.AddDbContext<DatasetDbContext>(options =>
             {
                 options.UseSqlServer(connectionString,
@@ -137,18 +111,18 @@ namespace BrickScan.WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DatasetDbContext context)
         {
-            //if (env.IsDevelopment())
-            //{
-            app.UseDeveloperExceptionPage();
-            //}
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
-            //app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "BrickScan API");
             });
 
+            //TODO: do this in Pipeline
             context.Database.Migrate();
 
             app.UseHttpsRedirection();
@@ -159,6 +133,7 @@ namespace BrickScan.WebApi
 
             app.UseEndpoints(endpoints =>
             {
+                //TODO: Require authorization!
                 endpoints.MapControllers();
             });
         }

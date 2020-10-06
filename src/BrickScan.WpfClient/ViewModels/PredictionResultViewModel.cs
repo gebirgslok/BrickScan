@@ -24,10 +24,16 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
+using Newtonsoft.Json.Linq;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using Stylet;
@@ -37,36 +43,67 @@ namespace BrickScan.WpfClient.ViewModels
     public class PredictionResultViewModel : PropertyChangedBase
     {
         private readonly IEventAggregator _eventAggregator;
+        private readonly IPredictedClassViewModelFactory _predictedClassViewModelFactory;
+        private readonly HttpClient _httpClient;
 
-        public string? Test { get; set; }
+        public IEnumerable<PredictedClassViewModelBase>? PredictedClassViewModels { get; set; }
 
         public BitmapSource ImageSource { get; }
 
-        public NotifyTask<string> InitializationNotifier { get; }
+        public NotifyTask<List<PredictedDatasetClassDto>> InitializationNotifier { get; }
 
         public string ImageSizeString => $"{ImageSource.PixelWidth}×{ImageSource.PixelHeight}";
 
         public PredictionResultViewModel(Mat imageSection, 
-            Func<Task<string>, string, NotifyTask<string>> notifyTaskFactory, 
-            IEventAggregator eventAggregator)
+            Func<Task<List<PredictedDatasetClassDto>>, List<PredictedDatasetClassDto>, NotifyTask<List<PredictedDatasetClassDto>>> notifyTaskFactory, 
+            IEventAggregator eventAggregator, 
+            HttpClient httpClient, 
+            IPredictedClassViewModelFactory predictedClassViewModelFactory)
         {
             _eventAggregator = eventAggregator;
+            _httpClient = httpClient;
+            _predictedClassViewModelFactory = predictedClassViewModelFactory;
             ImageSource = imageSection.ToBitmapSource();
-            var task = StartPredictionAsync(imageSection).ContinueWith(s => s.Result + "foo");
-            InitializationNotifier = notifyTaskFactory.Invoke(task, "foobar");
+            var task = StartPredictionAsync(imageSection);
+            InitializationNotifier = notifyTaskFactory.Invoke(task, new List<PredictedDatasetClassDto>());
+
             InitializationNotifier.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args)
             {
+                //TODO ERROR handling here.
+
                 if (args.PropertyName == nameof(InitializationNotifier.IsCompleted))
                 {
-                    Test = InitializationNotifier.Result;
+                    PredictedClassViewModels = BuildViewModels(InitializationNotifier.Result);
                 }
             };
         }
 
-        private async Task<string> StartPredictionAsync(Mat imageSection)
+        private IEnumerable<PredictedClassViewModelBase> BuildViewModels(List<PredictedDatasetClassDto> predictedClases)
         {
-            await Task.Delay(10000);
-            return "hello world";
+            return predictedClases.Select(x => _predictedClassViewModelFactory.Create(x));
+        }
+
+        private async Task<List<PredictedDatasetClassDto>> StartPredictionAsync(Mat imageSection)
+        {
+            //TODO: make code nicer, error handling for response.
+            var formData = new MultipartFormDataContent();
+            var content = new ByteArrayContent(imageSection.ToBytes());
+            content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+            formData.Add(content, "image", "prediction-image.png");
+            var response = await _httpClient.PostAsync("prediction", formData);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonObj = JObject.Parse(responseString);
+            var jsonData = jsonObj["data"];
+
+            if (jsonData == null)
+            {
+                throw new InvalidOperationException(
+                    "Received JSON response (for request POST /images) did not contain a 'data' object.");
+            }
+
+            var predictedClasses = jsonData.ToObject<List<PredictedDatasetClassDto>>() ?? 
+                                   new List<PredictedDatasetClassDto>();
+            return predictedClasses;
         }
 
         public void NavigateBack()

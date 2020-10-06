@@ -24,40 +24,37 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using BrickScan.Library.Core;
+using BrickScan.Library.Core.Dto;
+using BrickScan.Library.Dataset.Model;
 
-namespace BrickScan.WebApi
+namespace BrickScan.Library.Dataset
 {
-    public class ApiResponse
+    public interface IDatasetService
     {
-        public int StatusCode { get; }
+        Task<PagedResult<DatasetClassTrainImagesDto>> GetClassTrainImagesListAsync(int page = 1, int pageSize = 200);
 
-        public IEnumerable<string> Errors { get; }
+        Task<DatasetClass?> GetClassByIdAsync(int id);
 
-        public string Message { get; }
+        Task<DatasetClass> AddClassCandidateAsync(DatasetClassDto datasetClassDto, string createdBy);
 
-        public object? Data { get; }
+        Task<ConfirmUnclassififiedImageResult> ConfirmUnclassififiedImageAsync(int imageId, int classId);
 
-        internal ApiResponse(int statusCode, string? message = null, object? data = null, IEnumerable<string>? errors = null)
-        {
-            StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageForStatusCode(StatusCode);
-            Data = data;
-            Errors = errors ?? new List<string>();
-        }
+        Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData);
 
-        private static string GetDefaultMessageForStatusCode(int statusCode)
-        {
-            return statusCode switch
-            {
-                200 => "Request successful.",
-                201 => "Resource(s) created.",
-                204 => "No content",
-                400 => "Bad request.",
-                404 => "Resource not found.",
-                415 => "Unsupported media type.",
-                500 => "An internal server error occurred.",
-                _ => "An unknown error occurred."
-            };
-        }
+        Task<List<DatasetImage>> AddUnclassifiedImagesAsync(List<ImageData> imageDataList);
+
+        Task<DatasetColor> AddColorAsync(ColorDto color);
+
+        Task<List<DatasetColor>> AddColorsAsync(List<DatasetColor> colors);
+
+        Task<List<DatasetColor>> GetColorsAsync();
+
+        Task<DatasetImage?> FindImageByIdAsync(int imageId);
+
+        Task DeleteImageAsync(int imageId);
+
+        Task<List<PredictedDatasetClassDto>> GetPredictedDatasetClassesAsync(List<int> datasetClassesIndexes);
     }
 }

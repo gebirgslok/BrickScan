@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Copyright (c) 2020 Jens Eisenbach
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,43 +23,23 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Diagnostics;
-using System.Reflection;
-using BrickScan.WpfClient.Events;
-using PropertyChanged;
-using Stylet;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable MemberCanBePrivate.Global
-
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WebApi
 {
-    public class StatusBarViewModel : PropertyChangedBase, IHandle<OnStatusBarMessageChanged>
+    public class ReplaceVersionWithExactValueInPath : IDocumentFilter
     {
-        public string AssemblyFileVersion { get; }
-
-        public string? Message { get; set; }
-
-        [DependsOn(nameof(Message))]
-        public bool HasMessage => !string.IsNullOrEmpty(Message);
-
-        public StatusBarViewModel(IEventAggregator eventAggregator)
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            eventAggregator.Subscribe(this);
-            var assembly = Assembly.GetExecutingAssembly();
-            var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            AssemblyFileVersion = $"{Properties.Resources.ProgramVersion}: {fileVersionInfo.FileVersion}";
-        }
+            var paths = new OpenApiPaths();
 
-        public void Handle(OnStatusBarMessageChanged message)
-        {
-            if (message.ClearMessage)
+            foreach (var path in swaggerDoc.Paths)
             {
-                Message = null;
-                return;
+                paths.Add(path.Key.Replace("v{version}", swaggerDoc.Info.Version), path.Value);
             }
 
-            Message = message.Message;
+            swaggerDoc.Paths = paths;
         }
     }
 }

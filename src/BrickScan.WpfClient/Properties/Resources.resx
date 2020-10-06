@@ -103,9 +103,6 @@
   <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>
-  <data name="Contribute" xml:space="preserve">
-    <value>Contribute</value>
-  </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
@@ -228,5 +225,32 @@
   </data>
   <data name="SubmissionSuccessfulMessage" xml:space="preserve">
     <value>Submission successful. Thank you!</value>
+  </data>
+  <data name="Results" xml:space="preserve">
+    <value>Results</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="Addition" xml:space="preserve">
+    <value>Addition</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="OpenOnBricklinkToolTip" xml:space="preserve">
+    <value>Opens the Bricklink page of this part.</value>
+  </data>
+  <data name="AddToInventoryToolTip" xml:space="preserve">
+    <value>Opens a dialog to add this part to your inventory.</value>
+  </data>
+  <data name="ConfirmImageBelongsToClassToolTip" xml:space="preserve">
+    <value>Confirm that the input image is this part.</value>
+  </data>
+  <data name="Confirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="WaitingForConfirmationResponse" xml:space="preserve">
+    <value>Waiting for confirmation...</value>
   </data>
 </root>

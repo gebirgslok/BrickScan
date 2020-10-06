@@ -23,43 +23,18 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Diagnostics;
-using System.Reflection;
-using BrickScan.WpfClient.Events;
-using PropertyChanged;
-using Stylet;
-
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable MemberCanBePrivate.Global
-
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WebApi.Prediction
 {
-    public class StatusBarViewModel : PropertyChangedBase, IHandle<OnStatusBarMessageChanged>
+    public class ScoredLabel
     {
-        public string AssemblyFileVersion { get; }
+        public float Score { get; }
 
-        public string? Message { get; set; }
+        public string Label { get; }
 
-        [DependsOn(nameof(Message))]
-        public bool HasMessage => !string.IsNullOrEmpty(Message);
-
-        public StatusBarViewModel(IEventAggregator eventAggregator)
+        public ScoredLabel(string label, float score)
         {
-            eventAggregator.Subscribe(this);
-            var assembly = Assembly.GetExecutingAssembly();
-            var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            AssemblyFileVersion = $"{Properties.Resources.ProgramVersion}: {fileVersionInfo.FileVersion}";
-        }
-
-        public void Handle(OnStatusBarMessageChanged message)
-        {
-            if (message.ClearMessage)
-            {
-                Message = null;
-                return;
-            }
-
-            Message = message.Message;
+            Label = label;
+            Score = score;
         }
     }
 }

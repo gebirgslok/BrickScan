@@ -75,13 +75,7 @@ namespace BrickScan.WpfClient.ViewModels
                     Icon = new PackIconMaterial{ Kind = PackIconMaterialKind.CameraPlus },
                     Label = Properties.Resources.AddParts.ToUpperInvariant(),
                     Tag = _addPartsConductorViewModel
-                },
-                new HamburgerMenuIconItem
-                {
-                    Icon = new PackIconMaterial{ Kind = PackIconMaterialKind.ArmFlex },
-                    Label = Properties.Resources.Contribute.ToUpperInvariant(),
-                    Tag = null
-                },
+                }
             };
 
             return collection;

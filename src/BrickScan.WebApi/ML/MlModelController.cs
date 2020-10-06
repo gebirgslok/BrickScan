@@ -34,8 +34,8 @@ using Microsoft.Extensions.Logging;
 
 namespace BrickScan.WebApi.ML
 {
+    //TODO: check whether we need this.
     [ApiVersion("1.0")]
-    [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class MlModelController : ControllerBase
     {
@@ -51,13 +51,12 @@ namespace BrickScan.WebApi.ML
 
         private async Task CopyAsync(byte[] bytes, string modelFilePath)
         {
-
             var destinationDirectory = Path.GetDirectoryName(modelFilePath);
 
             if (!Directory.Exists(destinationDirectory))
             {
                 _logger.LogInformation("Creating {DestinationDirectory} (does not exist yet)...", destinationDirectory);
-                Directory.CreateDirectory(destinationDirectory); 
+                Directory.CreateDirectory(destinationDirectory);
                 _logger.LogInformation("Successfully created {DestinationDirectory}.", destinationDirectory);
             }
 

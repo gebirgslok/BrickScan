@@ -23,7 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,45 +31,13 @@ using BrickScan.Library.Core.Dto;
 using BrickScan.Library.Dataset;
 using BrickScan.Library.Dataset.Model;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
 namespace BrickScan.WebApi.Dataset
 {
-    class DatasetColorComparer : IEqualityComparer<DatasetColor>
-    {
-        public bool Equals(DatasetColor? x, DatasetColor? y)
-        {
-            if (ReferenceEquals(x, y))
-            {
-                return true;
-            }
-
-            if (ReferenceEquals(x, null))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(y, null))
-            {
-                return false;
-            }
-
-            if (x.GetType() != y.GetType())
-            {
-                return false;
-            }
-
-            return x.BricklinkColorId == y.BricklinkColorId;
-        }
-
-        public int GetHashCode(DatasetColor obj)
-        {
-            return obj.BricklinkColorId;
-        }
-    }
-
+    //TODO: XML doc
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class DatasetController : ControllerBase
@@ -137,8 +104,9 @@ namespace BrickScan.WebApi.Dataset
         /// <param name="color"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Route("colors")]
         public async Task<IActionResult> AddDatasetColor([FromBody] ColorDto color)
         {
@@ -152,7 +120,8 @@ namespace BrickScan.WebApi.Dataset
         }
 
         [HttpGet]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Route("colors")]
         [AllowAnonymous]
         public async Task<IActionResult> GetDatasetColors()
@@ -167,7 +136,8 @@ namespace BrickScan.WebApi.Dataset
         }
 
         [HttpPost]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Route("colors/update")]
         public async Task<IActionResult> UpdateDatasetColorsFromBricklink()
         {
@@ -189,7 +159,7 @@ namespace BrickScan.WebApi.Dataset
             var storedColors = await _datasetService.GetColorsAsync();
 
             var newColors = blColors
-                .Except(storedColors, new DatasetColorComparer())
+                .Except(storedColors, new DatasetByColorComparer())
                 .ToList();
 
             if (newColors.Any())
@@ -200,10 +170,33 @@ namespace BrickScan.WebApi.Dataset
             return NoContent();
         }
 
+        [HttpPatch("images/confirm")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ConfirmDatasetImage([FromQuery] int imageId,
+            [FromQuery] int classId)
+        {
+            _logger.LogDebug("Confirming unclassified image (ID = {ImageId}) for class (ID = {ClassId}).", imageId, classId);
+
+            var result = await _datasetService.ConfirmUnclassififiedImageAsync(imageId, classId);
+
+            if (!result.Success)
+            {
+                _logger.LogWarning("Received erroneous confirmation result ({@Errors})", result.Errors);
+
+                return new BadRequestObjectResult(new ApiResponse(StatusCodes.Status400BadRequest, errors: result.Errors));
+            }
+
+            _logger.LogDebug("Confirmation of image (ID = {ImageId}) for class (ID = {ClassId}) successful.", imageId, classId);
+
+            return new OkObjectResult(new ApiResponse(StatusCodes.Status200OK, data: result.Image));
+        }
+
         [HttpGet("classes/{id:int}", Name = nameof(GetDatasetClass))]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetDatasetClass([FromRoute] int id)
         {
             var datasetClass = await _datasetService.GetClassByIdAsync(id);
@@ -222,11 +215,14 @@ namespace BrickScan.WebApi.Dataset
 
         //TODO: XML Doc
         [HttpGet("classes/training-images", Name = nameof(GetDatasetTrainingImagesList))]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetDatasetTrainingImagesList(int page = 1, int pageSize = 200)
         {
+            _logger.LogInformation("Retrieving class train images list for page = {Page} and page size = {PageSize}.",
+                page, pageSize);
+
             var map = await _datasetService.GetClassTrainImagesListAsync(page, pageSize);
             return new OkObjectResult(new ApiResponse(200, data: map));
         }

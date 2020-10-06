@@ -23,44 +23,32 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using BrickScan.WpfClient.Events;
-using BrickScan.WpfClient.Extensions;
-using BrickScan.WpfClient.Model;
-using OpenCvSharp;
-using Serilog;
-using Stylet;
+using System.Collections.Generic;
+using BrickScan.Library.Core.Dto;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WebApi.Prediction
 {
-    public class PredictViewModel : CameraCaptureBaseViewModel
+    public class PredictedDatasetClassDtoByScoreComparer : IComparer<PredictedDatasetClassDto>
     {
-        private readonly IEventAggregator _eventAggregator;
-        private readonly ILogger _logger;
-
-        public PredictViewModel(CameraSetupViewModel cameraSetupViewModel, 
-            IVideoCapture videoCapture, 
-            IEventAggregator eventAggregator, 
-            ILogger logger) : base(videoCapture, cameraSetupViewModel)
+        public int Compare(PredictedDatasetClassDto? x, PredictedDatasetClassDto? y)
         {
-            _eventAggregator = eventAggregator;
-            _logger = logger;
-        }
+            if (x == null && y == null)
+            {
+                return 0;
+            }
 
-        public void Predict()
-        {
-            var rect = Rectangle.ToRect();
-            try
+            if (x == null && y != null)
             {
-                var imageSegment = new Mat(Frame!, rect);
-                _eventAggregator.PublishOnUIThread(new OnPredictionRequested(imageSegment));
+                return -1;
             }
-            catch (Exception exception)
+
+            if (y == null && x != null)
             {
-                _logger.Error(exception, "Failed to publish new prediction request " +
-                                         "(frame = {Frame}, rect = {Rect}). Message {Message", 
-                    Frame?.ToString() ?? "null", rect.ToString());
+                return 1;
             }
+
+            return y!.Score.CompareTo(x!.Score);
+
         }
     }
 }

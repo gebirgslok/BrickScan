@@ -122,7 +122,6 @@ namespace BrickScan.WpfClient.ViewModels
             return partConfigViewModel;
         }
 
-
         private IEnumerable<BitmapSource> GetDisplayImages()
         {
             var displayImages = new List<BitmapSource>();

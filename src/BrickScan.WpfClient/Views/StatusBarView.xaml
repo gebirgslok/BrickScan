@@ -75,18 +75,10 @@
                                                     RepeatBehavior="Forever"
                                                     Storyboard.TargetProperty="Text"
                                                     Duration="00:00:01.2">
-                                                    <DiscreteObjectKeyFrame
-                                                        KeyTime="00:00:00.0"
-                                                        Value="" />
-                                                    <DiscreteObjectKeyFrame
-                                                        KeyTime="00:00:00.3"
-                                                        Value="." />
-                                                    <DiscreteObjectKeyFrame
-                                                        KeyTime="00:00:00.6"
-                                                        Value=".." />
-                                                    <DiscreteObjectKeyFrame
-                                                        KeyTime="00:00:00.9"
-                                                        Value="..." />
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.0" Value="" />
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.3" Value="." />
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.6" Value=".." />
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.9" Value="..." />
                                                 </ObjectAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </BeginStoryboard>

@@ -24,40 +24,19 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
-namespace BrickScan.WebApi
+namespace BrickScan.Library.Core.Dto
 {
-    public class ApiResponse
+    /// <summary>
+    /// Provides a <c>DTO</c> to encapsulate a class (ID) and its associated images (URLs).
+    /// </summary>
+    public class DatasetClassTrainImagesDto
     {
-        public int StatusCode { get; }
+        [JsonPropertyName("class_id")]
+        public int ClassId { get; set; }
 
-        public IEnumerable<string> Errors { get; }
-
-        public string Message { get; }
-
-        public object? Data { get; }
-
-        internal ApiResponse(int statusCode, string? message = null, object? data = null, IEnumerable<string>? errors = null)
-        {
-            StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageForStatusCode(StatusCode);
-            Data = data;
-            Errors = errors ?? new List<string>();
-        }
-
-        private static string GetDefaultMessageForStatusCode(int statusCode)
-        {
-            return statusCode switch
-            {
-                200 => "Request successful.",
-                201 => "Resource(s) created.",
-                204 => "No content",
-                400 => "Bad request.",
-                404 => "Resource not found.",
-                415 => "Unsupported media type.",
-                500 => "An internal server error occurred.",
-                _ => "An unknown error occurred."
-            };
-        }
+        [JsonPropertyName("image_urls")]
+        public List<string>? ImageUrls { get; set; }
     }
 }

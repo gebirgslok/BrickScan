@@ -23,41 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
+using CommandLine;
 
-namespace BrickScan.WebApi
+namespace BrickScan.Training
 {
-    public class ApiResponse
+    public abstract class Options
     {
-        public int StatusCode { get; }
+        [Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.", Default = false)]
+        public bool Verbose { get; set; }
 
-        public IEnumerable<string> Errors { get; }
-
-        public string Message { get; }
-
-        public object? Data { get; }
-
-        internal ApiResponse(int statusCode, string? message = null, object? data = null, IEnumerable<string>? errors = null)
-        {
-            StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageForStatusCode(StatusCode);
-            Data = data;
-            Errors = errors ?? new List<string>();
-        }
-
-        private static string GetDefaultMessageForStatusCode(int statusCode)
-        {
-            return statusCode switch
-            {
-                200 => "Request successful.",
-                201 => "Resource(s) created.",
-                204 => "No content",
-                400 => "Bad request.",
-                404 => "Resource not found.",
-                415 => "Unsupported media type.",
-                500 => "An internal server error occurred.",
-                _ => "An unknown error occurred."
-            };
-        }
+        [Option('d', "datasetDir", Required = true, HelpText = "The Dataset directory into which all train images are downloaded.")]
+        public string DatasetDirectory { get; set; } = null!;
     }
 }

@@ -15,13 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickScan.WpfClient.Tests",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{968C51FD-313B-4D49-9B25-B9861DE6CFC9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickScan.Library.Dataset", "BrickScan.Library.Dataset\BrickScan.Library.Dataset.csproj", "{1D783942-6EBE-4136-9028-9BAD34DCBA9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickScan.Library.Dataset", "src\BrickScan.Library.Dataset\BrickScan.Library.Dataset.csproj", "{1D783942-6EBE-4136-9028-9BAD34DCBA9C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickScan.Library.Core", "BrickScan.Library.Core\BrickScan.Library.Core.csproj", "{DB19968C-673E-435C-88DD-91B17850AA45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickScan.Library.Core", "src\BrickScan.Library.Core\BrickScan.Library.Core.csproj", "{DB19968C-673E-435C-88DD-91B17850AA45}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CLI", "CLI", "{234C8335-7AF9-4987-85F7-C705A3944EDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickScan.Training", "BrickScan.Training\BrickScan.Training.csproj", "{A9D08B79-02BE-4F70-9653-4268818D3297}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickScan.Training", "src\BrickScan.Training\BrickScan.Training.csproj", "{A9D08B79-02BE-4F70-9653-4268818D3297}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

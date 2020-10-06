@@ -23,43 +23,24 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Diagnostics;
-using System.Reflection;
-using BrickScan.WpfClient.Events;
-using PropertyChanged;
-using Stylet;
+using System.Collections.Generic;
+using BrickScan.Library.Dataset.Model;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable MemberCanBePrivate.Global
-
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.Library.Dataset
 {
-    public class StatusBarViewModel : PropertyChangedBase, IHandle<OnStatusBarMessageChanged>
+    public class ConfirmUnclassififiedImageResult
     {
-        public string AssemblyFileVersion { get; }
+        public bool Success { get; }
 
-        public string? Message { get; set; }
+        public DatasetImage? Image { get; }
 
-        [DependsOn(nameof(Message))]
-        public bool HasMessage => !string.IsNullOrEmpty(Message);
+        public IEnumerable<string> Errors { get; }
 
-        public StatusBarViewModel(IEventAggregator eventAggregator)
+        internal ConfirmUnclassififiedImageResult(bool success, DatasetImage? image, IEnumerable<string>? errors)
         {
-            eventAggregator.Subscribe(this);
-            var assembly = Assembly.GetExecutingAssembly();
-            var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            AssemblyFileVersion = $"{Properties.Resources.ProgramVersion}: {fileVersionInfo.FileVersion}";
-        }
-
-        public void Handle(OnStatusBarMessageChanged message)
-        {
-            if (message.ClearMessage)
-            {
-                Message = null;
-                return;
-            }
-
-            Message = message.Message;
+            Success = success;
+            Image = image;
+            Errors = errors ?? new string[0];
         }
     }
 }

@@ -123,9 +123,6 @@
   <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>
-  <data name="Contribute" xml:space="preserve">
-    <value>Mitwirken</value>
-  </data>
   <data name="Settings" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
@@ -248,5 +245,32 @@
   </data>
   <data name="SubmissionSuccessfulMessage" xml:space="preserve">
     <value>Übertragung erfolgreich. Vielen Dank!</value>
+  </data>
+  <data name="Results" xml:space="preserve">
+    <value>Ergebnisse</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Farbe</value>
+  </data>
+  <data name="Addition" xml:space="preserve">
+    <value>Zusatz</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="OpenOnBricklinkToolTip" xml:space="preserve">
+    <value>Öffnet die Bricklink-Seite dieses Teils.</value>
+  </data>
+  <data name="AddToInventoryToolTip" xml:space="preserve">
+    <value>Öffnet einen Dialog um dieses Teil zu inventarisieren.</value>
+  </data>
+  <data name="ConfirmImageBelongsToClassToolTip" xml:space="preserve">
+    <value>Bestätigung, dass das Eingabebild dieses Teil ist.</value>
+  </data>
+  <data name="Confirmation" xml:space="preserve">
+    <value>Bestätigung</value>
+  </data>
+  <data name="WaitingForConfirmationResponse" xml:space="preserve">
+    <value>Warten auf Bestätigung...</value>
   </data>
 </root>

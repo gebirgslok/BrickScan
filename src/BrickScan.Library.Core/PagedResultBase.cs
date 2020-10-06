@@ -23,41 +23,32 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
+using System;
+using System.Text.Json.Serialization;
 
-namespace BrickScan.WebApi
+namespace BrickScan.Library.Core
 {
-    public class ApiResponse
+    public abstract class PagedResultBase
     {
-        public int StatusCode { get; }
+        [JsonPropertyName("current_page")]
+        public int CurrentPage { get; set; }
 
-        public IEnumerable<string> Errors { get; }
+        [JsonPropertyName("page_count")]
+        public int PageCount { get; set; }
 
-        public string Message { get; }
+        [JsonPropertyName("page_size")]
+        public int PageSize { get; set; }
 
-        public object? Data { get; }
+        [JsonPropertyName("row_count")]
+        public int RowCount { get; set; }
 
-        internal ApiResponse(int statusCode, string? message = null, object? data = null, IEnumerable<string>? errors = null)
-        {
-            StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageForStatusCode(StatusCode);
-            Data = data;
-            Errors = errors ?? new List<string>();
-        }
-
-        private static string GetDefaultMessageForStatusCode(int statusCode)
-        {
-            return statusCode switch
-            {
-                200 => "Request successful.",
-                201 => "Resource(s) created.",
-                204 => "No content",
-                400 => "Bad request.",
-                404 => "Resource not found.",
-                415 => "Unsupported media type.",
-                500 => "An internal server error occurred.",
-                _ => "An unknown error occurred."
-            };
-        }
+        [JsonIgnore]
+        public int FirstRowOnPage => (CurrentPage - 1) * PageSize + 1;
+       
+        [JsonIgnore]
+        public int LastRowOnPage => Math.Min(CurrentPage * PageSize, RowCount);
+        
+        [JsonIgnore]
+        public bool HasNextPage => CurrentPage < PageCount;
     }
 }

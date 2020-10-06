@@ -23,41 +23,29 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
+using CommandLine;
 
-namespace BrickScan.WebApi
+namespace BrickScan.Training
 {
-    public class ApiResponse
+    [Verb("train", HelpText = "TODO")]
+    public class TrainOptions : Options
     {
-        public int StatusCode { get; }
+        [Option('u',
+            "download",
+            HelpText = "Downloads the dataset before training the ML model.")]
+        public bool DownloadDataset { get; set; }
 
-        public IEnumerable<string> Errors { get; }
+        [Option('b',
+            "reuseBottleneckCache",
+            HelpText = "Boolean flag indicating whether to re-use cached bottleneck values.",
+            Default = false)]
+        public bool ReuseBottleneckCachedValues { get; set; }
 
-        public string Message { get; }
-
-        public object? Data { get; }
-
-        internal ApiResponse(int statusCode, string? message = null, object? data = null, IEnumerable<string>? errors = null)
-        {
-            StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageForStatusCode(StatusCode);
-            Data = data;
-            Errors = errors ?? new List<string>();
-        }
-
-        private static string GetDefaultMessageForStatusCode(int statusCode)
-        {
-            return statusCode switch
-            {
-                200 => "Request successful.",
-                201 => "Resource(s) created.",
-                204 => "No content",
-                400 => "Bad request.",
-                404 => "Resource not found.",
-                415 => "Unsupported media type.",
-                500 => "An internal server error occurred.",
-                _ => "An unknown error occurred."
-            };
-        }
+        [Option('e',
+            "epochs",
+            Required = false,
+            HelpText = "The number of epochs used to train the ML model.",
+            Default = 200)]
+        public int NumOfEpochs { get; set; }
     }
 }
