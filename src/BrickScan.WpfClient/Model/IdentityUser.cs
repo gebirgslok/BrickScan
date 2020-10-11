@@ -23,16 +23,15 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using Newtonsoft.Json;
+
 namespace BrickScan.WpfClient.Model
 {
-    public interface IUserManager
+    public class IdentityUser
     {
-        bool IsUserLoggedOn { get; }
+        public string Name { get; set; } = null!;
 
-        string? Username { get; }
-
-        void LogOn();
-
-        void LogOff();
+        [JsonProperty("extension_UserLevel")]
+        public string? Level { get; set; }
     }
 }

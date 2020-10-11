@@ -36,6 +36,7 @@ using BrickScan.WpfClient.Model;
 using BrickScan.WpfClient.Properties;
 using BrickScan.WpfClient.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Identity.Client;
 using Serilog;
 using VideoCapture = BrickScan.WpfClient.Model.VideoCapture;
 
@@ -70,6 +71,16 @@ namespace BrickScan.WpfClient
                 Settings.Default.SelectedCultureKey);
         }
 
+        private static void LogCallback(LogLevel level, string message, bool containsPii)
+        {
+            //TODO: Serilog logging.
+            //string logs = ($"{level} {message}");
+            //var builder = new StringBuilder();
+            //sb.Append(logs);
+            //File.AppendAllText(System.Reflection.Assembly.GetExecutingAssembly().Location + ".msalLogs.txt", sb.ToString());
+            //sb.Clear();
+        }
+
         protected override void ConfigureBootstrapper()
         {
             Log.Logger = new LoggerConfiguration()
@@ -91,7 +102,20 @@ namespace BrickScan.WpfClient
         protected override void ConfigureIoC(ContainerBuilder builder)
         {
             builder.RegisterViewModels();
-            builder.RegisterType<UserManager>().As<IUserManager>().SingleInstance();
+
+            builder.Register(c => PublicClientApplicationBuilder.Create(IdentitySettings.ClientId)
+                    .WithB2CAuthority(IdentitySettings.AuthoritySignUpSignIn)
+                .WithRedirectUri(IdentitySettings.RedirectUri)
+                .WithLogging(LogCallback, LogLevel.Info, false)
+                .Build())
+                .As<IPublicClientApplication>()
+                .SingleInstance();
+
+            builder.RegisterType<UserSession>()
+                .As<IUserSession>()
+                .SingleInstance()
+                .AutoActivate();
+
             builder.RegisterType<VideoCapture>().As<IVideoCapture>().SingleInstance();
             builder.RegisterType<RoiDetector>().As<IRoiDetector>();
             builder.Register(c => DialogCoordinator.Instance).As<IDialogCoordinator>();

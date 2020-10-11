@@ -56,7 +56,7 @@ namespace BrickScan.WpfClient.Model
             {
                 var mat = new Mat();
 
-                if (_videoCapture!.Read(mat))
+                if (_videoCapture != null && _videoCapture!.Read(mat))
                 {
                     var rectangle = _roiDetector.Detect(mat);
                     OnFrameCaptured(mat, rectangle);

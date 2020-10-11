@@ -38,6 +38,7 @@
     Width="1200"
     Height="800"
     Icon="pack://application:,,,/BrickScan.WpfClient;component/icon.png"
+    Loaded="{s:Action OnLoaded}"
     ShowIconOnTitleBar="False"
     mc:Ignorable="d">
     <mah:MetroWindow.Resources>
@@ -74,25 +75,26 @@
                 VerticalAlignment="Center"
                 Opacity=".5"
                 Text="{x:Static resx:Resources.NotLoggedOn}"
-                Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource InvBoolToVisibilityConverter}, Mode=OneWay}" />
+                Visibility="{Binding Path=UserSession.IsUserLoggedOn, Converter={StaticResource InvBoolToVisibilityConverter}, Mode=OneWay}" />
             <Button
                 Margin="5,0,5,0"
                 VerticalAlignment="Center"
-                Content="{Binding UserManager.Username, Mode=OneWay}"
-                Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" />
+                Command="{s:Action EditProfileAsync}"
+                Content="{Binding UserSession.Username, Mode=OneWay}"
+                Visibility="{Binding Path=UserSession.IsUserLoggedOn, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" />
             <Button
-                Command="{s:Action LogOn}"
+                Command="{s:Action LogOnAsync}"
                 ToolTip="{x:Static resx:Resources.LogOn}"
-                Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource InvBoolToVisibilityConverter}, Mode=OneWay}">
+                Visibility="{Binding Path=UserSession.IsUserLoggedOn, Converter={StaticResource InvBoolToVisibilityConverter}, Mode=OneWay}">
                 <iconPacks:Material
                     Width="22"
                     Height="22"
                     Kind="Login" />
             </Button>
             <Button
-                Command="{s:Action LogOff}"
+                Command="{s:Action LogOffAsync}"
                 ToolTip="{x:Static resx:Resources.LogOff}"
-                Visibility="{Binding Path=UserManager.IsUserLoggedOn, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+                Visibility="{Binding Path=UserSession.IsUserLoggedOn, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
                 <iconPacks:Material
                     Width="22"
                     Height="22"

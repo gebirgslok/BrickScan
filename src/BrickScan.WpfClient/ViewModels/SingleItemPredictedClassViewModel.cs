@@ -27,9 +27,11 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
+using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls.Dialogs;
 using PropertyChanged;
 using Serilog;
@@ -48,6 +50,8 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly IEventAggregator _eventAggregator;
         private readonly PredictedDatasetClassDto _predictedDatasetClassDto;
         private readonly Uri[] _displayImages;
+
+        public IUserSession UserSession { get; }
 
         public Uri? SelectedDisplayImage { get; set; }
 
@@ -73,17 +77,26 @@ namespace BrickScan.WpfClient.ViewModels
 
         public string? BricklinkColorName => _predictedDatasetClassDto.Items.First().Color?.BricklinkColorName;
 
-        public SingleItemPredictedClassViewModel(PredictedDatasetClassDto predictedDatasetClassDto, 
-            ILogger logger, 
-            HttpClient httpClient, 
-            IDialogCoordinator dialogCoordinator, 
-            IEventAggregator eventAggregator)
+        public string? ConfirmImageBelongsToClassToolTip =>
+            IsConfirmDatasetClassAvailable ? 
+                UserSession.IsTrusted ? 
+                    Properties.Resources.ConfirmImageBelongsToClassToolTip : 
+                    "Not logged on or not authorized."
+                : null;
+
+        public SingleItemPredictedClassViewModel(PredictedDatasetClassDto predictedDatasetClassDto,
+            ILogger logger,
+            HttpClient httpClient,
+            IDialogCoordinator dialogCoordinator,
+            IEventAggregator eventAggregator,
+            IUserSession userSession)
         {
             _predictedDatasetClassDto = predictedDatasetClassDto;
             _logger = logger;
             _httpClient = httpClient;
             _dialogCoordinator = dialogCoordinator;
             _eventAggregator = eventAggregator;
+            UserSession = userSession;
 
             _displayImages = _predictedDatasetClassDto
                 .DisplayImageUrls?
@@ -92,6 +105,7 @@ namespace BrickScan.WpfClient.ViewModels
 
             SelectedDisplayImage = _displayImages.Length > 0 ? _displayImages[0] : null;
         }
+
 
         public void ShowNextImage()
         {
@@ -138,11 +152,14 @@ namespace BrickScan.WpfClient.ViewModels
                 var classId = _predictedDatasetClassDto.Id;
                 var method = new HttpMethod("PATCH");
 
-                using var request = new HttpRequestMessage(method, 
+                using var request = new HttpRequestMessage(method,
                     new Uri($"dataset/images/confirm?imageId={imageId}&classId={classId}", UriKind.Relative));
 
+                var accessToken = await UserSession.GetAccessTokenAsync();
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
                 var response = await _httpClient.SendAsync(request);
-                
+
                 _logger.Information("Received status code = {StatusCode} for confirmation.", response.StatusCode);
 
                 await controller.CloseAsync();

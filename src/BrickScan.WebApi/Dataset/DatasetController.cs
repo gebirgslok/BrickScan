@@ -42,6 +42,7 @@ namespace BrickScan.WebApi.Dataset
     [Route("api/v{version:apiVersion}/[controller]")]
     public class DatasetController : ControllerBase
     {
+        static readonly string[] scopeRequiredByApi = new string[] { "access_as_user" };
         private const int MIN_NUM_OF_TRAIN_IMAGES = 2;
         private readonly IDatasetService _datasetService;
         private readonly ILogger<DatasetController> _logger;
@@ -170,10 +171,12 @@ namespace BrickScan.WebApi.Dataset
             return NoContent();
         }
 
+        //TODO: XML DOC
         [HttpPatch("images/confirm")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<IActionResult> ConfirmDatasetImage([FromQuery] int imageId,
             [FromQuery] int classId)
         {
@@ -227,6 +230,7 @@ namespace BrickScan.WebApi.Dataset
             return new OkObjectResult(new ApiResponse(200, data: map));
         }
 
+        //TODO: XML DOC
         [HttpPost("classes/submit")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]

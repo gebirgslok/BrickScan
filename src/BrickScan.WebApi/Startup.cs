@@ -26,11 +26,13 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using Autofac;
 using BrickScan.Library.Dataset;
 using BrickScan.Library.Dataset.Model;
 using BrickScan.WebApi.Images;
 using BrickScan.WebApi.Prediction;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +41,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.ML;
+using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -56,6 +59,12 @@ namespace BrickScan.WebApi
             Environment = env;
         }
 
+        private Task OnAuthenticationFailedCallback(AuthenticationFailedContext arg)
+        {
+            //TODO: do something useful
+            return Task.CompletedTask;
+        }
+
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterType<ImageFileConverter>().As<IImageFileConverter>();
@@ -65,8 +74,33 @@ namespace BrickScan.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApi(options =>
+                    {
+                        Configuration.Bind("AzureAdB2C", options);
+                    },
+                    options => { Configuration.Bind("AzureAdB2C", options); });
+
+            //services.AddAuthentication(options =>
+            //    {
+            //        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            //        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    })
+            //    .AddJwtBearer(jwtOptions =>
+            //    {
+            //        jwtOptions.Authority = $"https://login.microsoftonline.com/tfp/{Configuration["AzureAdB2C:Tenant"]}/{Configuration["AzureAdB2C:Policy"]}/v2.0";
+            //        jwtOptions.Audience = Configuration["AzureAdB2C:ClientId"];
+            //        jwtOptions.
+            //        jwtOptions.Events = new JwtBearerEvents
+            //        {
+            //            OnAuthenticationFailed = OnAuthenticationFailedCallback
+            //        };
+            //    });
+
             services.AddControllers();
             services.AddMvcCore();
+
             services.AddApiVersioning(options =>
             {
                 options.AssumeDefaultVersionWhenUnspecified = true;
@@ -105,6 +139,7 @@ namespace BrickScan.WebApi
             }
             else
             {
+                //TODO: Blob storage
                 services.AddTransient<IStorageService, LocalFileStorageService>();
             }
         }
@@ -133,7 +168,6 @@ namespace BrickScan.WebApi
 
             app.UseEndpoints(endpoints =>
             {
-                //TODO: Require authorization!
                 endpoints.MapControllers();
             });
         }

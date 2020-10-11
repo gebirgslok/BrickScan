@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Threading.Tasks;
 using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
@@ -44,19 +45,19 @@ namespace BrickScan.WpfClient.ViewModels
 
         public HamburgerMenuItem? SelectedItem { get; set; }
 
-        public IUserManager UserManager { get; }
+        public IUserSession UserSession { get; }
 
         public MainViewModel(PredictionConductorViewModel predictionConductorViewModel,
             AddPartsConductorViewModel addPartsConductorViewModel,
             SettingsViewModel settingsViewModel,
             StatusBarViewModel statusBarViewModel,
-            IUserManager userManager)
+            IUserSession userManager)
         {
             _predictionConductorViewModel = predictionConductorViewModel;
             _addPartsConductorViewModel = addPartsConductorViewModel;
             _settingsViewModel = settingsViewModel;
             StatusBarViewModel = statusBarViewModel;
-            UserManager = userManager;
+            UserSession = userManager;
             SelectedItem = MenuItems[0] as HamburgerMenuIconItem;
         }
 
@@ -111,14 +112,24 @@ namespace BrickScan.WpfClient.ViewModels
 
         }
 
-        public void LogOn()
+        public async Task LogOnAsync()
         {
-            UserManager.LogOn();
+            await UserSession.LogOnAsync();
         }
 
-        public void LogOff()
+        public async Task LogOffAsync()
         {
-            UserManager.LogOff();
+            await UserSession.LogOffAsync();
+        }
+
+        public async Task OnLoaded()
+        {
+            await UserSession.TryAutoLogOnAsync();
+        }
+
+        public async Task EditProfileAsync()
+        {
+            await UserSession.EditProfileAsync();
         }
     }
 }

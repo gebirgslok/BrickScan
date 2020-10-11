@@ -95,11 +95,12 @@
                     Width="18"
                     Height="12"
                     Fill="{Binding Path=BricklinkColorHtmlCode, Mode=OneTime, TargetNullValue={x:Null}}"
-                    Stroke="Black"
+                    Stroke="{DynamicResource MahApps.Brushes.Text}"
                     StrokeThickness="1" />
                 <TextBlock
                     Margin="5,1,1,1"
                     VerticalAlignment="Center"
+                    Foreground="{DynamicResource MahApps.Brushes.Text}"
                     Text="{Binding Path=BricklinkColorName, Mode=OneTime, TargetNullValue={x:Null}}" />
             </StackPanel>
             <Label
@@ -200,8 +201,10 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Command="{s:Action ConfirmImageBelongsToClassAsync}"
+                IsEnabled="{Binding Path=UserSession.IsTrusted, Mode=OneWay}"
                 Style="{DynamicResource MahApps.Styles.Button.Circle}"
-                ToolTip="{x:Static resx:Resources.ConfirmImageBelongsToClassToolTip}"
+                ToolTip="{Binding Path=ConfirmImageBelongsToClassToolTip, Mode=OneWay}"
+                ToolTipService.ShowOnDisabled="True"
                 Visibility="{Binding Path=IsConfirmDatasetClassAvailable, Mode=OneTime, Converter={StaticResource BoolToVisibilityConverter}}">
                 <iconPacks:Material Kind="Check" />
             </Button>
