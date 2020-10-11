@@ -58,7 +58,7 @@ namespace BrickScan.WpfClient.ViewModels
             catch (Exception exception)
             {
                 _logger.Error(exception, "Failed to publish new prediction request " +
-                                         "(frame = {Frame}, rect = {Rect}). Message {Message", 
+                                         "(frame = {Frame}, rect = {Rect}). Message {Message",
                     Frame?.ToString() ?? "null", rect.ToString());
             }
         }

@@ -87,6 +87,9 @@ namespace BrickScan.WpfClient.Model
             try
             {
                 _videoCapture = OpenCvSharp.VideoCapture.FromCamera(cameraIndex);
+                _videoCapture.FrameWidth = 1920;
+                _videoCapture.FrameHeight = 1024;
+
                 _logger.Information("Successfully opened camera {CameraIndex}.", cameraIndex);
                 const double timerInterval = 1000.0 / 30;
                 _timer = new Timer(timerInterval); //30 FPS.

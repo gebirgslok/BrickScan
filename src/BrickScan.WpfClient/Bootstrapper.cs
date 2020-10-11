@@ -125,7 +125,9 @@ namespace BrickScan.WpfClient
                 {
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
                     return new HttpClient
-                    { BaseAddress = new Uri(ConfigurationManager.AppSettings["BrickScanApiBaseUrl"]) };
+                    {
+                        BaseAddress = new Uri(ConfigurationManager.AppSettings["BrickScanApiBaseUrl"])
+                    };
                 })
                 .AsSelf()
                 .SingleInstance();

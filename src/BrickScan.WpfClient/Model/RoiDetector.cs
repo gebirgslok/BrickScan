@@ -32,20 +32,38 @@ namespace BrickScan.WpfClient.Model
 {
     internal class RoiDetector : IRoiDetector
     {
-        private const int MAX_MERGE_SPACING = 20;
-
-        private static readonly Dictionary<int, (double, double)> _sensitivityParams = new Dictionary<int, (double, double)>
+        class SensitivityParams
         {
-            {0, (10.0, 20.0)},
-            {1, (15.0, 30.0)},
-            {2, (20.0, 40.0)},
-            {3, (25.0, 50.0)},
-            {4, (30.0, 60.0)},
-            {5, (35.0, 70.0)},
-            {6, (40.0, 80.0)},
-            {7, (45.0, 90.0)},
-            {8, (50.0, 100.0)},
-            {9, (55.0, 110.0)}
+            public double T1 { get; }
+
+            public double T2 { get; }
+
+            public int BlurKernelSize { get; }
+
+            public SensitivityParams(double t1, double t2, int blurKernelSize)
+            {
+                T1 = t1;
+                T2 = t2;
+                BlurKernelSize = blurKernelSize;
+            }
+        }
+
+        private const int MAX_MERGE_SPACING = 20;
+        private const int DOWN_SAMPLE_WIDTH = 640;
+        private const int DOWN_SAMPLE_HEIGHT = 480;
+
+        private static readonly Dictionary<int, SensitivityParams> _sensitivityParams = new Dictionary<int, SensitivityParams>
+        {
+            {0, new SensitivityParams(10.0, 20.0, 1)},
+            {1, new SensitivityParams(15.0, 30.0, 3)},
+            {2, new SensitivityParams(20.0, 40.0, 3)},
+            {3, new SensitivityParams(25.0, 50.0, 3)},
+            {4, new SensitivityParams(30.0, 60.0, 3)},
+            {5, new SensitivityParams(35.0, 70.0, 5)},
+            {6, new SensitivityParams(40.0, 80.0, 5)},
+            {7, new SensitivityParams(45.0, 90.0, 5)},
+            {8, new SensitivityParams(50.0, 100.0, 5)},
+            {9, new SensitivityParams(55.0, 110.0, 5)},
         };
 
         private readonly IUserConfiguration _userConfiguration;
@@ -62,10 +80,13 @@ namespace BrickScan.WpfClient.Model
                 return Rectangle.Empty;
             }
 
-            using var grey = image.CvtColor(ColorConversionCodes.BGR2GRAY);
-            using var blurred = grey.Blur(new OpenCvSharp.Size(5, 5));
-            var (t1, t2) = _sensitivityParams[_userConfiguration.SelectedSensitivityLevel];
-            using var edge = blurred.Canny(t1, t2);
+            var sw = 1.0 * image.Width / DOWN_SAMPLE_WIDTH;
+            var sh = 1.0 * image.Height / DOWN_SAMPLE_HEIGHT;
+            using var downSampled = image.Resize(new OpenCvSharp.Size(DOWN_SAMPLE_WIDTH, DOWN_SAMPLE_HEIGHT));
+            using var grey = downSampled.CvtColor(ColorConversionCodes.BGR2GRAY);
+            var sensitivityParams = _sensitivityParams[_userConfiguration.SelectedSensitivityLevel];
+            using var blurred = grey.Blur(new OpenCvSharp.Size(sensitivityParams.BlurKernelSize, sensitivityParams.BlurKernelSize));
+            using var edge = blurred.Canny(sensitivityParams.T1, sensitivityParams.T2);
 
             using var morph = edge.MorphologyEx(MorphTypes.Close, Cv2.GetStructuringElement(MorphShapes.Rect, new OpenCvSharp.Size(5, 5)),
                 iterations: 2, borderType: BorderTypes.Isolated);
@@ -99,7 +120,7 @@ namespace BrickScan.WpfClient.Model
                 }
             }
 
-            var rectangle = r.ToRectangle().MakeSquare();
+            var rectangle = r.ToRectangle().Scale(sw, sh).MakeSquare();
             rectangle.Intersect(new Rectangle(0, 0, image.Width, image.Height));
             return rectangle;
         }

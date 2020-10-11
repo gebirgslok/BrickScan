@@ -75,5 +75,13 @@ namespace BrickScan.WpfClient.Extensions
 
             return new Rectangle(r.X, r.Y, r.Width, r.Height);
         }
+
+        internal static Rectangle Scale(this Rectangle r, double sw, double sh)
+        {
+            return new Rectangle((int)(sw * r.X),
+                (int)(sh * r.Y),
+                (int)(sw * r.Width),
+                (int)(sh * r.Height));
+        }
     }
 }

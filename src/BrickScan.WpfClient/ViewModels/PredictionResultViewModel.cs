@@ -36,6 +36,7 @@ using BrickScan.WpfClient.Events;
 using Newtonsoft.Json.Linq;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
+using Serilog;
 using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
@@ -45,6 +46,7 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly IEventAggregator _eventAggregator;
         private readonly IPredictedClassViewModelFactory _predictedClassViewModelFactory;
         private readonly HttpClient _httpClient;
+        private readonly ILogger _logger;
 
         public IEnumerable<PredictedClassViewModelBase>? PredictedClassViewModels { get; set; }
 
@@ -54,20 +56,22 @@ namespace BrickScan.WpfClient.ViewModels
 
         public string ImageSizeString => $"{ImageSource.PixelWidth}×{ImageSource.PixelHeight}";
 
-        public PredictionResultViewModel(Mat imageSection, 
-            Func<Task<List<PredictedDatasetClassDto>>, List<PredictedDatasetClassDto>, NotifyTask<List<PredictedDatasetClassDto>>> notifyTaskFactory, 
-            IEventAggregator eventAggregator, 
-            HttpClient httpClient, 
-            IPredictedClassViewModelFactory predictedClassViewModelFactory)
+        public PredictionResultViewModel(Mat imageSection,
+            Func<Task<List<PredictedDatasetClassDto>>, List<PredictedDatasetClassDto>, NotifyTask<List<PredictedDatasetClassDto>>> notifyTaskFactory,
+            IEventAggregator eventAggregator,
+            HttpClient httpClient,
+            IPredictedClassViewModelFactory predictedClassViewModelFactory, 
+            ILogger logger)
         {
             _eventAggregator = eventAggregator;
             _httpClient = httpClient;
             _predictedClassViewModelFactory = predictedClassViewModelFactory;
+            _logger = logger;
             ImageSource = imageSection.ToBitmapSource();
             var task = StartPredictionAsync(imageSection);
             InitializationNotifier = notifyTaskFactory.Invoke(task, new List<PredictedDatasetClassDto>());
 
-            InitializationNotifier.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args)
+            InitializationNotifier.PropertyChanged += delegate (object sender, PropertyChangedEventArgs args)
             {
                 //TODO ERROR handling here.
 
@@ -83,8 +87,30 @@ namespace BrickScan.WpfClient.ViewModels
             return predictedClases.Select(x => _predictedClassViewModelFactory.Create(x));
         }
 
+        private Mat ResizeIfTooLarge(Mat input)
+        {
+            var maxDim = Math.Max(input.Width, input.Width);
+
+            if (maxDim > 256)
+            {
+                var newWidth = (int)(input.Width * 256.0 / maxDim);
+                var newHeight = (int)(input.Height * 256.0 / maxDim);
+
+                _logger.Information("Input image {Size} was tool large, resized to {NewWidth} x {NewHeight}.", 
+                    input.Size(), 
+                    newWidth, 
+                    newHeight);
+
+                return input.Resize(new OpenCvSharp.Size(newWidth, newHeight));
+            }
+
+            return input;
+        }
+
         private async Task<List<PredictedDatasetClassDto>> StartPredictionAsync(Mat imageSection)
         {
+            imageSection = ResizeIfTooLarge(imageSection);
+
             //TODO: make code nicer, error handling for response.
             var formData = new MultipartFormDataContent();
             var content = new ByteArrayContent(imageSection.ToBytes());
@@ -101,7 +127,7 @@ namespace BrickScan.WpfClient.ViewModels
                     "Received JSON response (for request POST /images) did not contain a 'data' object.");
             }
 
-            var predictedClasses = jsonData.ToObject<List<PredictedDatasetClassDto>>() ?? 
+            var predictedClasses = jsonData.ToObject<List<PredictedDatasetClassDto>>() ??
                                    new List<PredictedDatasetClassDto>();
             return predictedClasses;
         }
