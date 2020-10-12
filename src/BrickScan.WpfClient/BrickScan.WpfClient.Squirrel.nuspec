@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>BrickScan</id>
+    <version>0.1.0.0</version>
+    <title>BrickScan</title>
+    <authors>Jens Eisenbach</authors>
+    <owners>Jens Eisenbach</owners>
+    <description>BrickScan</description>
+    <copyright>Copyright © Jens Eisenbach 2020</copyright>
+  </metadata>
+  <files>
+    <file src="*.dll" target="lib\net45\" exclude="*.pdb;*.vshost.*"/>
+    <file src="de-DE\*.dll" target="lib\net45\de-DE\" />
+    <file src="BrickScan.WpfClient.exe.config" target="lib\net45\" />
+    <file src="BrickScan.WpfClient.exe" target="lib\net45\" />
+  </files>
+</package>

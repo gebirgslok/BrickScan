@@ -23,10 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
+using Serilog;
+using Squirrel;
 using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
@@ -36,6 +40,7 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly PredictionConductorViewModel _predictionConductorViewModel;
         private readonly AddPartsConductorViewModel _addPartsConductorViewModel;
         private readonly SettingsViewModel _settingsViewModel;
+        private readonly ILogger _logger;
 
         public StatusBarViewModel StatusBarViewModel { get; }
 
@@ -51,13 +56,15 @@ namespace BrickScan.WpfClient.ViewModels
             AddPartsConductorViewModel addPartsConductorViewModel,
             SettingsViewModel settingsViewModel,
             StatusBarViewModel statusBarViewModel,
-            IUserSession userManager)
+            IUserSession userManager, 
+            ILogger logger)
         {
             _predictionConductorViewModel = predictionConductorViewModel;
             _addPartsConductorViewModel = addPartsConductorViewModel;
             _settingsViewModel = settingsViewModel;
             StatusBarViewModel = statusBarViewModel;
             UserSession = userManager;
+            _logger = logger;
             SelectedItem = MenuItems[0] as HamburgerMenuIconItem;
         }
 
@@ -97,6 +104,32 @@ namespace BrickScan.WpfClient.ViewModels
             return collection;
         }
 
+        private async Task UpdateApplication()
+        {
+            try
+            {
+                using var manager = new UpdateManager(@"E:\BrickScan_WPF_Releases");
+                var updateInfo = await manager.CheckForUpdate(true);
+
+                if (updateInfo == null)
+                {
+                    _logger.Warning($"Received no update info (Null) from {nameof(UpdateManager.CheckForUpdate)} call.");
+                    return;
+                }
+
+                _logger.Information("Received update info: {CurrentlyInstalledVersion}, {FutureEntry}, {@ReleasesToApply}.", 
+                    updateInfo.CurrentlyInstalledVersion.EntryAsString,
+                    updateInfo.FutureReleaseEntry.EntryAsString,
+                    updateInfo.ReleasesToApply.Select(x => x.EntryAsString));
+
+                await manager.ApplyReleases(updateInfo);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to update the application, received {ExceptionMessage}.", exception.Message);
+            }
+        }
+
         public void CloseApplication()
         {
             RequestClose();
@@ -124,6 +157,9 @@ namespace BrickScan.WpfClient.ViewModels
 
         public async Task OnLoaded()
         {
+#if !DEBUG
+            await UpdateApplication();
+#endif
             await UserSession.TryAutoLogOnAsync();
         }
 
