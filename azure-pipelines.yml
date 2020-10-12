@@ -8,16 +8,31 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   displayName: Publish WebApi
+  enabled: False
   inputs:
     command: publish
     publishWebProjects: True
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) -r win-x64'
     zipAfterPublish: False
+
+- task: DotNetCoreCLI@2
+  displayName: Build BrickScan WPF Client
+  enabled: False
+  inputs:
+    command: 'build'
+    projects: 'src\BrickScan.WpfClient\BrickScan.WpfClient.csproj'
+    arguments: '-c Release /p:Platform=x64'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'src\BrickScan.WpfClient\BrickScan.WpfClient.csproj'
+    arguments: '-c $(buildConfiguration) /p:Platform=x64 --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: false
 
 - task: DeleteFiles@1
   displayName: Delete Tensorflow linux-x64 runtimes
@@ -25,23 +40,14 @@ steps:
     SourceFolder: '$(Build.ArtifactStagingDirectory)\BrickScan.WebApi\runtimes\linux-x64\'
     Contents: '*'
     RemoveSourceFolder: True
-    
+
 - task: DeleteFiles@1
   displayName: Delete Tensorflow osx-x64 runtimes
   inputs:
     SourceFolder: '$(Build.ArtifactStagingDirectory)\BrickScan.WebApi\runtimes\osx-x64\'
     Contents: '*'
     RemoveSourceFolder: True
-    
-# - task: CopyFiles@2
-  # inputs:
-    # SourceFolder: '$(SYSTEM.DEFAULTWORKINGDIRECTORY)'
-    # Contents: |
-      # BricklinkSharp.Client\bin\$(BuildConfiguration)\**
-      # !**\runtimes\linux-x64\**
-      # !**\runtimes\osx-x64\**
-    # TargetFolder: '$(BUILD.ARTIFACTSTAGINGDIRECTORY)'    
-    
+       
 - task: PublishBuildArtifacts@1
   displayName: Publish artifacts
   inputs:
