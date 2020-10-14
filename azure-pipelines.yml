@@ -27,12 +27,21 @@ steps:
     arguments: '-c Release /p:Platform=x64'
 
 - task: DotNetCoreCLI@2
+  displayName: Publish BrickScan WPF Client
   inputs:
     command: 'publish'
     publishWebProjects: false
     projects: 'src\BrickScan.WpfClient\BrickScan.WpfClient.csproj'
     arguments: '-c $(buildConfiguration) /p:Platform=x64 --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: false
+
+- task: NuGetCommand@2
+  displayName: Pack WPF Client Squirrel Package
+  inputs:
+    command: 'pack'
+    packagesToPack: '$(Build.ArtifactStagingDirectory)\BrickScan.WpfClient\BrickScan.WpfClient.Squirrel.nuspec'
+    packDestination: '$(Build.ArtifactStagingDirectory)\BrickScan.WpfClient'
+    versioningScheme: 'off'
 
 - task: DeleteFiles@1
   displayName: Delete Tensorflow linux-x64 runtimes
