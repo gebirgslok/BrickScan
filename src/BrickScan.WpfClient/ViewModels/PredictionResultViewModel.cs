@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
+using BrickScan.WpfClient.Model;
 using Newtonsoft.Json.Linq;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
@@ -47,6 +48,7 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly IPredictedClassViewModelFactory _predictedClassViewModelFactory;
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
+        private readonly IUserSession _userSession;
 
         public IEnumerable<PredictedClassViewModelBase>? PredictedClassViewModels { get; set; }
 
@@ -61,12 +63,14 @@ namespace BrickScan.WpfClient.ViewModels
             IEventAggregator eventAggregator,
             HttpClient httpClient,
             IPredictedClassViewModelFactory predictedClassViewModelFactory, 
-            ILogger logger)
+            ILogger logger, 
+            IUserSession userSession)
         {
             _eventAggregator = eventAggregator;
             _httpClient = httpClient;
             _predictedClassViewModelFactory = predictedClassViewModelFactory;
             _logger = logger;
+            _userSession = userSession;
             ImageSource = imageSection.ToBitmapSource();
             var task = StartPredictionAsync(imageSection);
             InitializationNotifier = notifyTaskFactory.Invoke(task, new List<PredictedDatasetClassDto>());
@@ -87,6 +91,7 @@ namespace BrickScan.WpfClient.ViewModels
             return predictedClases.Select(x => _predictedClassViewModelFactory.Create(x));
         }
 
+        //TODO: Refactor this into (extension) method or helper class
         private Mat ResizeIfTooLarge(Mat input)
         {
             var maxDim = Math.Max(input.Width, input.Width);
@@ -111,12 +116,20 @@ namespace BrickScan.WpfClient.ViewModels
         {
             imageSection = ResizeIfTooLarge(imageSection);
 
+            using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("prediction", UriKind.Relative));
+
+            var accessToken = await _userSession.GetAccessTokenAsync();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
             //TODO: make code nicer, error handling for response.
             var formData = new MultipartFormDataContent();
             var content = new ByteArrayContent(imageSection.ToBytes());
             content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
             formData.Add(content, "image", "prediction-image.png");
-            var response = await _httpClient.PostAsync("prediction", formData);
+            request.Content = formData;
+
+            //var response = await _httpClient.PostAsync("prediction", formData); 
+            var response = await _httpClient.SendAsync(request);
             var responseString = await response.Content.ReadAsStringAsync();
             var jsonObj = JObject.Parse(responseString);
             var jsonData = jsonObj["data"];

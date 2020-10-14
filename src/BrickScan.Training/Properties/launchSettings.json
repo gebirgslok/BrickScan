@@ -2,7 +2,7 @@
   "profiles": {
     "BrickScan.Training": {
       "commandName": "Project",
-      "commandLineArgs": "train --datasetDir E:\\dataset_images\\downloaded -v -b",
+      "commandLineArgs": "train --datasetDir E:\\dataset_images\\downloaded -v -u",
       "environmentVariables": {
         "BRICKSCANTRAIN_ENVIRONMENT": "Development"
       }

@@ -34,7 +34,9 @@ using System.Windows.Media.Imaging;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Extensions;
+using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Identity.Client;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -65,6 +67,7 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly IEventAggregator _eventAggregator;
         private readonly IDialogCoordinator _dialogCoordinator;
         private readonly HttpClient _httpClient;
+        private readonly IUserSession _userSession;
         private bool _disposed;
 
         public bool UseFirstTrainImageAsDisplayImage { get; set; } = true;
@@ -100,12 +103,14 @@ namespace BrickScan.WpfClient.ViewModels
             IEventAggregator eventAggregator,
             Func<PartConfigViewModel> partConfigViewModelFactory,
             IDialogCoordinator dialogCoordinator,
-            HttpClient httpClient)
+            HttpClient httpClient, 
+            IUserSession userSession)
         {
             _eventAggregator = eventAggregator;
             _partConfigViewModelFactory = partConfigViewModelFactory;
             _dialogCoordinator = dialogCoordinator;
             _httpClient = httpClient;
+            _userSession = userSession;
             TrainImages = new BindableCollection<BitmapSource>(trainImages);
 
             PartConfigViewModels = new BindableCollection<PartConfigViewModel>
@@ -297,11 +302,16 @@ namespace BrickScan.WpfClient.ViewModels
                 datasetClass.Items.Add(item);
             }
 
-            var submitBody = JsonConvert.SerializeObject(datasetClass);
-            var response = await _httpClient.PostAsync("dataset/classes/submit",
-                new StringContent(submitBody, Encoding.UTF8, "application/json"));
+            using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("dataset/classes/submit", UriKind.Relative));
 
-            //TODO: eval response success code.
+            var accessToken = await _userSession.GetAccessTokenAsync();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var submitBody = JsonConvert.SerializeObject(datasetClass);
+            request.Content = new StringContent(submitBody, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+
+            //var response = await _httpClient.PostAsync("dataset/classes/submit",new StringContent(submitBody, Encoding.UTF8, "application/json"));
 
             await controller.CloseAsync();
 

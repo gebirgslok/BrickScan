@@ -50,59 +50,11 @@ namespace BrickScan.Library.Dataset
             _logger = logger;
         }
 
-        public async Task<PagedResult<DatasetClassTrainImagesDto>> GetClassTrainImagesListAsync(int page = 1, int pageSize = 200)
+        private async Task<DatasetClass> AddClassAsync(DatasetClassDto datasetClassDto, string createdBy, EntityStatus status)
         {
-            //TODO: VALIDATE page and pageSize
-
-            //TODO: LOG
-
-            //TODO: 
-
-            var result = new PagedResult<DatasetClassTrainImagesDto>
-            {
-                CurrentPage = page,
-                PageSize = pageSize,
-                RowCount = await _datasetDbContext.DatasetClasses.CountAsync(c =>
-                    c.Status == EntityStatus.Classified)
-            };
-
-            var pageCount = (double)result.RowCount / pageSize;
-            result.PageCount = (int)Math.Ceiling(pageCount);
-
-            var skip = (page - 1) * pageSize;
-
-            result.Results = await _datasetDbContext.DatasetClasses
-                .Where(c => c.Status == EntityStatus.Classified)
-                .Skip(skip)
-                .Take(pageSize)
-                .Select(c => new DatasetClassTrainImagesDto
-                {
-                    ClassId = c.Id,
-                    ImageUrls = c.TrainingImages.Select(img => img.Url).ToList()
-                })
-                .ToListAsync();
-
-            return result;
-        }
-
-        public async Task<DatasetClass?> GetClassByIdAsync(int id)
-        {
-            _logger.LogDebug($"Trying to find {nameof(DatasetClass)} for {nameof(id)}: {{Id}}.", id);
-            var datasetClass = await _datasetDbContext.DatasetClasses.FindAsync(id);
-
-            if (datasetClass == null)
-            {
-                _logger.LogInformation($"No {nameof(DatasetClass)} found for {nameof(id)}: {{Id}}.", id);
-
-                return null;
-            }
-
-            return datasetClass;
-        }
-
-        public async Task<DatasetClass> AddClassCandidateAsync(DatasetClassDto datasetClassDto, string createdBy)
-        {
-            _logger.LogInformation($"Adding candidate {nameof(DatasetClass)} with {{NumOfTrainImages}} train images from user = {{CreatedBy}}.",
+            _logger.LogInformation($"Adding {nameof(DatasetClass)} (status = {{Status}}) " +
+                                   "with {NumOfTrainImages} train images from user = {CreatedBy}.",
+                status,
                 datasetClassDto.TrainingImageIds.Count,
                 createdBy);
 
@@ -130,7 +82,7 @@ namespace BrickScan.Library.Dataset
             var datasetClass = new DatasetClass
             {
                 CreatedOn = DateTime.Now,
-                Status = EntityStatus.Classified, //TODO; Classified / unclassified depending on user level
+                Status = status,
                 CreatedBy = createdBy
             };
 
@@ -181,6 +133,98 @@ namespace BrickScan.Library.Dataset
                 numOfWrittenStateEntries);
 
             return datasetClass;
+        }
+
+        public async Task<PagedResult<DatasetClassTrainImagesDto>> GetClassTrainImagesListAsync(int page = 1, int pageSize = 200)
+        {
+            //TODO: VALIDATE page and pageSize
+
+            //TODO: LOG
+
+            //TODO: 
+
+            var result = new PagedResult<DatasetClassTrainImagesDto>
+            {
+                CurrentPage = page,
+                PageSize = pageSize,
+                RowCount = await _datasetDbContext.DatasetClasses.CountAsync(c =>
+                    c.Status == EntityStatus.Classified)
+            };
+
+            var pageCount = (double)result.RowCount / pageSize;
+            result.PageCount = (int)Math.Ceiling(pageCount);
+
+            var skip = (page - 1) * pageSize;
+
+            result.Results = await _datasetDbContext.DatasetClasses
+                .Where(c => c.Status == EntityStatus.Classified)
+                .Skip(skip)
+                .Take(pageSize)
+                .Select(c => new DatasetClassTrainImagesDto
+                {
+                    ClassId = c.Id,
+                    ImageUrls = c.TrainingImages.Select(img => img.Url).ToList()
+                })
+                .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<DatasetClass?> GetClassByIdAsync(int id)
+        {
+            _logger.LogDebug($"Trying to find {nameof(DatasetClass)} for {nameof(id)}: {{Id}}.", id);
+            var datasetClass = await _datasetDbContext.DatasetClasses.FindAsync(id);
+
+            if (datasetClass == null)
+            {
+                _logger.LogInformation($"No {nameof(DatasetClass)} found for {nameof(id)}: {{Id}}.", id);
+                return null;
+            }
+
+            return datasetClass;
+        }
+
+        public async Task<DatasetClass?> GetClassByNumberAndColorIdPairsAsync(List<Tuple<string, int>> numberColorIdPairs)
+        {
+            _logger.LogDebug($"Trying to find {nameof(DatasetClass)} " +
+                             $"for {nameof(numberColorIdPairs)}: {{NumberColorIdPairs}}.",
+                string.Join(",", numberColorIdPairs.Select(x => $"({x.Item1}:{x.Item2})")));
+
+            var numbers = numberColorIdPairs.Select(x => x.Item1);
+            var itemsWithMatchingNumbers = await _datasetDbContext
+                .DatasetItems
+                .Where(x => numbers.Contains(x.Number))
+                .ToListAsync();
+
+            var matches = itemsWithMatchingNumbers.Where(x => numberColorIdPairs
+                    .Any(x2 => string.Equals(x2.Item1, x.Number) && x2.Item2 == x.DatasetColorId))
+                .ToArray();
+
+            if (!matches.Any())
+            {
+                return null;
+            }
+
+            var classIds = matches.Select(x => x.DatasetClassId);
+            return await _datasetDbContext
+                .DatasetClasses
+                .FirstOrDefaultAsync(x => classIds.Contains(x.Id));
+        }
+
+        public async Task<DatasetClass> AutoMergeClassesAsync(DatasetClass existingClass, DatasetClassDto datasetClassDto)
+        {
+            //TODO: implement this
+            return await Task.FromResult(existingClass);
+        }
+
+        public async Task<DatasetClass> AddUnclassifiedClassAsync(DatasetClassDto datasetClassDto, string createdBy)
+        {
+            return await AddClassAsync(datasetClassDto, createdBy, EntityStatus.Unclassified);
+        }
+
+        public async Task<DatasetClass> AddClassifiedClassAsync(DatasetClassDto datasetClassDto, string createdBy)
+        {
+            return await AddClassAsync(datasetClassDto, createdBy, EntityStatus.Classified);
         }
 
         public async Task<ConfirmUnclassififiedImageResult> ConfirmUnclassififiedImageAsync(int imageId, int classId)

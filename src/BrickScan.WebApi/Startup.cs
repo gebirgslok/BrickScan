@@ -81,23 +81,6 @@ namespace BrickScan.WebApi
                     },
                     options => { Configuration.Bind("AzureAdB2C", options); });
 
-            //services.AddAuthentication(options =>
-            //    {
-            //        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            //        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    })
-            //    .AddJwtBearer(jwtOptions =>
-            //    {
-            //        jwtOptions.Authority = $"https://login.microsoftonline.com/tfp/{Configuration["AzureAdB2C:Tenant"]}/{Configuration["AzureAdB2C:Policy"]}/v2.0";
-            //        jwtOptions.Audience = Configuration["AzureAdB2C:ClientId"];
-            //        jwtOptions.
-            //        jwtOptions.Events = new JwtBearerEvents
-            //        {
-            //            OnAuthenticationFailed = OnAuthenticationFailedCallback
-            //        };
-            //    });
-
             services.AddControllers();
             services.AddMvcCore();
 

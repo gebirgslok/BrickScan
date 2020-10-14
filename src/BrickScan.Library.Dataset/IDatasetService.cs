@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
@@ -37,7 +38,13 @@ namespace BrickScan.Library.Dataset
 
         Task<DatasetClass?> GetClassByIdAsync(int id);
 
-        Task<DatasetClass> AddClassCandidateAsync(DatasetClassDto datasetClassDto, string createdBy);
+        Task<DatasetClass?> GetClassByNumberAndColorIdPairsAsync(List<Tuple<string, int>> numberColorIdPairs);
+
+        Task<DatasetClass> AutoMergeClassesAsync(DatasetClass existingClass, DatasetClassDto datasetClassDto);
+
+        Task<DatasetClass> AddUnclassifiedClassAsync(DatasetClassDto datasetClassDto, string createdBy);
+
+        Task<DatasetClass> AddClassifiedClassAsync(DatasetClassDto datasetClassDto, string createdBy);
 
         Task<ConfirmUnclassififiedImageResult> ConfirmUnclassififiedImageAsync(int imageId, int classId);
 
