@@ -11,6 +11,7 @@ steps:
 
 - task: NuGetCommand@2
   displayName: "Restore NuGet Packages"
+  enabled: false
   inputs:
     command: 'restore'
     restoreSolution: '**/*.sln'
@@ -46,8 +47,8 @@ steps:
 - task: CopyFiles@2 
   displayName: Copy squirrel.windows packages tool directory  
   inputs:
-    SourceFolder: 'packages'
-    Contents: 'squirrel.windows.*\tools'
+    SourceFolder: '$(UserProfile)\.nuget\packages'
+    Contents: 'squirrel.windows.*\**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)\packages'
 
 - task: DeleteFiles@1
