@@ -44,8 +44,15 @@ steps:
     packDestination: '$(Build.ArtifactStagingDirectory)\BrickScan.WpfClient'
     versioningScheme: 'off'
 
+- task: CopyFiles@2
+  displayName: Copy CI data to Artifacts Staging 
+  inputs:
+    SourceFolder: 'ci'
+    Contents: '**/*.ps1'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)\ci'
+
 - task: CopyFiles@2 
-  displayName: Copy squirrel.windows packages tool directory  
+  displayName: Copy squirrel.windows package to Artifacts Staging 
   inputs:
     SourceFolder: '$(UserProfile)\.nuget\packages'
     Contents: 'squirrel*/**'
