@@ -18,7 +18,6 @@
     <ProjectConfigFileName>App.config</ProjectConfigFileName>
   </PropertyGroup>
   <ItemGroup>
-    <!--<None Remove="BrickScan.WpfClient.Squirrel.nuspec" />-->
     <None Remove="icon.png" />
   </ItemGroup>
   <ItemGroup>

@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using Microsoft.Identity.Client;
@@ -31,7 +32,11 @@ namespace BrickScan.WpfClient.Model
 {
     static class TokenCacheHelper
     {
-        private static readonly string _cacheFilePath = System.Reflection.Assembly.GetExecutingAssembly().Location + ".msalcache.bin";
+        private static readonly string _cacheFilePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "BrickScan",
+            $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.msalcache.bin");
+
         private static readonly object _fileLock = new object();
 
         private static void BeforeAccessNotification(TokenCacheNotificationArgs args)

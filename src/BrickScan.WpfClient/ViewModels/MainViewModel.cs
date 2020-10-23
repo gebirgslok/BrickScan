@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.WpfClient.Model;
@@ -108,7 +109,8 @@ namespace BrickScan.WpfClient.ViewModels
         {
             try
             {
-                using var manager = new UpdateManager(@"E:\BrickScan_WPF_Releases");
+                var url = ConfigurationManager.AppSettings["SquirrelReleasesUrl"];
+                using var manager = new UpdateManager(url);
                 var updateInfo = await manager.CheckForUpdate(true);
 
                 if (updateInfo == null)

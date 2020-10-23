@@ -23,37 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.IO;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using BrickScan.Library.Dataset.Model;
 
-namespace BrickScan.WpfClient.Extensions
+namespace BrickScan.Library.Dataset.Extensions
 {
-    internal static class BitmapSourceExtensions
-    {
-        public static BitmapSource ClipMaxSize(this BitmapSource bitmapSource, int maxWidth, int maxHeight)
-        {
-            if (bitmapSource.PixelWidth < maxWidth && bitmapSource.PixelHeight < maxHeight)
-            {
-                return bitmapSource;
-            }
-
-            var ratioW = 1.0 * maxWidth /bitmapSource.PixelWidth;
-            var ratioH = 1.0 * maxHeight / bitmapSource.PixelHeight;
-
-            var ratio = Math.Max(ratioW, ratioH);
-            return new TransformedBitmap(bitmapSource, new ScaleTransform(ratio, ratio));
-        }
-
-        public static byte[] ToByteArray(this BitmapSource bitmapSource)
-        {
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-
-            using var stream = new MemoryStream();
-            encoder.Save(stream);
-            return stream.ToArray();
-        }
-    }
+    //internal static class DatasetClassExtensions
+    //{
+    //    public static DatasetItem FirstOrDefault(string number, s)
+    //}
 }

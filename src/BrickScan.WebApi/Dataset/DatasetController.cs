@@ -192,6 +192,7 @@ namespace BrickScan.WebApi.Dataset
             return new OkObjectResult(new ApiResponse(StatusCodes.Status200OK, data: result.Image));
         }
 
+        //TODO: XML doc
         [HttpGet("classes/{id:int}", Name = nameof(GetDatasetClass))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -217,7 +218,6 @@ namespace BrickScan.WebApi.Dataset
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
         public async Task<IActionResult> GetDatasetTrainingImagesList(int page = 1, int pageSize = 200)
         {
             _logger.LogInformation("Retrieving class train images list for page = {Page} and page size = {PageSize}.",
@@ -227,11 +227,39 @@ namespace BrickScan.WebApi.Dataset
             return new OkObjectResult(new ApiResponse(200, data: map));
         }
 
+        private async Task<IActionResult> SubmitDatasetClassForTrustedUser(DatasetClassDto datasetClassDto, ApiVersion apiVersion)
+        {
+            var numberColorIdPairs =
+                datasetClassDto.Items.Select(x => new Tuple<string, int>(x.Number, x.DatasetColorId))
+                    .ToList();
+
+            var exisiting = await _datasetService.GetClassByNumberAndColorIdPairsAsync(numberColorIdPairs);
+
+            var userName = HttpContext.User.GetUserName();
+            DatasetClass datasetClass;
+            if (exisiting != null)
+            {
+                datasetClass = await _datasetService.AddRequiresMergeClassAsync(datasetClassDto, userName);
+            }
+            else
+            {
+                datasetClass = await _datasetService.AddClassifiedClassAsync(datasetClassDto, userName);
+            }
+
+            return CreatedAtRoute(nameof(GetDatasetClass),
+                new
+                {
+                    id = datasetClass?.Id ?? -1,
+                    version = apiVersion.ToString()
+                },
+                new ApiResponse(201, data: datasetClass));
+        }
+
         //TODO: XML DOC
         [HttpPost("classes/submit")]
         [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
-        [Authorize]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SubmitDatasetClass([FromBody] DatasetClassDto datasetClassDto, ApiVersion apiVersion)
         {
             if (!Validate(datasetClassDto, out var errors))
@@ -239,38 +267,20 @@ namespace BrickScan.WebApi.Dataset
                 return new BadRequestObjectResult(new ApiResponse(400, errors: errors));
             }
 
-            //TODO: set this using the real user.
             var isTrustedUser = HttpContext.User.IsTrusted();
-            var userName = HttpContext.User.GetUserName();
 
-            DatasetClass datasetClass = null;
-            //Todo: add class entity; if exists, try auto merge, if auto merge fails, set status to merged
             if (isTrustedUser)
             {
-                var numberColorIdPairs =
-                    datasetClassDto.Items.Select(x => new Tuple<string, int>(x.Number, x.DatasetColorId))
-                        .ToList();
-
-                var exisiting = await _datasetService.GetClassByNumberAndColorIdPairsAsync(numberColorIdPairs);
-
-                if (exisiting != null)
-                {
-                    datasetClass = await _datasetService.AutoMergeClassesAsync(exisiting, datasetClassDto);
-                }
-                else
-                {
-                    datasetClass = await _datasetService.AddClassifiedClassAsync(datasetClassDto, userName);
-                }
+                return await SubmitDatasetClassForTrustedUser(datasetClassDto, apiVersion);
             }
-            else
-            {
-                datasetClass = await _datasetService.AddUnclassifiedClassAsync(datasetClassDto, userName);
-            }
+
+            var userName = HttpContext.User.GetUserName();
+            var datasetClass = await _datasetService.AddUnclassifiedClassAsync(datasetClassDto, userName);
 
             return CreatedAtRoute(nameof(GetDatasetClass),
                 new
                 {
-                    id = datasetClass?.Id ?? -1,
+                    id = datasetClass.Id,
                     version = apiVersion.ToString()
                 },
                 new ApiResponse(201, data: datasetClass));

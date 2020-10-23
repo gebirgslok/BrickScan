@@ -33,5 +33,8 @@ namespace BrickScan.WpfClient.Model
 
         [JsonProperty("extension_UserLevel")]
         public string? Level { get; set; }
+
+        [JsonProperty("oid")] 
+        public string ObjectId { get; set; } = null!;
     }
 }

@@ -29,6 +29,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
 using BrickScan.Library.Core.Dto;
+using BrickScan.Library.Core.Extensions;
 using BrickScan.Library.Dataset.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -50,6 +51,24 @@ namespace BrickScan.Library.Dataset
             _logger = logger;
         }
 
+        private async Task<Dictionary<int, DatasetImage>> FetchDatasetImages(DatasetClassDto datasetClassDto)
+        {
+            var distinctImageIds = datasetClassDto.GetAllDistinctImageIds();
+
+            _logger.LogInformation($"{nameof(DatasetClassDto)} contains these distinct IDs: {{@distinctImageIds}}.",
+                string.Join(",", distinctImageIds));
+
+            var datasetImages = await _datasetDbContext
+                .DatasetImages
+                .Where(img => distinctImageIds.Contains(img.Id))
+                .ToListAsync();
+
+            var map = datasetImages
+                .ToDictionary(img => img.Id, img => img);
+
+            return map;
+        }
+
         private async Task<DatasetClass> AddClassAsync(DatasetClassDto datasetClassDto, string createdBy, EntityStatus status)
         {
             _logger.LogInformation($"Adding {nameof(DatasetClass)} (status = {{Status}}) " +
@@ -58,26 +77,7 @@ namespace BrickScan.Library.Dataset
                 datasetClassDto.TrainingImageIds.Count,
                 createdBy);
 
-            var allImageIds = new List<int>(datasetClassDto.TrainingImageIds);
-
-            allImageIds.AddRange(datasetClassDto.DisplayImageIds);
-            allImageIds.AddRange(datasetClassDto.Items.SelectMany(i => i.DisplayImageIds));
-
-            var distinctImageIds = allImageIds
-                .Distinct()
-                .ToArray();
-
-            _logger.LogInformation($"{nameof(DatasetClass)} candidate contains these distinct IDs: {{@distinctImageIds}}.",
-                string.Join(",", distinctImageIds));
-
-            //TODO: validate that every ID passed in the datasetClassDto is contained in 'distinctImageIds'.
-
-            var datasetImages = _datasetDbContext
-                .DatasetImages
-                .Where(img => distinctImageIds.Contains(img.Id));
-
-            var map = datasetImages
-                .ToDictionary(img => img.Id, img => img);
+            var map = await FetchDatasetImages(datasetClassDto);
 
             var datasetClass = new DatasetClass
             {
@@ -117,7 +117,7 @@ namespace BrickScan.Library.Dataset
             _logger.LogTrace($"Adding {nameof(DatasetClass)} async...");
             await _datasetDbContext.DatasetClasses.AddAsync(datasetClass);
 
-            foreach (var datasetImage in datasetImages)
+            foreach (var datasetImage in map.Values)
             {
                 _logger.LogDebug($"Setting {nameof(DatasetImage.Status)} of {nameof(DatasetImage)} (ID = {{Id}}) to {{Status}}.",
                     datasetImage.Id,
@@ -213,6 +213,58 @@ namespace BrickScan.Library.Dataset
 
         public async Task<DatasetClass> AutoMergeClassesAsync(DatasetClass existingClass, DatasetClassDto datasetClassDto)
         {
+            //var map = await FetchDatasetImages(datasetClassDto);
+
+            ////Add display images (except the first train image if it is used as display image as well)
+            //foreach (var displayImageId in datasetClassDto.GetOnlyDisplayImages())
+            //{
+            //    var displayImage = map[displayImageId];
+
+            //    _logger.LogInformation($"Adding {nameof(DatasetImage)} (ID = {{ImageId}} as display image " +
+            //                           $"to {nameof(DatasetClass)} {{ClassId}}...", 
+            //        displayImage.Id, 
+            //        existingClass.Id);
+
+            //    existingClass.DisplayImages.Add(displayImage);
+            //}
+
+            ////Add train images.
+            //foreach (var trainImageId in datasetClassDto.TrainingImageIds)
+            //{
+            //    var trainImage = map[trainImageId];
+
+            //    _logger.LogInformation($"Adding {nameof(DatasetImage)} (ID = {{ImageId}} as train image " +
+            //                           $"to {nameof(DatasetClass)} {{ClassId}}...",
+            //        trainImage.Id,
+            //        existingClass.Id);
+
+            //    existingClass.TrainingImages.Add(trainImage);
+            //}
+
+            //await _datasetDbContext.Entry(existingClass)
+            //    .Collection(x => x.DatasetItems)
+            //    .LoadAsync();
+
+            ////Update items.
+            //foreach (var datasetItemDto in datasetClassDto.Items)
+            //{
+            //    var item = existingClass
+            //        .DatasetItems
+            //        .FirstOrDefault(x =>
+            //            x.DatasetColorId == datasetItemDto.DatasetColorId && x.Number == datasetItemDto.Number);
+
+            //    if (item == null)
+            //    {
+            //        continue;
+            //    }
+
+            //    if (string.IsNullOrEmpty(item.AdditionalIdentifier) &&
+            //        !string.IsNullOrEmpty(datasetItemDto.AdditionalIdentifier))
+            //    {
+            //        item.AdditionalIdentifier = datasetItemDto.AdditionalIdentifier;
+            //    }
+            //}
+
             //TODO: implement this
             return await Task.FromResult(existingClass);
         }
@@ -225,6 +277,11 @@ namespace BrickScan.Library.Dataset
         public async Task<DatasetClass> AddClassifiedClassAsync(DatasetClassDto datasetClassDto, string createdBy)
         {
             return await AddClassAsync(datasetClassDto, createdBy, EntityStatus.Classified);
+        }
+
+        public async Task<DatasetClass> AddRequiresMergeClassAsync(DatasetClassDto datasetClassDto, string createdBy)
+        {
+            return await AddClassAsync(datasetClassDto, createdBy, EntityStatus.RequiresMerge);
         }
 
         public async Task<ConfirmUnclassififiedImageResult> ConfirmUnclassififiedImageAsync(int imageId, int classId)

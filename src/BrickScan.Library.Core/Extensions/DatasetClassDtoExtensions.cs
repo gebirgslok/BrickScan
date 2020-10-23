@@ -23,37 +23,38 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.IO;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using System.Collections.Generic;
+using System.Linq;
+using BrickScan.Library.Core.Dto;
 
-namespace BrickScan.WpfClient.Extensions
+namespace BrickScan.Library.Core.Extensions
 {
-    internal static class BitmapSourceExtensions
+    public static class DatasetClassDtoExtensions
     {
-        public static BitmapSource ClipMaxSize(this BitmapSource bitmapSource, int maxWidth, int maxHeight)
+        public static IEnumerable<int> GetOnlyDisplayImages(this DatasetClassDto datasetClassDto)
         {
-            if (bitmapSource.PixelWidth < maxWidth && bitmapSource.PixelHeight < maxHeight)
+            if (!datasetClassDto.DisplayImageIds.Any())
             {
-                return bitmapSource;
+                return new int[0];
             }
 
-            var ratioW = 1.0 * maxWidth /bitmapSource.PixelWidth;
-            var ratioH = 1.0 * maxHeight / bitmapSource.PixelHeight;
-
-            var ratio = Math.Max(ratioW, ratioH);
-            return new TransformedBitmap(bitmapSource, new ScaleTransform(ratio, ratio));
+            return datasetClassDto
+                .DisplayImageIds
+                .Except(datasetClassDto.TrainingImageIds);
         }
 
-        public static byte[] ToByteArray(this BitmapSource bitmapSource)
+        public static int[] GetAllDistinctImageIds(this DatasetClassDto datasetClassDto)
         {
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+            var allImageIds = new List<int>(datasetClassDto.TrainingImageIds);
 
-            using var stream = new MemoryStream();
-            encoder.Save(stream);
-            return stream.ToArray();
+            allImageIds.AddRange(datasetClassDto.DisplayImageIds);
+            allImageIds.AddRange(datasetClassDto.Items.SelectMany(i => i.DisplayImageIds));
+
+            var distinctImageIds = allImageIds
+                .Distinct()
+                .ToArray();
+
+            return distinctImageIds;
         }
     }
 }

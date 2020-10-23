@@ -265,7 +265,20 @@ namespace BrickScan.WpfClient.ViewModels
 
             //TODO: extract to class / interface
             var datasetClass = new DatasetClassDto();
-            var trainImagesResult = await PostImagesAsync(TrainImages);
+
+            var resizedTrainImages = new List<BitmapSource>();
+
+            if (UseFirstTrainImageAsDisplayImage)
+            {
+                resizedTrainImages.Add(TrainImages.First());
+                resizedTrainImages.AddRange(TrainImages.Skip(1).Select(x => x.ClipMaxSize(256, 256)));
+            }
+            else
+            {
+                resizedTrainImages.AddRange(TrainImages.Select(x => x.ClipMaxSize(256, 256)));
+            }
+
+            var trainImagesResult = await PostImagesAsync(resizedTrainImages);
 
             datasetClass.TrainingImageIds.AddRange(trainImagesResult.DatasetImages.Select(img => img.Id));
 
