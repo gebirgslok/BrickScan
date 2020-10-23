@@ -6,20 +6,11 @@ param(
     [string]$VariableName
 )
 
-Function Write-Xml([xml]$xml)
-{
-    $StringWriter = New-Object System.IO.StringWriter;
-    $XmlWriter = New-Object System.Xml.XmlTextWriter $StringWriter;
-    $XmlWriter.Formatting = "indented";
-    $xml.WriteTo($XmlWriter);
-    $XmlWriter.Flush();
-    $StringWriter.Flush();
-    Write-Host $StringWriter.ToString();
-}
-
 Write-Host "Reading Version from nuspec file =" $NuspecFile
 
 [xml]$nuspecXml = Get-Content -Path $NuspecFile
+
+. ".\helpers.ps1"
 
 Write-Host
 Write-Host "NUSPEC Content:"

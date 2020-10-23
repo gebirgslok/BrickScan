@@ -23,7 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="BrickScan.WpfClient.Squirrel.nuspec">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
