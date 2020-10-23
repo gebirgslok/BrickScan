@@ -6,7 +6,7 @@ param(
     [string]$DestinationNuspec
 )
 
-. ".\helpers.ps1"
+. "$PSScriptRoot\helpers.ps1"
 
 Write-Host "Reading version from source assembly = $SourceAssembly"
 Write-Host "Writing retrieved version to Nuspec file = $DestinationNuspec"

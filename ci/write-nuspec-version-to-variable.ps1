@@ -10,7 +10,7 @@ Write-Host "Reading Version from nuspec file =" $NuspecFile
 
 [xml]$nuspecXml = Get-Content -Path $NuspecFile
 
-. ".\helpers.ps1"
+. "$PSScriptRoot\helpers.ps1"
 
 Write-Host
 Write-Host "NUSPEC Content:"
