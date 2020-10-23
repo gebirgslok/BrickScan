@@ -8,7 +8,7 @@
     <authors>Jens Eisenbach</authors>
     <owners>Jens Eisenbach</owners>
     <description>BrickScan</description>
-    <copyright>Copyright Ãƒâ€šÃ‚Â© Jens Eisenbach 2020</copyright>
+    <copyright>Copyright © Jens Eisenbach 2020</copyright>
   </metadata>
   <files>
     <file src="*.dll" target="lib\net45\" exclude="*.pdb;*.vshost.*" />

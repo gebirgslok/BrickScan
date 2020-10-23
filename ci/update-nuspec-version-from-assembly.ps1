@@ -15,7 +15,7 @@ Write-Host "Writing retrieved version to Nuspec file = $DestinationNuspec"
 
 Write-Host "Read assembly version = $Version"
 
-[xml]$NuspecXml = Get-Content -Path $DestinationNuspec
+[xml]$NuspecXml = Get-Content -Path $DestinationNuspec -Encoding UTF8
 
 Write-Host
 Write-Host "NUSPEC Content:"
