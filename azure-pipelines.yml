@@ -19,7 +19,7 @@ steps:
 
 - task: DotNetCoreCLI@2
   displayName: Publish WebApi
-  enabled: False
+  enabled: false
   inputs:
     command: publish
     publishWebProjects: True
@@ -48,7 +48,7 @@ steps:
   displayName: Copy squirrel.windows packages tool directory  
   inputs:
     SourceFolder: '$(UserProfile)\.nuget\packages'
-    Contents: 'squirrel*\**'
+    Contents: 'squirrel*\*\tools'
     TargetFolder: '$(Build.ArtifactStagingDirectory)\packages'
 
 - task: DeleteFiles@1
