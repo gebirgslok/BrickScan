@@ -48,7 +48,7 @@ steps:
   displayName: Copy squirrel.windows packages tool directory  
   inputs:
     SourceFolder: '$(UserProfile)\.nuget\packages'
-    Contents: 'squirrel*\*\tools'
+    Contents: 'squirrel.windows\**\tools'
     TargetFolder: '$(Build.ArtifactStagingDirectory)\packages'
 
 - task: DeleteFiles@1
