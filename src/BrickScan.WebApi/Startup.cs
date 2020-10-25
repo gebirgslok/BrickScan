@@ -59,12 +59,6 @@ namespace BrickScan.WebApi
             Environment = env;
         }
 
-        private Task OnAuthenticationFailedCallback(AuthenticationFailedContext arg)
-        {
-            //TODO: do something useful
-            return Task.CompletedTask;
-        }
-
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterType<ImageFileConverter>().As<IImageFileConverter>();
@@ -91,11 +85,18 @@ namespace BrickScan.WebApi
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
 
-            var modelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!,
-                Configuration.GetValue<string>("ModelFilePath"));
-
-            services.AddPredictionEnginePool<ModelImageInput, ModelImagePrediction>()
-                .FromFile(filePath: modelFilePath, modelName: "BrickScanModel", watchForChanges: true);
+            if (Environment.IsDevelopment())
+            {
+                var modelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!,
+                    Configuration.GetValue<string>("ModelFilePath"));
+                services.AddPredictionEnginePool<ModelImageInput, ModelImagePrediction>()
+                    .FromFile(filePath: modelFilePath, modelName: "BrickScanModel", watchForChanges: true);
+            }
+            else
+            {
+                services.AddPredictionEnginePool<ModelImageInput, ModelImagePrediction>()
+                    .FromUri(modelName: "BrickScanModel", uri: "blob storage URI", TimeSpan.FromDays(1));
+            }
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             

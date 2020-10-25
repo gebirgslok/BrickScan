@@ -88,15 +88,16 @@
             Grid.Row="0"
             Grid.Column="1"
             Visibility="{Binding Path=InitializationNotifier.IsFaulted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Label Content="{x:Static resx:Resources.RequestFailedMessage}"
-                   VerticalAlignment="Top"
-                   HorizontalAlignment="Center"
-                   FontSize="14"
-                   Foreground="OrangeRed"
-                   FontWeight="SemiBold"/>
+            <Label
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Content="{x:Static resx:Resources.RequestFailedMessage}"
+                FontSize="14"
+                FontWeight="SemiBold"
+                Foreground="OrangeRed" />
         </Grid>
 
-        <!--Success: Prediction Results-->
+        <!--  Success: Prediction Results  -->
         <Grid
             Grid.Row="0"
             Grid.Column="1"

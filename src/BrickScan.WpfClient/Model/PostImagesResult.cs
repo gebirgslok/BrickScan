@@ -32,7 +32,6 @@ namespace BrickScan.WpfClient.Model
     {
         public List<DatasetImageDto> DatasetImages { get; }
 
-        //TODO: EVAL
         public bool Success { get; }
 
         internal PostImagesResult(bool success, List<DatasetImageDto>? datasetImages)
