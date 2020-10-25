@@ -241,6 +241,24 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to edit profile. Please sign out and then sign in again and try again..
+        /// </summary>
+        public static string EditProfileFailedMessage {
+            get {
+                return ResourceManager.GetString("EditProfileFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred.
+        /// </summary>
+        public static string ErrorOccurredCaption {
+            get {
+                return ResourceManager.GetString("ErrorOccurredCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
         public static string Home {
@@ -394,6 +412,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Request failed..
+        /// </summary>
+        public static string RequestFailedMessage {
+            get {
+                return ResourceManager.GetString("RequestFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Results.
         /// </summary>
         public static string Results {
@@ -471,6 +498,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string Stop {
             get {
                 return ResourceManager.GetString("Stop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Submission failed..
+        /// </summary>
+        public static string SubmissionFailedMessage {
+            get {
+                return ResourceManager.GetString("SubmissionFailedMessage", resourceCulture);
             }
         }
         

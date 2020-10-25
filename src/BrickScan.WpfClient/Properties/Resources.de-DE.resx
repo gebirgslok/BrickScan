@@ -273,4 +273,16 @@
   <data name="WaitingForConfirmationResponse" xml:space="preserve">
     <value>Warten auf Bestätigung...</value>
   </data>
+  <data name="EditProfileFailedMessage" xml:space="preserve">
+    <value>Das Profil konnte nicht aktualisiert werden. Bitte melde dich ab und wieder an und versuche es erneut.</value>
+  </data>
+  <data name="ErrorOccurredCaption" xml:space="preserve">
+    <value>Fehler aufgetreten</value>
+  </data>
+  <data name="SubmissionFailedMessage" xml:space="preserve">
+    <value>Übertragung fehlgeschlagen.</value>
+  </data>
+  <data name="RequestFailedMessage" xml:space="preserve">
+    <value>Anfrage fehlgeschlagen.</value>
+  </data>
 </root>

@@ -23,23 +23,24 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BrickScan.WebApi.Prediction
+using System;
+using Microsoft.Identity.Client;
+using Serilog.Events;
+
+namespace BrickScan.WpfClient.Extensions
 {
-    public class ScoredLabel
+    internal static class LogLevelExtensions
     {
-        public float Score { get; }
-
-        public string Label { get; }
-
-        public ScoredLabel(string label, float score)
+        public static LogEventLevel ToSerilogLogEventLevel(this LogLevel logLevel)
         {
-            Label = label;
-            Score = score;
-        }
-
-        public override string ToString()
-        {
-            return $"{Label}:{Score:F3}";
+            return logLevel switch
+            {
+                LogLevel.Error => LogEventLevel.Error,
+                LogLevel.Warning => LogEventLevel.Warning,
+                LogLevel.Info => LogEventLevel.Information,
+                LogLevel.Verbose => LogEventLevel.Verbose,
+                _ => throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null)
+            };
         }
     }
 }

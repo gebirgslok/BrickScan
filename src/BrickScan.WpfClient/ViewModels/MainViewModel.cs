@@ -27,6 +27,8 @@ using System;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
@@ -36,12 +38,13 @@ using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    internal class MainViewModel : Screen
+    internal class MainViewModel : Screen, IHandle<OnDialogMessageBoxRequested>
     {
         private readonly PredictionConductorViewModel _predictionConductorViewModel;
         private readonly AddPartsConductorViewModel _addPartsConductorViewModel;
         private readonly SettingsViewModel _settingsViewModel;
         private readonly ILogger _logger;
+        private readonly IWindowManager _windowManager;
 
         public StatusBarViewModel StatusBarViewModel { get; }
 
@@ -58,7 +61,8 @@ namespace BrickScan.WpfClient.ViewModels
             SettingsViewModel settingsViewModel,
             StatusBarViewModel statusBarViewModel,
             IUserSession userManager, 
-            ILogger logger)
+            ILogger logger, 
+            IWindowManager windowManager)
         {
             _predictionConductorViewModel = predictionConductorViewModel;
             _addPartsConductorViewModel = addPartsConductorViewModel;
@@ -66,6 +70,7 @@ namespace BrickScan.WpfClient.ViewModels
             StatusBarViewModel = statusBarViewModel;
             UserSession = userManager;
             _logger = logger;
+            _windowManager = windowManager;
             SelectedItem = MenuItems[0] as HamburgerMenuIconItem;
         }
 
@@ -168,6 +173,11 @@ namespace BrickScan.WpfClient.ViewModels
         public async Task EditProfileAsync()
         {
             await UserSession.EditProfileAsync();
+        }
+
+        public void Handle(OnDialogMessageBoxRequested message)
+        {
+            MessageBox.Show(message.Message, message.Caption, MessageBoxButton.OK, message.Icon);
         }
     }
 }

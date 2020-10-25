@@ -23,23 +23,23 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BrickScan.WebApi.Prediction
+using System.Windows;
+
+namespace BrickScan.WpfClient.Events
 {
-    public class ScoredLabel
+    public class OnDialogMessageBoxRequested
     {
-        public float Score { get; }
+        public string Message { get; }
 
-        public string Label { get; }
+        public string Caption { get; }
 
-        public ScoredLabel(string label, float score)
+        public MessageBoxImage Icon { get; }
+
+        internal OnDialogMessageBoxRequested(string message, string caption, MessageBoxImage icon)
         {
-            Label = label;
-            Score = score;
-        }
-
-        public override string ToString()
-        {
-            return $"{Label}:{Score:F3}";
+            Message = message;
+            Caption = caption;
+            Icon = icon;
         }
     }
 }

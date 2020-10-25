@@ -253,4 +253,16 @@
   <data name="WaitingForConfirmationResponse" xml:space="preserve">
     <value>Waiting for confirmation...</value>
   </data>
+  <data name="EditProfileFailedMessage" xml:space="preserve">
+    <value>Failed to edit profile. Please sign out and then sign in again and try again.</value>
+  </data>
+  <data name="ErrorOccurredCaption" xml:space="preserve">
+    <value>An error occurred</value>
+  </data>
+  <data name="SubmissionFailedMessage" xml:space="preserve">
+    <value>Submission failed.</value>
+  </data>
+  <data name="RequestFailedMessage" xml:space="preserve">
+    <value>Request failed.</value>
+  </data>
 </root>

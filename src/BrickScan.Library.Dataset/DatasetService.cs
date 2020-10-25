@@ -137,11 +137,17 @@ namespace BrickScan.Library.Dataset
 
         public async Task<PagedResult<DatasetClassTrainImagesDto>> GetClassTrainImagesListAsync(int page = 1, int pageSize = 200)
         {
-            //TODO: VALIDATE page and pageSize
+            if (page < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(page), page, $"{nameof(page)} must be >= 1 (received {page}).");
+            }
 
-            //TODO: LOG
+            if (pageSize < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageSize), pageSize, $"{nameof(pageSize)} must be >= 1 (received {pageSize}).");
+            }
 
-            //TODO: 
+            _logger.LogInformation("Retrieving ClassTrainImagesList with {@PageOptions}...", new { page, pageSize });
 
             var result = new PagedResult<DatasetClassTrainImagesDto>
             {
@@ -156,6 +162,10 @@ namespace BrickScan.Library.Dataset
 
             var skip = (page - 1) * pageSize;
 
+            _logger.LogInformation("Computed page options: Row count = {RowCount}, page count = {PageCount}, skip = {Skip}.", 
+                result.RowCount,
+                result.PageCount, skip);
+
             result.Results = await _datasetDbContext.DatasetClasses
                 .Where(c => c.Status == EntityStatus.Classified)
                 .Skip(skip)
@@ -166,6 +176,8 @@ namespace BrickScan.Library.Dataset
                     ImageUrls = c.TrainingImages.Select(img => img.Url).ToList()
                 })
                 .ToListAsync();
+
+            _logger.LogInformation("#of received results = {NumOfResults}.", result.Results.Count);
 
             return result;
         }
@@ -209,64 +221,6 @@ namespace BrickScan.Library.Dataset
             return await _datasetDbContext
                 .DatasetClasses
                 .FirstOrDefaultAsync(x => classIds.Contains(x.Id));
-        }
-
-        public async Task<DatasetClass> AutoMergeClassesAsync(DatasetClass existingClass, DatasetClassDto datasetClassDto)
-        {
-            //var map = await FetchDatasetImages(datasetClassDto);
-
-            ////Add display images (except the first train image if it is used as display image as well)
-            //foreach (var displayImageId in datasetClassDto.GetOnlyDisplayImages())
-            //{
-            //    var displayImage = map[displayImageId];
-
-            //    _logger.LogInformation($"Adding {nameof(DatasetImage)} (ID = {{ImageId}} as display image " +
-            //                           $"to {nameof(DatasetClass)} {{ClassId}}...", 
-            //        displayImage.Id, 
-            //        existingClass.Id);
-
-            //    existingClass.DisplayImages.Add(displayImage);
-            //}
-
-            ////Add train images.
-            //foreach (var trainImageId in datasetClassDto.TrainingImageIds)
-            //{
-            //    var trainImage = map[trainImageId];
-
-            //    _logger.LogInformation($"Adding {nameof(DatasetImage)} (ID = {{ImageId}} as train image " +
-            //                           $"to {nameof(DatasetClass)} {{ClassId}}...",
-            //        trainImage.Id,
-            //        existingClass.Id);
-
-            //    existingClass.TrainingImages.Add(trainImage);
-            //}
-
-            //await _datasetDbContext.Entry(existingClass)
-            //    .Collection(x => x.DatasetItems)
-            //    .LoadAsync();
-
-            ////Update items.
-            //foreach (var datasetItemDto in datasetClassDto.Items)
-            //{
-            //    var item = existingClass
-            //        .DatasetItems
-            //        .FirstOrDefault(x =>
-            //            x.DatasetColorId == datasetItemDto.DatasetColorId && x.Number == datasetItemDto.Number);
-
-            //    if (item == null)
-            //    {
-            //        continue;
-            //    }
-
-            //    if (string.IsNullOrEmpty(item.AdditionalIdentifier) &&
-            //        !string.IsNullOrEmpty(datasetItemDto.AdditionalIdentifier))
-            //    {
-            //        item.AdditionalIdentifier = datasetItemDto.AdditionalIdentifier;
-            //    }
-            //}
-
-            //TODO: implement this
-            return await Task.FromResult(existingClass);
         }
 
         public async Task<DatasetClass> AddUnclassifiedClassAsync(DatasetClassDto datasetClassDto, string createdBy)
@@ -437,7 +391,17 @@ namespace BrickScan.Library.Dataset
 
         public async Task<DatasetColor> AddColorAsync(ColorDto color)
         {
-            //TODO: check whether the color (BL ID) already exists.
+            _logger.LogInformation("Adding {@Color} to database...", color);
+
+            var doesBricklinkIdAlreadyExist = await _datasetDbContext
+                .DatasetColors
+                .AnyAsync(x => x.BricklinkColorId == color.BricklinkColorId);
+
+            if (doesBricklinkIdAlreadyExist)
+            {
+                throw new InvalidOperationException($"An {nameof(DatasetColor)} entry with bricklink Id = {color.BricklinkColorId} already exists. " +
+                                                    "Cannot add color.");
+            }
 
             var datasetColor = new DatasetColor
             {
@@ -446,8 +410,12 @@ namespace BrickScan.Library.Dataset
                 BricklinkColorType = color.BricklinkColorType,
                 BricklinkColorHtmlCode = color.BricklinkColorHtmlCode
             };
+
             await _datasetDbContext.DatasetColors.AddAsync(datasetColor);
             await _datasetDbContext.SaveChangesAsync();
+
+            _logger.LogInformation($"Created new {nameof(DatasetColor)} entry with ID = {{Id}}.", datasetColor.Id);
+
             return datasetColor;
         }
     }

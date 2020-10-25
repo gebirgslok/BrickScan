@@ -29,6 +29,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using BrickScan.Library.Core.Dto;
+using BrickScan.WpfClient.Model;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using PropertyChanged;
@@ -56,7 +57,7 @@ namespace BrickScan.WpfClient.ViewModels
         [DependsOn(nameof(PartNo), nameof(SelectedColor))]
         public bool IsValid => !string.IsNullOrEmpty(PartNo) && SelectedColor != null;
 
-        public PartConfigViewModel(Func<Task<IEnumerable<ColorDto>>, IEnumerable<ColorDto>, NotifyTask<IEnumerable<ColorDto>>> notifierTaskFunc, 
+        public PartConfigViewModel(Func<Task<IEnumerable<ColorDto>>, IEnumerable<ColorDto>, NotifyTask<IEnumerable<ColorDto>>> notifierTaskFunc,
         HttpClient httpClient)
         {
             var task = GetColorsAsnc(httpClient);
@@ -74,6 +75,31 @@ namespace BrickScan.WpfClient.ViewModels
             }
 
             return _cachedColors;
+        }
+
+        internal SubmitDatasetItemDto ConvertToSubmitDatasetItemDto()
+        {
+            if (string.IsNullOrEmpty(PartNo))
+            {
+                throw new InvalidOperationException($"Failed to convert {nameof(PartConfigViewModel)} to {nameof(SubmitDatasetItemDto)}: " +
+                                                    $"{nameof(PartNo)} must not be Null or empty.");
+            }
+
+            if (SelectedColor == null)
+            {
+                throw new InvalidOperationException($"Failed to convert {nameof(PartConfigViewModel)} to {nameof(SubmitDatasetItemDto)}: " +
+                                                    $"{nameof(SelectedColor)} must not be Null.");
+            }
+
+
+            var images = SpecificDisplayImage == null
+                ? null
+                : new List<BitmapSource> { SpecificDisplayImage };
+
+            return new SubmitDatasetItemDto(PartNo!, SelectedColor!.Id, images)
+            {
+                AdditionalIdentifier = AdditionalIdentifier
+            };
         }
 
         public void SelectImage()

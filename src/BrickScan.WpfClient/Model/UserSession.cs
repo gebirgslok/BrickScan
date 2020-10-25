@@ -29,21 +29,23 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
+using BrickScan.WpfClient.Events;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using PropertyChanged;
 using Serilog;
 using Stylet;
+using Application = System.Windows.Application;
 
 namespace BrickScan.WpfClient.Model
 {
     internal class UserSession : PropertyChangedBase, IUserSession
     {
-        //TODO: set this correctly
-        public static string[] ApiScopes = { "https://brickscan.onmicrosoft.com/api/access_as_user" };
+        private static readonly string[] _apiScopes = { "https://brickscan.onmicrosoft.com/api/access_as_user" };
 
         private readonly ILogger _logger;
         private readonly IPublicClientApplication _publicClientApplication;
+        private readonly IEventAggregator _eventAggregator;
 
         public IdentityUser? CurrentUser { get; private set; }
 
@@ -59,10 +61,13 @@ namespace BrickScan.WpfClient.Model
         [DependsOn(nameof(CurrentUser))]
         public bool IsTrusted => string.Equals(Level, "trusted_user");
 
-        public UserSession(ILogger logger, IPublicClientApplication publicClientApplication)
+        public UserSession(ILogger logger, 
+            IPublicClientApplication publicClientApplication, 
+            IEventAggregator eventAggregator)
         {
             _logger = logger;
             _publicClientApplication = publicClientApplication;
+            _eventAggregator = eventAggregator;
             TokenCacheHelper.Bind(_publicClientApplication.UserTokenCache);
         }
 
@@ -109,7 +114,7 @@ namespace BrickScan.WpfClient.Model
 
             try
             {
-                authenticationResult = await _publicClientApplication.AcquireTokenInteractive(ApiScopes)
+                authenticationResult = await _publicClientApplication.AcquireTokenInteractive(_apiScopes)
                     .WithParentActivityOrWindow(mainWindowHandle)
                     .ExecuteAsync();
 
@@ -126,7 +131,7 @@ namespace BrickScan.WpfClient.Model
 
                     if (msalException.ErrorCode == "access_denied" && msalException.Message.StartsWith("AADB2C90118"))
                     {
-                        authenticationResult = await _publicClientApplication.AcquireTokenInteractive(ApiScopes)
+                        authenticationResult = await _publicClientApplication.AcquireTokenInteractive(_apiScopes)
                             .WithParentActivityOrWindow(mainWindowHandle)
                             .WithPrompt(Prompt.SelectAccount)
                             .WithB2CAuthority(IdentitySettings.AuthorityResetPassword)
@@ -157,7 +162,7 @@ namespace BrickScan.WpfClient.Model
                 var accounts = await _publicClientApplication.GetAccountsAsync(IdentitySettings.PolicySignUpSignIn);
 
                 var authenticationResult = await _publicClientApplication
-                    .AcquireTokenSilent(ApiScopes, accounts.FirstOrDefault())
+                    .AcquireTokenSilent(_apiScopes, accounts.FirstOrDefault())
                     .ExecuteAsync();
 
                 ProcessAuthenticationResult(authenticationResult);
@@ -199,40 +204,42 @@ namespace BrickScan.WpfClient.Model
         {
             try
             {
-                var mainWindowHandle = new WindowInteropHelper(Application.Current.MainWindow!).Handle;
-
-                var authenticationResult = await _publicClientApplication.AcquireTokenInteractive(ApiScopes)
-                    .WithParentActivityOrWindow(mainWindowHandle)
+                var authenticationResult = await _publicClientApplication.AcquireTokenInteractive(_apiScopes)
+                    .WithParentActivityOrWindow(GetMainWindowHandle())
                     .WithB2CAuthority(IdentitySettings.AuthorityEditProfile)
                     .WithPrompt(Prompt.NoPrompt)
                     .ExecuteAsync(new System.Threading.CancellationToken());
 
                 ProcessAuthenticationResult(authenticationResult);
             }
-            catch (MsalException msalException)
-            {
-                //TODO: do something useful, e.g. logging with correct log level.
-                if (msalException.ErrorCode == "authentication_cancelled")
-                {
-
-                }
-            }
             catch (Exception exception)
             {
+                if (exception is MsalException msalException)
+                {
+                    if (msalException.ErrorCode == "authentication_cancelled" || msalException.Message.StartsWith("AADB2C90091"))
+                    {
+                        _logger.Debug("'Edit Profile' cancelled by user.");
+                        return;
+                    } 
+                }
+
                 _logger.Error(exception, "Failed to edit profile of the current user. Received an unexpected exception.");
-                //TODO: handle appropriate, message box??
-                //ResultText.Text = $"Session has expired, please sign out and back in.{App.AuthorityEditProfile}{Environment.NewLine}{ex}";
+
+                var message = new OnDialogMessageBoxRequested(Properties.Resources.EditProfileFailedMessage,
+                    Properties.Resources.ErrorOccurredCaption,
+                    MessageBoxImage.Error);
+                _eventAggregator.PublishOnUIThread(message);
             }
         }
 
         public async Task<string?> GetAccessTokenAsync()
         {
             var accounts = await _publicClientApplication.GetAccountsAsync(IdentitySettings.PolicySignUpSignIn);
-            AuthenticationResult? authenticationResult = null;
+            AuthenticationResult? authenticationResult;
             try
             {
                 authenticationResult = await _publicClientApplication
-                    .AcquireTokenSilent(ApiScopes, accounts.FirstOrDefault())
+                    .AcquireTokenSilent(_apiScopes, accounts.FirstOrDefault())
                     .ExecuteAsync();
 
                 return authenticationResult.AccessToken;
@@ -243,7 +250,7 @@ namespace BrickScan.WpfClient.Model
 
                 try
                 {
-                    authenticationResult = await _publicClientApplication.AcquireTokenInteractive(ApiScopes)
+                    authenticationResult = await _publicClientApplication.AcquireTokenInteractive(_apiScopes)
                         .WithParentActivityOrWindow(GetMainWindowHandle())
                         .ExecuteAsync();
 

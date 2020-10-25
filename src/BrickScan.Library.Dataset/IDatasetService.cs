@@ -40,8 +40,6 @@ namespace BrickScan.Library.Dataset
 
         Task<DatasetClass?> GetClassByNumberAndColorIdPairsAsync(List<Tuple<string, int>> numberColorIdPairs);
 
-        Task<DatasetClass> AutoMergeClassesAsync(DatasetClass existingClass, DatasetClassDto datasetClassDto);
-
         Task<DatasetClass> AddUnclassifiedClassAsync(DatasetClassDto datasetClassDto, string createdBy);
 
         Task<DatasetClass> AddClassifiedClassAsync(DatasetClassDto datasetClassDto, string createdBy);

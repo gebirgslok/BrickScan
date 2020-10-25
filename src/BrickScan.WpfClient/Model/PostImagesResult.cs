@@ -23,23 +23,22 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BrickScan.WebApi.Prediction
+using System.Collections.Generic;
+using BrickScan.Library.Core.Dto;
+
+namespace BrickScan.WpfClient.Model
 {
-    public class ScoredLabel
+    public sealed class PostImagesResult
     {
-        public float Score { get; }
+        public List<DatasetImageDto> DatasetImages { get; }
 
-        public string Label { get; }
+        //TODO: EVAL
+        public bool Success { get; }
 
-        public ScoredLabel(string label, float score)
+        internal PostImagesResult(bool success, List<DatasetImageDto>? datasetImages)
         {
-            Label = label;
-            Score = score;
-        }
-
-        public override string ToString()
-        {
-            return $"{Label}:{Score:F3}";
+            Success = success;
+            DatasetImages = datasetImages ?? new List<DatasetImageDto>();
         }
     }
 }

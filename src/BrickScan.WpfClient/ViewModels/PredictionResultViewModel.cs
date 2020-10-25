@@ -77,9 +77,7 @@ namespace BrickScan.WpfClient.ViewModels
 
             InitializationNotifier.PropertyChanged += delegate (object sender, PropertyChangedEventArgs args)
             {
-                //TODO ERROR handling here.
-
-                if (args.PropertyName == nameof(InitializationNotifier.IsCompleted))
+                if (args.PropertyName == nameof(InitializationNotifier.IsSuccessfullyCompleted))
                 {
                     PredictedClassViewModels = BuildViewModels(InitializationNotifier.Result);
                 }

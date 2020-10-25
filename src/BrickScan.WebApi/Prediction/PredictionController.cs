@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Dataset;
@@ -30,6 +31,7 @@ using BrickScan.WebApi.Images;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace BrickScan.WebApi.Prediction
 {
@@ -42,16 +44,19 @@ namespace BrickScan.WebApi.Prediction
         private readonly IImageFileConverter _imageFileConverter;
         private readonly IImagePredictor _imagePredictor;
         private readonly IDatasetService _datasetService;
+        private readonly ILogger<PredictionController> _logger;
 
         public PredictionController(IImageFileConverter imageFileConverter,
             IImagePredictor imagePredictor,
             IConfiguration configuration,
-            IDatasetService datasetService)
+            IDatasetService datasetService,
+            ILogger<PredictionController> logger)
         {
             _imageFileConverter = imageFileConverter;
             _imagePredictor = imagePredictor;
             _configuration = configuration;
             _datasetService = datasetService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -61,25 +66,36 @@ namespace BrickScan.WebApi.Prediction
         /// <remarks>Supported image file formats: <b>JPEG</b> and <b>PNG</b>.</remarks>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)] 
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Predict([FromForm] IFormFile image)
         {
-            //TODO: Add logging.
+            _logger.LogInformation("Prediction requested, trying to convert image ({Filename}, {Bytes}, {ContentType})...",
+                image.FileName, image.Length, image.ContentType);
+
             var result = await _imageFileConverter.TryConvertAsync(image);
+
+            _logger.LogInformation("Conversion result = {@ConversionResult} after processing.", result);
 
             if (!result.Success)
             {
                 return result.ActionResult!;
             }
 
+            _logger.LogDebug("Calling Image Predictor...");
+
             var scoredLabels = _imagePredictor.Predict(result.ImageDataList.First().RawBytes);
+
+            _logger.LogInformation("Predicted {NScoredLabels} scored labels: {ScoredLabels}.",
+                scoredLabels.Count, string.Join(",", scoredLabels.Select(x => x.ToString())));
 
             var indexes = scoredLabels
                 .Select(x => int.Parse(x.Label))
                 .ToList();
+
+            _logger.LogDebug("Retrieving class data from database...");
 
             var predictedClasses = await _datasetService.GetPredictedDatasetClassesAsync(indexes);
 
@@ -93,16 +109,34 @@ namespace BrickScan.WebApi.Prediction
 
             predictedClasses.Sort(new PredictedDatasetClassDtoByScoreComparer());
 
-            var scoreT = _configuration.GetValue<double>("Prediction:AddImageScoreThreshold");
-            var minScore = predictedClasses.Min(x => x.Score);
+            _logger.LogInformation("Retrieved the following classes: {@PredictedClasses}.", predictedClasses);
 
-            if (minScore < scoreT)
+            var addImageActive = _configuration.GetValue<bool>("Prediction:AddImageActive");
+
+            if (addImageActive)
             {
-                var datasetImage = await _datasetService.AddUnclassifiedImageAsync(result.ImageDataList.First());
-                
-                foreach (var predictedClass in predictedClasses)
+                var scoreT = _configuration.GetValue<double>("Prediction:AddImageScoreThreshold");
+                var diffT = _configuration.GetValue<double>("Prediction:AddImageScoreDiffThreshold");
+                var maxScore = predictedClasses[0].Score;
+                var maxScore2 = predictedClasses.Count > 1 ? predictedClasses[1].Score : 0.0f;
+                var diff = maxScore - maxScore2;
+
+                _logger.LogInformation("Adding image is active. Checking whether to add image with the following parameters:" + 
+                                       Environment.NewLine +
+                                       "score Threshold = {ScoreT}, diff threshold = {DiffT}, " +
+                                       "max score = {MaxScore}, max score (2nd) = {MaxScore2}," +
+                                       "diff = {Diff}.", scoreT, diffT, maxScore, maxScore2, diff);
+
+                if (maxScore < scoreT || diff < diffT)
                 {
-                    predictedClass.UnconfirmedImageId = datasetImage.Id;
+                    _logger.LogInformation("Adding posted image as 'Unclassified'.");
+
+                    var datasetImage = await _datasetService.AddUnclassifiedImageAsync(result.ImageDataList.First());
+
+                    foreach (var predictedClass in predictedClasses)
+                    {
+                        predictedClass.UnconfirmedImageId = datasetImage.Id;
+                    }
                 }
             }
 

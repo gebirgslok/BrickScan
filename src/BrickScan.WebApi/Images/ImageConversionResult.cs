@@ -24,6 +24,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using BrickScan.Library.Core;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,7 @@ namespace BrickScan.WebApi.Images
 {
     public class ImageConversionResult
     {
+        [JsonIgnore]
         public IActionResult? ActionResult { get; }
 
         public bool Success { get; }

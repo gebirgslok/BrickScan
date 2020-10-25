@@ -32,6 +32,7 @@ using System.Threading;
 using System.Windows.Threading;
 using Autofac;
 using AutofacSerilogIntegration;
+using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.Model;
 using BrickScan.WpfClient.Properties;
 using BrickScan.WpfClient.ViewModels;
@@ -42,21 +43,6 @@ using VideoCapture = BrickScan.WpfClient.Model.VideoCapture;
 
 namespace BrickScan.WpfClient
 {
-    static class ContainerBuilderExtensions
-    {
-        public static void RegisterViewModels(this ContainerBuilder builder)
-        {
-            //TODO: remove this method?
-            //builder.RegisterType<PredictionConductorViewModel>().AsSelf();
-            //builder.RegisterType<AddPartsConductorViewModel>().AsSelf();
-            //builder.RegisterType<PredictionResultViewModel>().AsSelf();
-            //builder.RegisterType<PredictViewModel>().AsSelf();
-            //builder.RegisterType<MainViewModel>().AsSelf();
-            //builder.RegisterType<StatusBarViewModel>().AsSelf();
-            //builder.RegisterType<CameraSetupViewModel>().AsSelf().SingleInstance();
-        }
-    }
-
     internal class Bootstrapper : AutofacBootstrapper<MainViewModel>
     {
         private void SetupLanguage()
@@ -73,12 +59,8 @@ namespace BrickScan.WpfClient
 
         private static void LogCallback(LogLevel level, string message, bool containsPii)
         {
-            //TODO: Serilog logging.
-            //string logs = ($"{level} {message}");
-            //var builder = new StringBuilder();
-            //sb.Append(logs);
-            //File.AppendAllText(System.Reflection.Assembly.GetExecutingAssembly().Location + ".msalLogs.txt", sb.ToString());
-            //sb.Clear();
+            Log.ForContext(typeof(IPublicClientApplication))
+                .Write(level.ToSerilogLogEventLevel(), message);
         }
 
         protected override void ConfigureBootstrapper()
@@ -101,8 +83,6 @@ namespace BrickScan.WpfClient
 
         protected override void ConfigureIoC(ContainerBuilder builder)
         {
-            builder.RegisterViewModels();
-
             builder.Register(c => PublicClientApplicationBuilder.Create(IdentitySettings.ClientId)
                     .WithB2CAuthority(IdentitySettings.AuthoritySignUpSignIn)
                 .WithRedirectUri(IdentitySettings.RedirectUri)
@@ -132,6 +112,7 @@ namespace BrickScan.WpfClient
                 .AsSelf()
                 .SingleInstance();
 
+            builder.RegisterType<BrickScanApiClient>().As<IBrickScanApiClient>();
             builder.Register(c => UserConfiguration.Instance).As<IUserConfiguration>();
             builder.RegisterType<PredictedClassViewModelFactory>().As<IPredictedClassViewModelFactory>().SingleInstance();
             builder.RegisterLogger();

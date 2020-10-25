@@ -27,14 +27,17 @@ using System.Collections.Generic;
 
 namespace BrickScan.Library.Core.Dto
 {
-    public class DatasetItemDto
+    public abstract class AbstractDatasetItemDto
     {
         public string Number { get; set; } = null!;
 
         public string? AdditionalIdentifier { get; set; }
 
-        public List<int> DisplayImageIds { get; set; } = new List<int>();
-
         public int DatasetColorId { get; set; }
+    }
+
+    public class DatasetItemDto : AbstractDatasetItemDto
+    {
+        public List<int> DisplayImageIds { get; set; } = new List<int>();
     }
 }

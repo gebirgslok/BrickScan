@@ -23,23 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BrickScan.WebApi.Prediction
+using System.Configuration;
+
+namespace BrickScan.WpfClient
 {
-    public class ScoredLabel
+    internal static class AppConfig
     {
-        public float Score { get; }
-
-        public string Label { get; }
-
-        public ScoredLabel(string label, float score)
-        {
-            Label = label;
-            Score = score;
-        }
-
-        public override string ToString()
-        {
-            return $"{Label}:{Score:F3}";
-        }
+        public static int MaxNonDisplayImageWidthOrHeight =>
+            int.Parse(ConfigurationManager.AppSettings["MaxNonDisplayImageWidthOrHeight"]);
     }
 }
