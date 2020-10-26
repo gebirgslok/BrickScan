@@ -1,7 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <Version>0.1.0</Version>    
-    <FileVersin>0.1.0</FileVersin>
+    <!-- Versions will be updated by CI -->
+    <FileVersion>0.1.0.0</FileVersion>
+    <Version>0.0.0.0</Version>
+    <InformationalVersion>0.1.0</InformationalVersion>
     <Authors>Jens Eisenbach</Authors>
     <Product>BrickScan</Product>
     <Description>Native BrickScan App for Windows</Description>
@@ -101,8 +103,8 @@
   </ItemGroup>
   <Target Name="FixAL1703Warning" BeforeTargets="GenerateSatelliteAssemblies" Condition="'$(PlatformTarget)' == 'x64'">
     <Message Text="Adjusting SDK tools directory to use x64 version of AL.EXE" />
-      <PropertyGroup>
-        <TargetFrameworkSDKToolsDirectory>$(TargetFrameworkSDKToolsDirectory)\$(PlatformTarget)\</TargetFrameworkSDKToolsDirectory>
-      </PropertyGroup>
+    <PropertyGroup>
+      <TargetFrameworkSDKToolsDirectory>$(TargetFrameworkSDKToolsDirectory)\$(PlatformTarget)\</TargetFrameworkSDKToolsDirectory>
+    </PropertyGroup>
   </Target>
 </Project>
