@@ -3,17 +3,17 @@ param(
 	[Parameter(Mandatory=$True)]
 	[string]$SrcDirectory,
 	[Parameter(Mandatory=$True)]
-	[int]$BuildNumber,
+	[int]$BuildId,
 	[Parameter(Mandatory=$True)]
 	[string]$InformationalVersionSuffix
 )
 
 . "$PSScriptRoot\helpers.ps1"
 
-Function Update-CsProj-Versions([string]$CsProjPath, [int]$BuildNumber, [string]$InformationalVersionSuffix)
+Function Update-CsProj-Versions([string]$CsProjPath, [int]$BuildId, [string]$InformationalVersionSuffix)
 {
     Write-Host "Patching .csproj file = $CsProjPath"
-    Write-Host "Build number = $BuildNumber"
+    Write-Host "Build number = $BuildId"
     Write-Host "Informational version suffix = $InformationalVersionSuffix"
 
     [xml]$CsProjContent = Get-Content -Path $CsProjPath -Encoding UTF8
@@ -32,7 +32,7 @@ Function Update-CsProj-Versions([string]$CsProjPath, [int]$BuildNumber, [string]
 
     Write-Host "Major = $($Split[0]), Minor = $($Split[1]), Patch = $($Split[2])"
 
-    [string]$UpdatedFileVersion = "$($Split[0]).$($Split[1]).$($Split[2]).$BuildNumber"
+    [string]$UpdatedFileVersion = "$($Split[0]).$($Split[1]).$($Split[2]).$BuildId"
     $FileVersionNode.InnerText = $UpdatedFileVersion
 
     Write-Host "Set updated FileVersion = $UpdatedFileVersion"
@@ -64,6 +64,6 @@ $CsProjPaths = Get-ChildItem -Path $SrcDirectory -Filter "*.csproj" -Recurse | %
 
 foreach ($CsProjPath in $CsProjPaths)
 {   
-    Update-CsProj-Versions -CsProjPath $CsProjPath -BuildNumber $BuildNumber -InformationalVersionSuffix $InformationalVersionSuffix
+    Update-CsProj-Versions -CsProjPath $CsProjPath -BuildId $BuildId -InformationalVersionSuffix $InformationalVersionSuffix
     Write-Host
 }
