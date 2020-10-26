@@ -9,13 +9,11 @@ variables:
 
 steps:
 
-- task: NuGetCommand@2
-  displayName: "Restore NuGet Packages"
-  enabled: false
+- task: PowerShell@2
+  displayName: Update .csproj Versions
   inputs:
-    command: 'restore'
-    restoreSolution: '**/*.sln'
-    feedsToUse: 'select'
+    filePath: 'ci\update-csproj-versions.ps1'
+    arguments: '-SrcDirectory $(System.DefaultWorkingDirectory)\src -BuildId $(Build.BuildId) -InformationalVersionSuffix FOOBAR'
 
 - task: DotNetCoreCLI@2
   displayName: Publish WebApi
