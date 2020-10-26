@@ -1,7 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>0.1.0</Version>
-    <FileVersin>0.1.0</FileVersin>
+    <!-- Versions will be updated by CI -->
+    <FileVersion>0.1.0.0</FileVersion>
+    <Version>0.0.0.0</Version>
+    <InformationalVersion>0.1.0</InformationalVersion>
     <Authors>Jens Eisenbach</Authors>
     <Product>BrickScan for Windows</Product>
     <Description>BrickScan.WpfClient UnitTests</Description>
