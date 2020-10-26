@@ -27,14 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Model;
-using Newtonsoft.Json.Linq;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using Serilog;
@@ -46,9 +43,8 @@ namespace BrickScan.WpfClient.ViewModels
     {
         private readonly IEventAggregator _eventAggregator;
         private readonly IPredictedClassViewModelFactory _predictedClassViewModelFactory;
-        private readonly HttpClient _httpClient;
+        private readonly IBrickScanApiClient _apiClient;
         private readonly ILogger _logger;
-        private readonly IUserSession _userSession;
 
         public IEnumerable<PredictedClassViewModelBase>? PredictedClassViewModels { get; set; }
 
@@ -61,16 +57,14 @@ namespace BrickScan.WpfClient.ViewModels
         public PredictionResultViewModel(Mat imageSection,
             Func<Task<List<PredictedDatasetClassDto>>, List<PredictedDatasetClassDto>, NotifyTask<List<PredictedDatasetClassDto>>> notifyTaskFactory,
             IEventAggregator eventAggregator,
-            HttpClient httpClient,
             IPredictedClassViewModelFactory predictedClassViewModelFactory, 
-            ILogger logger, 
-            IUserSession userSession)
+            ILogger logger,
+            IBrickScanApiClient apiClient)
         {
             _eventAggregator = eventAggregator;
-            _httpClient = httpClient;
             _predictedClassViewModelFactory = predictedClassViewModelFactory;
             _logger = logger;
-            _userSession = userSession;
+            _apiClient = apiClient;
             ImageSource = imageSection.ToBitmapSource();
             var task = StartPredictionAsync(imageSection);
             InitializationNotifier = notifyTaskFactory.Invoke(task, new List<PredictedDatasetClassDto>());
@@ -89,22 +83,22 @@ namespace BrickScan.WpfClient.ViewModels
             return predictedClases.Select(x => _predictedClassViewModelFactory.Create(x));
         }
 
-        //TODO: Refactor this into (extension) method or helper class
         private Mat ResizeIfTooLarge(Mat input)
         {
-            var maxDim = Math.Max(input.Width, input.Width);
+            var maxWidthOrHeight = Math.Max(input.Width, input.Width);
+            var t = AppConfig.MaxNonDisplayImageWidthOrHeight;
 
-            if (maxDim > 256)
+            if (maxWidthOrHeight > t)
             {
-                var newWidth = (int)(input.Width * 256.0 / maxDim);
-                var newHeight = (int)(input.Height * 256.0 / maxDim);
+                var newWidth = (int)(1.0 * input.Width * t / maxWidthOrHeight);
+                var newHeight = (int)(1.0 * input.Height * t / maxWidthOrHeight);
 
                 _logger.Information("Input image {Size} was tool large, resized to {NewWidth} x {NewHeight}.", 
                     input.Size(), 
                     newWidth, 
                     newHeight);
 
-                return input.Resize(new OpenCvSharp.Size(newWidth, newHeight));
+                return input.Resize(new Size(newWidth, newHeight));
             }
 
             return input;
@@ -113,34 +107,7 @@ namespace BrickScan.WpfClient.ViewModels
         private async Task<List<PredictedDatasetClassDto>> StartPredictionAsync(Mat imageSection)
         {
             imageSection = ResizeIfTooLarge(imageSection);
-
-            using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("prediction", UriKind.Relative));
-
-            var accessToken = await _userSession.GetAccessTokenAsync();
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            //TODO: make code nicer, error handling for response.
-            var formData = new MultipartFormDataContent();
-            var content = new ByteArrayContent(imageSection.ToBytes());
-            content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
-            formData.Add(content, "image", "prediction-image.png");
-            request.Content = formData;
-
-            //var response = await _httpClient.PostAsync("prediction", formData); 
-            var response = await _httpClient.SendAsync(request);
-            var responseString = await response.Content.ReadAsStringAsync();
-            var jsonObj = JObject.Parse(responseString);
-            var jsonData = jsonObj["data"];
-
-            if (jsonData == null)
-            {
-                throw new InvalidOperationException(
-                    "Received JSON response (for request POST /images) did not contain a 'data' object.");
-            }
-
-            var predictedClasses = jsonData.ToObject<List<PredictedDatasetClassDto>>() ??
-                                   new List<PredictedDatasetClassDto>();
-            return predictedClasses;
+            return await _apiClient.PredictAsync(imageSection.ToBytes());
         }
 
         public void NavigateBack()

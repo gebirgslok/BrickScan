@@ -84,6 +84,7 @@
                 Text="{x:Static resx:Resources.RunningIdentificationMessage}" />
         </StackPanel>
 
+        <!--  Failure: Display message  -->
         <Grid
             Grid.Row="0"
             Grid.Column="1"
@@ -144,8 +145,6 @@
                 </ItemsControl>
             </ScrollViewer>
         </Grid>
-
-
 
         <Button
             Grid.Row="1"

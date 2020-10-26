@@ -132,7 +132,7 @@ namespace BrickScan.WpfClient.ViewModels
 
         public void AddToInventory()
         {
-            //TODO: FUTURE Feature.
+            //TODO FUTURE Feature.
         }
 
         public async Task ConfirmImageBelongsToClassAsync()

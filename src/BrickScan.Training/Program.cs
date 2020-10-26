@@ -85,7 +85,6 @@ namespace BrickScan.Training
         //    }
         //    catch (Exception e)
         //    {
-        //        //TODO: log exception!
         //        return new List<DatasetImageDto>();
         //    }
         //    finally
@@ -192,7 +191,6 @@ namespace BrickScan.Training
                     });
 
                 Console.ReadLine();
-                //TODO: error codes:
                 return returnCode;
             }
             catch (Exception e)

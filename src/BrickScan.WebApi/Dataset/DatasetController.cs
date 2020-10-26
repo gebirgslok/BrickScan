@@ -100,7 +100,6 @@ namespace BrickScan.WebApi.Dataset
             return !errors.Any();
         }
 
-        //TODO: XML Comment
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

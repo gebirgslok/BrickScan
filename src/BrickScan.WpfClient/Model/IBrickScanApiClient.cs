@@ -128,6 +128,7 @@ namespace BrickScan.WpfClient.Model
 
                 var accessToken = await _userSession.GetAccessTokenAsync();
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
                 var submitBody = JsonConvert.SerializeObject(datasetClass);
                 request.Content = new StringContent(submitBody, Encoding.UTF8, "application/json");
 
@@ -193,6 +194,36 @@ namespace BrickScan.WpfClient.Model
                 }
             }
         }
+
+        public async Task<List<PredictedDatasetClassDto>> PredictAsync(byte[] imageBytes)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("prediction", UriKind.Relative));
+
+            var accessToken = await _userSession.GetAccessTokenAsync();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var formData = new MultipartFormDataContent();
+            var content = new ByteArrayContent(imageBytes);
+            content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+            formData.Add(content, "image", "prediction-image.png");
+            request.Content = formData;
+
+            var response = await _httpClient.SendAsync(request);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonObj = JObject.Parse(responseString);
+            var jsonData = jsonObj["data"];
+
+            if (jsonData == null)
+            {
+                throw new InvalidOperationException(
+                    "Received JSON response (for request POST /images) did not contain a 'data' object.");
+            }
+
+            var predictedClasses = jsonData.ToObject<List<PredictedDatasetClassDto>>() ??
+                                   new List<PredictedDatasetClassDto>();
+
+            return predictedClasses;
+        }
     }
 
 
@@ -203,5 +234,7 @@ namespace BrickScan.WpfClient.Model
 
         Task<PostImagesResult> PostImagesAsync(IEnumerable<BitmapSource> images,
             string filenameTemplate = "image[{0}].png");
+
+        Task<List<PredictedDatasetClassDto>> PredictAsync(byte[] imageBytes);
     }
 }

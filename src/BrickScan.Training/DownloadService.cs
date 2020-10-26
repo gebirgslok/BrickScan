@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
@@ -41,19 +40,6 @@ namespace BrickScan.Training
 {
     public class DownloadService : IDownloadService
     {
-        class ClassesTrainImagesListResult
-        {
-            public bool Success { get; }
-
-            public List<DatasetClassTrainImagesDto> DatasetClassTrainImagesList { get; }
-
-            public ClassesTrainImagesListResult(bool success, List<DatasetClassTrainImagesDto> datasetClassTrainImagesList)
-            {
-                Success = success;
-                DatasetClassTrainImagesList = datasetClassTrainImagesList;
-            }
-        }
-
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<DownloadService> _logger;
         private readonly IConfiguration _configuration;
@@ -73,12 +59,13 @@ namespace BrickScan.Training
         private async Task<ClassesTrainImagesListResult> GetClassesTrainImagesListAsync()
         {
             var list = new List<DatasetClassTrainImagesDto>();
+
             using (var httpClient = _httpClientFactory.CreateClient())
             {
                 var baseAddress = _configuration.GetValue<string>("BrickScanApiBaseUrl");
                 httpClient.BaseAddress = new Uri(baseAddress);
 
-                bool hasNextPage = true;
+                var hasNextPage = true;
                 var page = 1;
 
                 while (hasNextPage)
@@ -109,18 +96,20 @@ namespace BrickScan.Training
             var totalNumOfImages = classTrainImagesList
                 .SelectMany(x => x.ImageUrls)
                 .Count();
+
             _logger.LogInformation("Copying {TotalNumOfImages} images from {NumberOfClasses} classes to {DestinationDirectory}.", 
                 totalNumOfImages,
                 classTrainImagesList.Count,
                 destinationDirectory);
+
             _writer.WriteLine($"Copying {totalNumOfImages} images from {classTrainImagesList.Count} classes to {destinationDirectory}.");
 
             foreach (var dto in classTrainImagesList)
             {
                 if (dto.ImageUrls == null)
                 {
-                    //TODO: LOG THIS, should not happen
-                    continue;
+                    throw new ArgumentNullException(nameof(DatasetClassTrainImagesDto), 
+                        $"DTO for {nameof(dto.ClassId)} = {dto.ClassId} does not contain any image URLs.");
                 }
 
                 var classId = dto.ClassId;
@@ -173,8 +162,8 @@ namespace BrickScan.Training
 
             if (result.Success == false)
             {
-                //TODO: write console message
-                //TODO: log
+                _writer.WriteLine("Failed to retrieve 'ClassesTrainImagesList'.");
+                _logger.LogError("");
             }
 
             await CopyImagesAsync(result.DatasetClassTrainImagesList, destinationDirectory);
