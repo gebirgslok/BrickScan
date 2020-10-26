@@ -9,14 +9,6 @@ variables:
 
 steps:
 
-- task: NuGetCommand@2
-  displayName: "Restore NuGet Packages"
-  enabled: false
-  inputs:
-    command: 'restore'
-    restoreSolution: '**/*.sln'
-    feedsToUse: 'select'
-
 - task: DotNetCoreCLI@2
   displayName: Publish WebApi
   enabled: false
@@ -24,7 +16,7 @@ steps:
     command: publish
     publishWebProjects: True
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) -r win-x64'
-    zipAfterPublish: False
+    zipAfterPublish: false
 
 - task: DotNetCoreCLI@2
   displayName: Publish BrickScan WPF Client
@@ -34,15 +26,6 @@ steps:
     projects: 'src\BrickScan.WpfClient\BrickScan.WpfClient.csproj'
     arguments: '-c $(buildConfiguration) /p:Platform=x64 --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: false
-
-- task: NuGetCommand@2
-  displayName: Pack WPF Client Squirrel Package
-  enabled: false
-  inputs:
-    command: 'pack'
-    packagesToPack: '$(Build.ArtifactStagingDirectory)\BrickScan.WpfClient\BrickScan.WpfClient.Squirrel.nuspec'
-    packDestination: '$(Build.ArtifactStagingDirectory)\BrickScan.WpfClient'
-    versioningScheme: 'off'
 
 - task: CopyFiles@2
   displayName: Copy CI data to Artifacts Staging 
