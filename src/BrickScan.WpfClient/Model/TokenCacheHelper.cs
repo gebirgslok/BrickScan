@@ -57,6 +57,9 @@ namespace BrickScan.WpfClient.Model
             {
                 lock (_fileLock)
                 {
+                    var cacheDirectory = Path.GetDirectoryName(_cacheFilePath);
+                    Directory.CreateDirectory(cacheDirectory!);
+
                     File.WriteAllBytes(_cacheFilePath,
                         ProtectedData.Protect(args.TokenCache.SerializeMsalV3(),
                             null,

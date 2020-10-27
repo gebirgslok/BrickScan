@@ -36,6 +36,7 @@ using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.Model;
 using BrickScan.WpfClient.Properties;
 using BrickScan.WpfClient.ViewModels;
+using BrickScan.WpfClient.Views;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Identity.Client;
 using Serilog;
@@ -63,6 +64,31 @@ namespace BrickScan.WpfClient
                 .Write(level.ToSerilogLogEventLevel(), message);
         }
 
+        private void RegisterViews(ContainerBuilder builder)
+        {
+            builder.RegisterAssemblyTypes(GetType().Assembly)
+                .Where(type => type.Name.EndsWith("View"))
+                .Where(type =>  !string.IsNullOrWhiteSpace(type.Namespace) && type.Namespace != null && type.Namespace.EndsWith("Views"))
+                .AsSelf()
+                .InstancePerDependency();
+        }
+
+        private static void RegisterViewModels(ContainerBuilder builder)
+        {
+            builder.RegisterType<AddPartsConductorViewModel>().AsSelf();
+            builder.RegisterType<AddPartsViewModel>().AsSelf();
+            builder.RegisterType<CameraSetupViewModel>().AsSelf().SingleInstance();
+            builder.RegisterType<EditPartMetaViewModel>().AsSelf();
+            builder.RegisterType<MainViewModel>().AsSelf();
+            builder.RegisterType<PartConfigViewModel>().AsSelf();
+            builder.RegisterType<PredictionConductorViewModel>().AsSelf();
+            builder.RegisterType<PredictionResultViewModel>().AsSelf();
+            builder.RegisterType<PredictViewModel>().AsSelf();
+            builder.RegisterType<SettingsViewModel>().AsSelf();
+            builder.RegisterType<SingleItemPredictedClassViewModel>().AsSelf();
+            builder.RegisterType<StatusBarViewModel>().AsSelf();
+        }
+
         protected override void ConfigureBootstrapper()
         {
             Log.Logger = new LoggerConfiguration()
@@ -83,6 +109,9 @@ namespace BrickScan.WpfClient
 
         protected override void ConfigureIoC(ContainerBuilder builder)
         {
+            RegisterViewModels(builder);
+            RegisterViews(builder);
+
             builder.Register(c => PublicClientApplicationBuilder.Create(IdentitySettings.ClientId)
                     .WithB2CAuthority(IdentitySettings.AuthoritySignUpSignIn)
                 .WithRedirectUri(IdentitySettings.RedirectUri)

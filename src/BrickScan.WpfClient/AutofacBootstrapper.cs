@@ -108,7 +108,6 @@ namespace BrickScan.WpfClient
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance(); 
             builder.RegisterType<MessageBoxViewModel>().As<IMessageBoxViewModel>().ExternallyOwned();
-            builder.RegisterAssemblyTypes(GetType().Assembly).ExternallyOwned();
             builder.RegisterModule<EventAggregationAutoSubscriptionModule>();
         }
 
