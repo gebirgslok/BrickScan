@@ -100,6 +100,12 @@ namespace BrickScan.WpfClient
 
         private UserConfiguration()
         {
+            if (Settings.Default.IsUpgradeRequired)
+            {
+                Settings.Default.Upgrade();
+                Settings.Default.IsUpgradeRequired = false;
+                Settings.Default.Save();
+            }
         }
 
         public void Save()
