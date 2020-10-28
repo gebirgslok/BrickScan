@@ -54,7 +54,7 @@ steps:
   inputs:
     script: |
       dotnet tool install --global dotnet-ef
-      dotnet ef migrations script -i -o $(Build.ArtifactStagingDirectory)\BrickScan.Library.Dataset\migrate.sql -p src\BrickScan.Library.Dataset\BrickScan.Library.Dataset.csproj
+      dotnet ef migrations script -i -o $(Build.ArtifactStagingDirectory)\BrickScan.Library.Dataset\migrate.sql -p src\BrickScan.WebApi\BrickScan.WebApi.csproj
 
 - task: DeleteFiles@1
   displayName: Delete Tensorflow linux-x64 runtimes
