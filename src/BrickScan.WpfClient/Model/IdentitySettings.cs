@@ -24,7 +24,6 @@
 #endregion
 
 using System.Configuration;
-using System.Globalization;
 
 namespace BrickScan.WpfClient.Model
 {
@@ -33,17 +32,18 @@ namespace BrickScan.WpfClient.Model
         private static readonly string _tenant = ConfigurationManager.AppSettings["Tenant"];
         private static readonly string _azureAdB2CHostname = ConfigurationManager.AppSettings["AzureAdB2CHostname"];
         private static readonly string _authorityBase = $"https://{_azureAdB2CHostname}/tfp/{_tenant}/";
+        private static readonly string _policyEditProfile = ConfigurationManager.AppSettings["PolicyEditProfile"];
+        private static readonly string _policyResetPassword = ConfigurationManager.AppSettings["PolicyResetPassword"];
+
         public static readonly string PolicySignUpSignIn = ConfigurationManager.AppSettings["PolicySignUpSignIn"];
-        public static readonly string PolicyEditProfile = ConfigurationManager.AppSettings["PolicyEditProfile"];
-        public static readonly string PolicyResetPassword = ConfigurationManager.AppSettings["PolicyResetPassword"];
         public static readonly string AuthoritySignUpSignIn = $"{_authorityBase}{PolicySignUpSignIn}";
-        public static readonly string AuthorityEditProfile = $"{_authorityBase}{PolicyEditProfile}";
-        public static readonly string AuthorityResetPassword = $"{_authorityBase}{PolicyResetPassword}";
+        public static readonly string AuthorityEditProfile = $"{_authorityBase}{_policyEditProfile}";
+        public static readonly string AuthorityResetPassword = $"{_authorityBase}{_policyResetPassword}";
         public static readonly string RedirectUri = ConfigurationManager.AppSettings["RedirectUri"];
         public static readonly string ClientId = ConfigurationManager.AppSettings["ClientId"];
 
-        public static readonly string Authority = string.Format(CultureInfo.InvariantCulture, 
-            "https://login.microsoftonline.com/{0}/v2.0",
-            _tenant);
+        //public static readonly string Authority = string.Format(CultureInfo.InvariantCulture, 
+        //    "https://login.microsoftonline.com/{0}/v2.0",
+        //    _tenant);
     }
 }

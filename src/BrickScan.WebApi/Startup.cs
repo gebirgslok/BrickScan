@@ -26,7 +26,6 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using Autofac;
 using BrickScan.Library.Dataset;
 using BrickScan.Library.Dataset.Model;
@@ -59,6 +58,20 @@ namespace BrickScan.WebApi
             Environment = env;
         }
 
+        private static void ConfigureDbContext(IServiceCollection services, IConfiguration configuration)
+        {
+            var connectionString = configuration.GetConnectionString("BrickScanDbConnectionString");
+
+            services.AddDbContext<DatasetDbContext>(options =>
+            {
+                options.UseSqlServer(connectionString,
+                    sqlServerOptions =>
+                    {
+                        sqlServerOptions.MigrationsAssembly(typeof(DatasetDbContext).Assembly.GetName().Name);
+                    });
+            });
+        }
+
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterType<ImageFileConverter>().As<IImageFileConverter>();
@@ -85,6 +98,8 @@ namespace BrickScan.WebApi
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
 
+            ConfigureDbContext(services, Configuration);
+
             if (Environment.IsDevelopment())
             {
                 var modelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!,
@@ -98,14 +113,6 @@ namespace BrickScan.WebApi
                     .FromUri(modelName: "BrickScanModel", uri: "blob storage URI", TimeSpan.FromDays(1));
             }
 
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
-            
-            services.AddDbContext<DatasetDbContext>(options =>
-            {
-                options.UseSqlServer(connectionString,
-                    x => x.MigrationsAssembly(typeof(DatasetDbContext).Assembly.GetName().Name));
-            });
-
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "BrickScan API", Version = "v1" });
@@ -115,7 +122,6 @@ namespace BrickScan.WebApi
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
             });
-
 
             if (Environment.IsDevelopment())
             {
