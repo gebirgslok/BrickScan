@@ -25,6 +25,7 @@
 
 using System;
 using Autofac.Extensions.DependencyInjection;
+using Azure.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -37,10 +38,11 @@ namespace BrickScan.WebApi
     {
         public static void Main(string[] args)
         {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, true)
-                .AddJsonFile($"appsettings.{env}.json", true, true)
+                .AddJsonFile($"appsettings.{environment}.json", true, true)
                 .Build();
 
             Log.Logger = new LoggerConfiguration()
@@ -69,7 +71,15 @@ namespace BrickScan.WebApi
                 .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureAppConfiguration((context, config) =>
+                    {
+                        if (context.HostingEnvironment.IsProduction())
+                        {
+                            var builtConfig = config.Build();
+                            var keyVaultUri = builtConfig["AzureKeyVault:Uri"];
+                            config.AddAzureKeyVault(new Uri(keyVaultUri), new DefaultAzureCredential());
+                        }
+                    }).UseStartup<Startup>();
                 });
         }
     }
