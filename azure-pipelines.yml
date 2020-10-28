@@ -65,6 +65,7 @@ steps:
     RemoveSourceFolder: True
 
 - task: DeleteFiles@1
+  enabled: false
   displayName: Delete Tensorflow Unused runtimes
   inputs:
     SourceFolder: '$(Build.ArtifactStagingDirectory)\BrickScan.WebApi\runtimes\'
