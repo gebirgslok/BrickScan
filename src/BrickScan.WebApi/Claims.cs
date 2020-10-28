@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Copyright (c) 2020 Jens Eisenbach
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,21 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Text.Json.Serialization;
-
-namespace BrickScan.Library.Core
+namespace BrickScan.WebApi
 {
-    public class ImageData
+    internal static class Claims
     {
-        [JsonIgnore]
-        public byte[] RawBytes { get; }
-
-        public ImageFormat Format { get; }
-
-        public ImageData(byte[] rawBytes, ImageFormat format)
-        {
-            RawBytes = rawBytes;
-            Format = format;
-        }
+        public const string UserLevel = "extension_UserLevel";
     }
 }

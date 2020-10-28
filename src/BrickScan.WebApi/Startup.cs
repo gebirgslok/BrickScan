@@ -26,7 +26,6 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using Autofac;
 using BrickScan.Library.Dataset;
 using BrickScan.Library.Dataset.Model;
@@ -74,6 +73,12 @@ namespace BrickScan.WebApi
                         Configuration.Bind("AzureAdB2C", options);
                     },
                     options => { Configuration.Bind("AzureAdB2C", options); });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Policies.RequiresTrustedUser, policy => 
+                    policy.RequireClaim(Claims.UserLevel, "trusted_user", "admin"));
+            });
 
             services.AddControllers();
             services.AddMvcCore();

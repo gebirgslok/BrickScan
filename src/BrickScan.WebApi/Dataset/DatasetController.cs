@@ -172,6 +172,7 @@ namespace BrickScan.WebApi.Dataset
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = Policies.RequiresTrustedUser)]
         public async Task<IActionResult> ConfirmDatasetImage([FromQuery] int imageId,
             [FromQuery] int classId)
         {

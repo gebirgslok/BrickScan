@@ -285,4 +285,19 @@
   <data name="RequestFailedMessage" xml:space="preserve">
     <value>Anfrage fehlgeschlagen.</value>
   </data>
+  <data name="CheckingForUpdates" xml:space="preserve">
+    <value>Prüfe auf Updates</value>
+  </data>
+  <data name="ApplyingUpdate" xml:space="preserve">
+    <value>Führe Update aus</value>
+  </data>
+  <data name="Reboot" xml:space="preserve">
+    <value>Neustart</value>
+  </data>
+  <data name="RebootRequired" xml:space="preserve">
+    <value>Neustart erforderlich</value>
+  </data>
+  <data name="RebootRequiredMessage" xml:space="preserve">
+    <value>Es ist ein Neustart erforderlich um das Update fertigzustellen.</value>
+  </data>
 </root>

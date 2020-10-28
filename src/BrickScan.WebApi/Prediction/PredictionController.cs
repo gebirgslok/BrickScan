@@ -66,11 +66,12 @@ namespace BrickScan.WebApi.Prediction
         /// <remarks>Supported image file formats: <b>JPEG</b> and <b>PNG</b>.</remarks>
         /// <returns></returns>
         [HttpPost]
+        [ActionName("predict")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Predict([FromForm] IFormFile image)
+        public async Task<IActionResult> PredictAsync([FromForm] IFormFile image)
         {
             _logger.LogInformation("Prediction requested, trying to convert image ({Filename}, {Bytes}, {ContentType})...",
                 image.FileName, image.Length, image.ContentType);
@@ -111,9 +112,9 @@ namespace BrickScan.WebApi.Prediction
 
             _logger.LogInformation("Retrieved the following classes: {@PredictedClasses}.", predictedClasses);
 
-            var addImageActive = _configuration.GetValue<bool>("Prediction:AddImageActive");
+            var keepImagesWithLowScores = _configuration.GetValue<bool>("Prediction:KeepImagesWithLowScores");
 
-            if (addImageActive)
+            if (keepImagesWithLowScores)
             {
                 var scoreT = _configuration.GetValue<double>("Prediction:AddImageScoreThreshold");
                 var diffT = _configuration.GetValue<double>("Prediction:AddImageScoreDiffThreshold");
@@ -121,9 +122,9 @@ namespace BrickScan.WebApi.Prediction
                 var maxScore2 = predictedClasses.Count > 1 ? predictedClasses[1].Score : 0.0f;
                 var diff = maxScore - maxScore2;
 
-                _logger.LogInformation("Adding image is active. Checking whether to add image with the following parameters:" + 
+                _logger.LogInformation("KeepImagesWithLowScores is enabled. Checking whether to add image with the following parameters:" + 
                                        Environment.NewLine +
-                                       "score Threshold = {ScoreT}, diff threshold = {DiffT}, " +
+                                       "score threshold = {ScoreT}, diff threshold = {DiffT}, " +
                                        "max score = {MaxScore}, max score (2nd) = {MaxScore2}," +
                                        "diff = {Diff}.", scoreT, diffT, maxScore, maxScore2, diff);
 

@@ -31,6 +31,7 @@ using System.Windows;
 using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.IconPacks;
 using Serilog;
 using Squirrel;
@@ -44,7 +45,8 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly AddPartsConductorViewModel _addPartsConductorViewModel;
         private readonly SettingsViewModel _settingsViewModel;
         private readonly ILogger _logger;
-        private readonly IWindowManager _windowManager;
+        private readonly IEventAggregator _eventAggregator;
+        private readonly IDialogCoordinator _dialogCoordinator;
 
         public StatusBarViewModel StatusBarViewModel { get; }
 
@@ -60,9 +62,10 @@ namespace BrickScan.WpfClient.ViewModels
             AddPartsConductorViewModel addPartsConductorViewModel,
             SettingsViewModel settingsViewModel,
             StatusBarViewModel statusBarViewModel,
-            IUserSession userManager, 
-            ILogger logger, 
-            IWindowManager windowManager)
+            IUserSession userManager,
+            ILogger logger,
+            IEventAggregator eventAggregator,
+            IDialogCoordinator dialogCoordinator)
         {
             _predictionConductorViewModel = predictionConductorViewModel;
             _addPartsConductorViewModel = addPartsConductorViewModel;
@@ -70,7 +73,8 @@ namespace BrickScan.WpfClient.ViewModels
             StatusBarViewModel = statusBarViewModel;
             UserSession = userManager;
             _logger = logger;
-            _windowManager = windowManager;
+            _eventAggregator = eventAggregator;
+            _dialogCoordinator = dialogCoordinator;
             SelectedItem = MenuItems[0] as HamburgerMenuIconItem;
         }
 
@@ -114,7 +118,10 @@ namespace BrickScan.WpfClient.ViewModels
         {
             try
             {
+                StatusBarViewModel.Message = Properties.Resources.CheckingForUpdates;
+
                 var url = ConfigurationManager.AppSettings["SquirrelReleasesUrl"];
+
                 using var manager = new UpdateManager(url);
                 var updateInfo = await manager.CheckForUpdate(true);
 
@@ -124,12 +131,25 @@ namespace BrickScan.WpfClient.ViewModels
                     return;
                 }
 
-                _logger.Information("Received update info: {CurrentlyInstalledVersion}, {FutureEntry}, {@ReleasesToApply}.", 
+                _logger.Information("Received update info: {CurrentlyInstalledVersion}, {FutureEntry}, {@ReleasesToApply}.",
                     updateInfo.CurrentlyInstalledVersion.EntryAsString,
                     updateInfo.FutureReleaseEntry.EntryAsString,
                     updateInfo.ReleasesToApply.Select(x => x.EntryAsString));
 
+                StatusBarViewModel.Message = Properties.Resources.ApplyingUpdate;
+
                 await manager.ApplyReleases(updateInfo);
+
+                StatusBarViewModel.Clear();
+
+                var settings = new MetroDialogSettings { AffirmativeButtonText = Properties.Resources.Reboot };
+
+                await _dialogCoordinator.ShowMessageAsync(this, 
+                    Properties.Resources.RebootRequired,
+                    Properties.Resources.RebootRequiredMessage, 
+                    settings: settings);
+
+                UpdateManager.RestartApp();
             }
             catch (Exception exception)
             {

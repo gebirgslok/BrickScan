@@ -115,6 +115,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Applying update.
+        /// </summary>
+        public static string ApplyingUpdate {
+            get {
+                return ResourceManager.GetString("ApplyingUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
         public static string Back {
@@ -165,6 +174,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string CannotConnectCameraTooltip {
             get {
                 return ResourceManager.GetString("CannotConnectCameraTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking for updates.
+        /// </summary>
+        public static string CheckingForUpdates {
+            get {
+                return ResourceManager.GetString("CheckingForUpdates", resourceCulture);
             }
         }
         
@@ -399,6 +417,33 @@ namespace BrickScan.WpfClient.Properties {
         public static string ProgramVersion {
             get {
                 return ResourceManager.GetString("ProgramVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reboot.
+        /// </summary>
+        public static string Reboot {
+            get {
+                return ResourceManager.GetString("Reboot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reboot required.
+        /// </summary>
+        public static string RebootRequired {
+            get {
+                return ResourceManager.GetString("RebootRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A reboot is required to finish the update of the application..
+        /// </summary>
+        public static string RebootRequiredMessage {
+            get {
+                return ResourceManager.GetString("RebootRequiredMessage", resourceCulture);
             }
         }
         

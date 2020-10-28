@@ -34,7 +34,7 @@ using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    public class StatusBarViewModel : PropertyChangedBase, IHandle<OnStatusBarMessageChanged>
+    public class StatusBarViewModel : PropertyChangedBase
     {
         public string AssemblyFileVersion { get; }
 
@@ -43,23 +43,27 @@ namespace BrickScan.WpfClient.ViewModels
         [DependsOn(nameof(Message))]
         public bool HasMessage => !string.IsNullOrEmpty(Message);
 
-        public StatusBarViewModel(IEventAggregator eventAggregator)
+        public StatusBarViewModel()
         {
-            eventAggregator.Subscribe(this);
             var assembly = Assembly.GetExecutingAssembly();
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             AssemblyFileVersion = $"{Properties.Resources.ProgramVersion}: {fileVersionInfo.FileVersion}";
         }
 
-        public void Handle(OnStatusBarMessageChanged message)
+        internal void Clear()
         {
-            if (message.ClearMessage)
-            {
-                Message = null;
-                return;
-            }
-
-            Message = message.Message;
+            Message = null;
         }
+
+        //public void Handle(OnStatusBarMessageChanged message)
+        //{
+        //    if (message.ClearMessage)
+        //    {
+        //        Message = null;
+        //        return;
+        //    }
+
+        //    Message = message.Message;
+        //}
     }
 }
