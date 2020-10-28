@@ -19,11 +19,11 @@ steps:
 
 - task: DotNetCoreCLI@2
   displayName: Publish WebApi
-  enabled: false
   inputs:
     command: publish
-    publishWebProjects: True
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) -r win-x64'
+    publishWebProjects: false
+    projects: 'src\BrickScan.WebApi\BrickScan.WebApi.csproj'
+    arguments: '-c $(buildConfiguration) /p:Platform=x64 --output $(Build.ArtifactStagingDirectory) -r linux-x64'
     zipAfterPublish: false
 
 - task: DotNetCoreCLI@2
@@ -58,16 +58,21 @@ steps:
 
 - task: DeleteFiles@1
   displayName: Delete Tensorflow linux-x64 runtimes
+  enabled: false
   inputs:
     SourceFolder: 'runtimes\linux-x64\'
     Contents: '*'
     RemoveSourceFolder: True
 
 - task: DeleteFiles@1
-  displayName: Delete Tensorflow osx-x64 runtimes
+  displayName: Delete Tensorflow Unused runtimes
   inputs:
-    SourceFolder: '$(Build.ArtifactStagingDirectory)\BrickScan.WebApi\runtimes\osx-x64\'
-    Contents: '*'
+    SourceFolder: '$(Build.ArtifactStagingDirectory)\BrickScan.WebApi\runtimes\'
+    Contents: |
+      osx*\**
+      unix*\**
+      win*\**
+
     RemoveSourceFolder: True
        
 - task: PublishBuildArtifacts@1
