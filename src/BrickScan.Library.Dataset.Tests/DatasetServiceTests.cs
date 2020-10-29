@@ -23,18 +23,36 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using BrickScan.Library.Core.Dto;
+using FakeItEasy;
+using Microsoft.Extensions.Logging;
+using Xunit;
 
-[assembly:InternalsVisibleTo("BrickScan.Library.Dataset.Tests")]
-
-namespace BrickScan.Library.Dataset
+namespace BrickScan.Library.Dataset.Tests
 {
-    internal static class StorageServiceHelper
+    public class DatasetServiceTests : SqliteTestBase
     {
-        public static string GenerateImageFilename()
+        [Fact]
+        public async Task AddColorAsync_WithNotExistingColor()
         {
-            return $"img-{DateTime.UtcNow:yyyyMMdd_HHmmssfff}-{Guid.NewGuid().ToString().Substring(0, 4)}";
+            var service = new DatasetService(A.Dummy<IStorageService>(), CreateContext(), A.Dummy<ILogger<DatasetService>>());
+
+            var dto = new ColorDto
+            {
+                BricklinkColorHtmlCode = "FFFFFFFF",
+                BricklinkColorId = 1,
+                BricklinkColorName = "Red",
+                BricklinkColorType = "Solid"
+            };
+
+            var color = await service.AddColorAsync(dto);
+
+            Assert.NotEqual(0, color.Id);
+            Assert.Equal(dto.BricklinkColorId, color.BricklinkColorId);
+            Assert.Equal(dto.BricklinkColorHtmlCode, color.BricklinkColorHtmlCode);
+            Assert.Equal(dto.BricklinkColorName, color.BricklinkColorName);
+            Assert.Equal(dto.BricklinkColorType, color.BricklinkColorType);
         }
     }
 }

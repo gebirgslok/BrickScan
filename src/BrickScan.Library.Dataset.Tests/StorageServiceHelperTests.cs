@@ -23,12 +23,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.Library.Dataset.Model;
+using Xunit;
 
-namespace BrickScan.Library.Dataset.Extensions
+namespace BrickScan.Library.Dataset.Tests
 {
-    //internal static class DatasetClassExtensions
-    //{
-    //    public static DatasetItem FirstOrDefault(string number, s)
-    //}
+    public class StorageServiceHelperTests
+    {
+        [Fact]
+        public void GenerateImageFilename_ReturnsExpectedFormat()
+        {
+            var filename = StorageServiceHelper.GenerateImageFilename();
+            Assert.Matches(@"^img-\d{8}_\d{9}-[a-f0-9]{4}$", filename);
+        }
+    }
 }
