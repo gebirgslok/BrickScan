@@ -6,7 +6,7 @@
     <InformationalVersion>0.1.0</InformationalVersion>
     <Authors>Jens Eisenbach</Authors>
     <Product>BrickScan</Product>
-    <Description>XUnit Test project for BrickScan.Library.Dataset</Description>
+    <Description>Unit Test project for BrickScan.Library.Dataset</Description>
     <Copyright>Copyright © Jens Eisenbach 2020</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Title>BrickScan.Library.Dataset.Tests</Title>

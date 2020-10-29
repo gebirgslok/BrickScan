@@ -140,12 +140,12 @@ namespace BrickScan.WebApi
             }
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DatasetDbContext context)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
+            //if (env.IsDevelopment())
+            //{
                 app.UseDeveloperExceptionPage();
-            }
+            //}
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>
@@ -154,7 +154,7 @@ namespace BrickScan.WebApi
             });
 
             //TODO: do this in Pipeline
-            context.Database.Migrate();
+            //context.Database.Migrate();
 
             app.UseHttpsRedirection();
             app.UseSerilogRequestLogging();
