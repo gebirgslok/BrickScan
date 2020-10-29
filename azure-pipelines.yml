@@ -18,6 +18,14 @@ steps:
     arguments: '-SrcDirectory $(System.DefaultWorkingDirectory)\src -BuildId $(Build.BuildId) -InformationalVersionSuffix FOOBAR'
 
 - task: DotNetCoreCLI@2
+  displayName: Run Unit Tests
+  inputs:
+    command: 'test'
+    projects: |
+      **\*Tests.dll
+      !**\obj\**
+
+- task: DotNetCoreCLI@2
   displayName: Publish WebApi
   inputs:
     command: publish
