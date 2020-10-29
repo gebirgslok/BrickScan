@@ -18,14 +18,6 @@ steps:
     arguments: '-SrcDirectory $(System.DefaultWorkingDirectory)\src -BuildId $(Build.BuildId) -InformationalVersionSuffix FOOBAR'
 
 - task: DotNetCoreCLI@2
-  displayName: Run Unit Tests
-  inputs:
-    command: 'test'
-    projects: |
-      **\*Tests.dll
-      !**\obj\**
-
-- task: DotNetCoreCLI@2
   displayName: Publish WebApi
   inputs:
     command: publish
@@ -43,6 +35,13 @@ steps:
     arguments: '-c $(buildConfiguration) /p:Platform=x64 --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: false
 
+- task: DotNetCoreCLI@2
+  displayName: Run Unit Tests
+  inputs:
+    command: 'test'
+    projects: 'src\BrickScan.Library.Dataset.Tests\BrickScan.Library.Dataset.Tests.csproj'
+    arguments: '-c $(buildConfiguration) --no-restore'
+    
 - task: CopyFiles@2
   displayName: Copy CI data to Artifacts Staging 
   inputs:
