@@ -15,7 +15,7 @@ steps:
   displayName: Update .csproj Versions
   inputs:
     filePath: 'ci\update-csproj-versions.ps1'
-    arguments: '-SrcDirectory $(System.DefaultWorkingDirectory)\src -BuildId $(Build.BuildId) -InformationalVersionSuffix "$(Date:yyyyMMdd+HHmmss)""'
+    arguments: '-SrcDirectory $(System.DefaultWorkingDirectory)\src -BuildId $(Build.BuildId) -InformationalVersionSuffix "$(Date:yyyyMMdd+HHmmss)"'
 
 - task: DotNetCoreCLI@2
   displayName: Publish WebApi
