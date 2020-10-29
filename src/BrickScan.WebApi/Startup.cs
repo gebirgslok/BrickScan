@@ -58,6 +58,23 @@ namespace BrickScan.WebApi
             Environment = env;
         }
 
+        private static void ConfigurePredictionEngine(IServiceCollection services, IConfiguration configuration,
+            bool isDevelopment)
+        {
+            if (isDevelopment)
+            {
+                var modelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!,
+                    configuration["MlModel:Uri"]);
+                services.AddPredictionEnginePool<ModelImageInput, ModelImagePrediction>()
+                    .FromFile(filePath: modelFilePath, modelName: configuration["MlModel:ModelName"], watchForChanges: true);
+            }
+            else
+            {
+                services.AddPredictionEnginePool<ModelImageInput, ModelImagePrediction>()
+                    .FromUri(modelName: configuration["MlModel:ModelName"], uri: configuration["MlModel:Uri"], TimeSpan.FromDays(1));
+            }
+        }
+
         private static void ConfigureDbContext(IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("BrickScanDbConnectionString");
@@ -105,19 +122,7 @@ namespace BrickScan.WebApi
             });
 
             ConfigureDbContext(services, Configuration);
-
-            if (Environment.IsDevelopment())
-            {
-                var modelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!,
-                    Configuration.GetValue<string>("ModelFilePath"));
-                services.AddPredictionEnginePool<ModelImageInput, ModelImagePrediction>()
-                    .FromFile(filePath: modelFilePath, modelName: "BrickScanModel", watchForChanges: true);
-            }
-            else
-            {
-                services.AddPredictionEnginePool<ModelImageInput, ModelImagePrediction>()
-                    .FromUri(modelName: "BrickScanModel", uri: "blob storage URI", TimeSpan.FromDays(1));
-            }
+            ConfigurePredictionEngine(services, Configuration, Environment.IsDevelopment());
 
             services.AddSwaggerGen(options =>
             {
