@@ -15,7 +15,7 @@ steps:
   displayName: Update .csproj Versions
   inputs:
     filePath: 'ci\update-csproj-versions.ps1'
-    arguments: '-SrcDirectory $(System.DefaultWorkingDirectory)\src -BuildId $(Build.BuildId) -InformationalVersionSuffix FOOBAR'
+    arguments: '-SrcDirectory $(System.DefaultWorkingDirectory)\src -BuildId $(Build.BuildId) -InformationalVersionSuffix $(Date:yyyyMMdd+HHmmss)'
 
 - task: DotNetCoreCLI@2
   displayName: Publish WebApi
@@ -40,7 +40,7 @@ steps:
   inputs:
     command: 'test'
     projects: 'src\BrickScan.Library.Dataset.Tests\BrickScan.Library.Dataset.Tests.csproj'
-    arguments: '-c $(buildConfiguration) --no-restore'
+    arguments: '-c $(buildConfiguration)'
     
 - task: CopyFiles@2
   displayName: Copy CI data to Artifacts Staging 
