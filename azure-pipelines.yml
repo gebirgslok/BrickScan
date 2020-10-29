@@ -8,6 +8,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  semVerDate: $(Get-Date -Format yyyyMMdd+HHmmss)
 
 steps:
 
@@ -15,7 +16,7 @@ steps:
   displayName: Update .csproj Versions
   inputs:
     filePath: 'ci\update-csproj-versions.ps1'
-    arguments: '-SrcDirectory $(System.DefaultWorkingDirectory)\src -BuildId $(Build.BuildId) -InformationalVersionSuffix "$(Date:yyyyMMddHHmmss)"'
+    arguments: '-SrcDirectory $(System.DefaultWorkingDirectory)\src -BuildId $(Build.BuildId) -InformationalVersionSuffix "$(semVerDate)"'
 
 - task: DotNetCoreCLI@2
   displayName: Publish WebApi
