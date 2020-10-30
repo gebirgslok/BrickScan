@@ -56,7 +56,7 @@ namespace BrickScan.WebApi.Images
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Route("{imageId}")]
-        public async Task<IActionResult> Delete([FromRoute] int imageId)
+        public async Task<IActionResult> DeleteImageAsync([FromRoute] int imageId)
         {
             await _datasetService.DeleteImageAsync(imageId);
             return NoContent();
@@ -73,7 +73,7 @@ namespace BrickScan.WebApi.Images
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Route("{imageId}")]
-        public async Task<IActionResult> Get([FromRoute] int imageId)
+        public async Task<IActionResult> GetImageByIdAsync([FromRoute] int imageId)
         {
             var datasetImage = await _datasetService.FindImageByIdAsync(imageId);
 
@@ -86,15 +86,28 @@ namespace BrickScan.WebApi.Images
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-        public async Task<IActionResult> Post([FromForm] IEnumerable<IFormFile> images)
+        public async Task<IActionResult> UploadImagesAsync([FromForm] IEnumerable<IFormFile> images)
         {
             var conversionResult = await _imageFileConverter.TryConvertManyAsync(images.ToList());
-            var datasetImages = await _datasetService.AddUnclassifiedImagesAsync(conversionResult.ImageDataList.ToList());
 
-            return Ok(new ApiResponse(200, data: datasetImages));
+            if (!conversionResult.Success)
+            {
+                return conversionResult.ActionResult!;
+            }
+
+            var imageDataList = conversionResult.ImageDataList!.ToArray();
+
+            if (imageDataList.Length == 1)
+            {
+                var datasetImage = await _datasetService.AddUnclassifiedImageAsync(imageDataList.First());
+                return Ok(new ApiResponse(StatusCodes.Status201Created, data: new[] { datasetImage }));
+            }
+
+            var datasetImages = await _datasetService.AddUnclassifiedImagesAsync(conversionResult.ImageDataList.ToList());
+            return Ok(new ApiResponse(StatusCodes.Status201Created, data: datasetImages));
         }
     }
 }

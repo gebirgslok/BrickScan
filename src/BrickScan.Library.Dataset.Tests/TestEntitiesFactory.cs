@@ -23,30 +23,21 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Xunit;
+using System;
+using BrickScan.Library.Dataset.Model;
 
 namespace BrickScan.Library.Dataset.Tests
 {
-    public class StorageServiceHelperTests
+    internal static class TestEntitiesFactory
     {
-        [Theory]
-        [InlineData("jpeg")]
-        [InlineData("jpg")]
-        [InlineData("png")]
-        [InlineData(".jpeg")]
-        [InlineData(".jpg")]
-        [InlineData(".png")]
-        public void GenerateImageFilename_WithExtension_ReturnsExpectedFormat(string extension)
+        internal static DatasetImage CreateRandomDatasetImage(string? url = null, EntityStatus status = EntityStatus.Unclassified)
         {
-            var filename = StorageServiceHelper.GenerateImageFilename(extension);
-            Assert.Matches(@$"^img-\d{{8}}\d{{9}}-[a-f0-9]{{4}}.{extension.TrimStart('.')}$", filename);
-        }
-
-        [Fact]
-        public void GenerateImageFilename_ReturnsExpectedFormat()
-        {
-            var filename = StorageServiceHelper.GenerateImageFilename();
-            Assert.Matches(@"^img-\d{8}\d{9}-[a-f0-9]{4}$", filename);
+            return new DatasetImage
+            {
+                CreatedOn = DateTime.Now,
+                Status = status,
+                Url = string.IsNullOrEmpty(url) ? "https://www.foo.bar/img1.png" : url
+            };
         }
     }
 }

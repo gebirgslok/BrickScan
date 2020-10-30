@@ -25,79 +25,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace BrickScan.Library.Dataset
 {
-    public class LocalFileStorageService : IStorageService
-    {
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<LocalFileStorageService> _logger;
-        
-        public LocalFileStorageService(IConfiguration configuration, 
-            ILogger<LocalFileStorageService> logger)
-        {
-            _configuration = configuration;
-            _logger = logger;
-        }
-
-        public Task<Uri> StoreImageAsync(ImageData imageData)
-        {
-            var filenameWithoutExtension = StorageServiceHelper.GenerateImageFilename();
-            var ext = imageData.Format.ToFileExtension();
-
-            _logger.LogDebug("Generated new filename {Filename}, received extension {Extension}.", 
-                filenameWithoutExtension, ext);
-
-            var directory = _configuration.GetValue<string>("StorageService:Directory");
-            Directory.CreateDirectory(directory);
-            var filePath = Path.Combine(directory, Path.ChangeExtension(filenameWithoutExtension, ext));
-
-            _logger.LogDebug("Writing image ({RawBytes}b, format = {Format}) to file {FilePath}...", 
-                imageData.RawBytes.Length, imageData.Format, filePath);
-
-            File.WriteAllBytes(filePath, imageData.RawBytes);
-
-            _logger.LogDebug("Successfully wrote {RawBytes}b to file {FilePath}.", imageData.RawBytes.Length, filePath);
-
-            return Task.FromResult(new Uri(filePath));
-        }
-
-        public async Task<List<Uri>> StoreImagesAsync(List<ImageData> imageDataList)
-        {
-            var uris = new List<Uri>();
-
-            foreach (var imageData in imageDataList)
-            {
-                var uri = await StoreImageAsync(imageData);
-                uris.Add(uri);
-            }
-
-            return uris;
-        }
-    }
-
-    public class AzureBlobStorageService : IStorageService
-    {
-        public Task<Uri> StoreImageAsync(ImageData imageData)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Uri>> StoreImagesAsync(List<ImageData> imageDataList)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public interface IStorageService
     {
         Task<Uri> StoreImageAsync(ImageData imageDatá);
 
         Task<List<Uri>> StoreImagesAsync(List<ImageData> imageDataList);
+
+        Task DeleteImageAsync(Uri imageUri);
     }
 }

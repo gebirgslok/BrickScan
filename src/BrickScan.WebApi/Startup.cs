@@ -58,6 +58,18 @@ namespace BrickScan.WebApi
             Environment = env;
         }
 
+        private static void ConfigureStorageService(IServiceCollection services, bool isDevelopment)
+        {
+            if (isDevelopment)
+            {
+                services.AddTransient<IStorageService, LocalFileStorageService>();
+            }
+            else
+            {
+                services.AddTransient<IStorageService, AzureBlobStorageService>();
+            }
+        }
+
         private static void ConfigurePredictionEngine(IServiceCollection services, IConfiguration configuration,
             bool isDevelopment)
         {
@@ -103,7 +115,11 @@ namespace BrickScan.WebApi
                     {
                         Configuration.Bind("AzureAdB2C", options);
                     },
-                    options => { Configuration.Bind("AzureAdB2C", options); });
+                    options =>
+                    {
+                        Configuration.Bind("AzureAdB2C", options); 
+
+                    });
 
             services.AddAuthorization(options =>
             {
@@ -122,7 +138,9 @@ namespace BrickScan.WebApi
             });
 
             ConfigureDbContext(services, Configuration);
-            ConfigurePredictionEngine(services, Configuration, Environment.IsDevelopment());
+            var isDevelopment = Environment.IsDevelopment();
+            ConfigurePredictionEngine(services, Configuration, isDevelopment);
+            ConfigureStorageService(services, isDevelopment);
 
             services.AddSwaggerGen(options =>
             {
@@ -133,16 +151,6 @@ namespace BrickScan.WebApi
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
             });
-
-            if (Environment.IsDevelopment())
-            {
-                services.AddTransient<IStorageService, LocalFileStorageService>();
-            }
-            else
-            {
-                //TODO: Blob storage
-                services.AddTransient<IStorageService, LocalFileStorageService>();
-            }
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

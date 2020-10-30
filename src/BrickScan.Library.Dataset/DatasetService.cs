@@ -274,6 +274,7 @@ namespace BrickScan.Library.Dataset
                     imageData.RawBytes.Length, imageData.Format);
 
             var uri = await _storageService.StoreImageAsync(imageData);
+
             var datasetImage = new DatasetImage
             {
                 CreatedOn = DateTime.UtcNow,
@@ -358,10 +359,28 @@ namespace BrickScan.Library.Dataset
 
         public async Task DeleteImageAsync(int imageId)
         {
-            var datasetImage = new DatasetImage { Id = imageId };
-            _datasetDbContext.DatasetImages.Attach(datasetImage);
+            _logger.LogDebug($"Attempting to delete {nameof(DatasetImage)} with ID = {{Id}}.", imageId);
+
+            var datasetImage = await _datasetDbContext.DatasetImages.FirstOrDefaultAsync(x => x.Id == imageId);
+
+            if (datasetImage == null)
+            {
+                _logger.LogWarning($"No {nameof(DatasetImage)} found for ID = {{Id}}. No data deleted.", imageId);
+                return;
+            }
+
+            var uri = new Uri(datasetImage.Url);
+
+            _logger.LogInformation($"Removed {nameof(DatasetImage)} with URL = {{Url}} and ID = {{Id}}.", datasetImage.Url, datasetImage.Id);
+
             _datasetDbContext.DatasetImages.Remove(datasetImage);
             await _datasetDbContext.SaveChangesAsync();
+
+            _logger.LogDebug("Deleting image from {ImageUri}...", uri);
+
+            await _storageService.DeleteImageAsync(uri);
+
+            _logger.LogDebug("Successfully deleted image from {ImageUri}...", uri);
         }
 
         public async Task<List<PredictedDatasetClassDto>> GetPredictedDatasetClassesAsync(List<int> datasetClassesIndexes)

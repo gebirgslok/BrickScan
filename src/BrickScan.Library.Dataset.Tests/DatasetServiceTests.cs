@@ -23,8 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Core.Dto;
+using BrickScan.Library.Dataset.Model;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -33,10 +36,38 @@ namespace BrickScan.Library.Dataset.Tests
 {
     public class DatasetServiceTests : SqliteTestBase
     {
+        private DatasetService CreateDatasetService(IStorageService? storageService = null, 
+            DatasetDbContext? dbContext = null, 
+            ILogger<DatasetService>? logger = null)
+        {
+            return new DatasetService(storageService ?? A.Dummy<IStorageService>(),
+                dbContext ?? CreateContext(),
+                logger ?? A.Dummy<ILogger<DatasetService>>());
+        }
+
+        [Fact]
+        public async Task DeleteImageAsync_ImageIdExists()
+        {
+            var storage = A.Fake<IStorageService>();
+            var context = CreateContext();
+
+            var image = TestEntitiesFactory.CreateRandomDatasetImage();
+            await context.DatasetImages.AddAsync(image);
+            await context.SaveChangesAsync();
+
+            var service = CreateDatasetService(dbContext: context, storageService: storage);
+
+            await service.DeleteImageAsync(image.Id);
+
+            Assert.Equal(0, context.DatasetImages.Count());
+            A.CallTo(() => storage.DeleteImageAsync(A<Uri>.That.Matches(x => x.AbsoluteUri == image.Url)))
+                .MustHaveHappenedOnceExactly();
+        }
+
         [Fact]
         public async Task AddColorAsync_WithNotExistingColor()
         {
-            var service = new DatasetService(A.Dummy<IStorageService>(), CreateContext(), A.Dummy<ILogger<DatasetService>>());
+            var service = CreateDatasetService();
 
             var dto = new ColorDto
             {

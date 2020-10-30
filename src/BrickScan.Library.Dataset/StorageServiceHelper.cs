@@ -26,15 +26,20 @@
 using System;
 using System.Runtime.CompilerServices;
 
-[assembly:InternalsVisibleTo("BrickScan.Library.Dataset.Tests")]
+[assembly: InternalsVisibleTo("BrickScan.Library.Dataset.Tests")]
 
 namespace BrickScan.Library.Dataset
 {
     internal static class StorageServiceHelper
     {
+        public static string GenerateImageFilename(string extension)
+        {
+            return $"{GenerateImageFilename()}.{extension.TrimStart('.')}";
+        }
+
         public static string GenerateImageFilename()
         {
-            return $"img-{DateTime.UtcNow:yyyyMMdd_HHmmssfff}-{Guid.NewGuid().ToString().Substring(0, 4)}";
+            return $"img-{DateTime.UtcNow:yyyyMMddHHmmssfff}-{Guid.NewGuid().ToString().Substring(0, 4)}";
         }
     }
 }

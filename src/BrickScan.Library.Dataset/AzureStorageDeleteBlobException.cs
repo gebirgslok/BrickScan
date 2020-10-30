@@ -23,30 +23,32 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Xunit;
+using System;
+using System.Runtime.Serialization;
 
-namespace BrickScan.Library.Dataset.Tests
+namespace BrickScan.Library.Dataset
 {
-    public class StorageServiceHelperTests
+    public class AzureStorageDeleteBlobException : Exception
     {
-        [Theory]
-        [InlineData("jpeg")]
-        [InlineData("jpg")]
-        [InlineData("png")]
-        [InlineData(".jpeg")]
-        [InlineData(".jpg")]
-        [InlineData(".png")]
-        public void GenerateImageFilename_WithExtension_ReturnsExpectedFormat(string extension)
+        public string? BlobName { get; }
+
+        public int StatusCode { get; }
+
+        public string? ReasonPhrase { get; }
+
+        public override string Message =>
+            $"Failed to delete blob (name = {BlobName ?? "Null"}) from storage container.{Environment.NewLine}" +
+            $"Received status code = {StatusCode} ({ReasonPhrase}).";
+
+        internal AzureStorageDeleteBlobException(string blobName, int statusCode, string reasonPhrase)
         {
-            var filename = StorageServiceHelper.GenerateImageFilename(extension);
-            Assert.Matches(@$"^img-\d{{8}}\d{{9}}-[a-f0-9]{{4}}.{extension.TrimStart('.')}$", filename);
+            BlobName = blobName;
+            StatusCode = statusCode;
+            ReasonPhrase = reasonPhrase;
         }
 
-        [Fact]
-        public void GenerateImageFilename_ReturnsExpectedFormat()
+        private AzureStorageDeleteBlobException(SerializationInfo serializationInfo, StreamingContext context) : base(serializationInfo, context)
         {
-            var filename = StorageServiceHelper.GenerateImageFilename();
-            Assert.Matches(@"^img-\d{8}\d{9}-[a-f0-9]{4}$", filename);
         }
     }
 }
