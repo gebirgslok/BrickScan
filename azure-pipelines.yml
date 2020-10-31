@@ -24,7 +24,7 @@ steps:
     command: publish
     publishWebProjects: false
     projects: 'src\BrickScan.WebApi\BrickScan.WebApi.csproj'
-    arguments: '-c $(buildConfiguration) /p:Platform=x64 --output $(Build.ArtifactStagingDirectory) -r linux-x64'
+    arguments: '-c $(buildConfiguration) /p:Platform=x64 --output $(Build.ArtifactStagingDirectory) -r linux-x64 -p:PublishTrimmed=true -p:PublishSingleFile=true'
     zipAfterPublish: true
 
 - task: DotNetCoreCLI@2
