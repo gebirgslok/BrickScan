@@ -271,13 +271,13 @@
   <data name="ApplyingUpdate" xml:space="preserve">
     <value>Applying update</value>
   </data>
-  <data name="Reboot" xml:space="preserve">
-    <value>Reboot</value>
+  <data name="Restart" xml:space="preserve">
+    <value>Restart</value>
   </data>
-  <data name="RebootRequired" xml:space="preserve">
-    <value>Reboot required</value>
+  <data name="RestartRequired" xml:space="preserve">
+    <value>Restart required</value>
   </data>
-  <data name="RebootRequiredMessage" xml:space="preserve">
-    <value>A reboot is required to finish the update of the application.</value>
+  <data name="RestartRequiredMessage" xml:space="preserve">
+    <value>A restart of the application is required to finish the update.</value>
   </data>
 </root>

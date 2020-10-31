@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -91,6 +92,43 @@ namespace BrickScan.Training
             return new ClassesTrainImagesListResult(true, list);
         }
 
+        private void DownloadFileIfNotExist(Uri uri, string classBasePath)
+        {
+            var filename = Path.GetFileName(uri.LocalPath);
+            var destinationFilePath = Path.Combine(classBasePath, filename);
+
+            if (!File.Exists(destinationFilePath))
+            {
+                using (var webClient = new WebClient())
+                {
+                    webClient.DownloadFile(uri, destinationFilePath);
+                }
+
+                _writer.WriteLineIfVerbose($"Downloaded and saved image to {destinationFilePath}.");
+            }
+            else
+            {
+                _writer.WriteLineIfVerbose($"Image {filename} already exists, nothing downloaded.");
+            }
+        }
+
+        private void CopyFileIfNotExist(Uri uri, string classBasePath)
+        {
+            var sourceFilePath = uri.AbsolutePath;
+            var filename = Path.GetFileName(sourceFilePath);
+            var destinationFilePath = Path.Combine(classBasePath, filename);
+
+            if (!File.Exists(destinationFilePath))
+            {
+                File.Copy(sourceFilePath, destinationFilePath, true);
+                _writer.WriteLineIfVerbose($"Copied image to {destinationFilePath}.");
+            }
+            else
+            {
+                _writer.WriteLineIfVerbose($"Image {filename} already exists, nothing copied.");
+            }
+        }
+
         private async Task CopyImagesAsync(List<DatasetClassTrainImagesDto> classTrainImagesList, string destinationDirectory)
         {
             var totalNumOfImages = classTrainImagesList
@@ -127,25 +165,11 @@ namespace BrickScan.Training
 
                         if (uri.IsFile || uri.IsUnc)
                         {
-                            var sourceFilePath = uri.AbsolutePath;
-                            var filename = Path.GetFileName(sourceFilePath);
-                            var destinationFilePath = Path.Combine(classBasePath, filename);
-
-                            if (!File.Exists(destinationFilePath))
-                            {
-                                File.Copy(sourceFilePath, destinationFilePath, true);
-                                _writer.WriteLineIfVerbose($"Copied image to {destinationFilePath}.");
-                                _logger.LogTrace("Set {Directory} for {ClassId}.", classBasePath, classId);
-                            }
-                            else
-                            {
-                                _writer.WriteLineIfVerbose($"Image {filename} already exists, nothing copied.");
-                            }
+                            CopyFileIfNotExist(uri, classBasePath);
                         }
                         else
                         {
-                            //Download image.
-
+                            DownloadFileIfNotExist(uri, classBasePath);
                         }
                     }
                     catch (Exception e)

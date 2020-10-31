@@ -24,20 +24,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using BrickScan.Library.Core.Dto;
 using CommandLine;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Serilog;
 
 namespace BrickScan.Training
@@ -52,7 +44,7 @@ namespace BrickScan.Training
     static class Program
     {
         //private static async Task<List<DatasetImageDto>> PostImagesAsync(HttpClient client,
-        //    IEnumerable<string> images, 
+        //    IEnumerable<string> images,
         //    string filenameTemplate = "image[{0}].png")
         //{
         //    var disposableContents = new List<ByteArrayContent>();
@@ -96,24 +88,30 @@ namespace BrickScan.Training
         //    }
         //}
 
-        //TODO: keep this snippet.
+        ////TODO: keep this snippet.
         //static async Task Temp()
         //{
-        //    var httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:5001/api/v1/") };
-        //    const string dir = @"D:\Baygent\Pictures\BrickScan"; 
+        //    var httpClient = new HttpClient { BaseAddress = new Uri("https://brickscan-app-prod-001.azurewebsites.net/api/v1/") };
+        //    const string dir = @"D:\Baygent\Pictures\BrickScan";
+        //    const string destDir = @"E:\dataset_images_downloaded";
 
         //    var response = await httpClient.GetAsync("dataset/colors");
         //    var responseString = await response.Content.ReadAsStringAsync();
         //    var json = JObject.Parse(responseString);
         //    var colors = json["data"]?.ToObject<List<ColorDto>>() ?? new List<ColorDto>();
 
-        //    var dirs = Directory.EnumerateDirectories(dir);
+        //    var dirs = Directory.EnumerateDirectories(dir).ToArray();
 
+        //    var count = 0;
         //    foreach (var d in dirs)
         //    {
         //        var partNoColor = Path.GetFileName(d).Split('_');
         //        var partNo = partNoColor[0];
         //        var colorStr = partNoColor[1];
+
+        //        Console.WriteLine($"Adding item #{++count} / {dirs.Length}:");
+        //        Console.WriteLine($"Adding item (part no = {partNo} / color = {colorStr}...");
+
         //        var color = (PartColor)Enum.Parse(typeof(PartColor), colorStr, true);
         //        var blColorId = (int)color;
 
@@ -137,11 +135,34 @@ namespace BrickScan.Training
         //        var submitBody = JsonConvert.SerializeObject(datasetClass);
         //        var postResponse = await httpClient.PostAsync("dataset/classes/submit",
         //            new StringContent(submitBody, Encoding.UTF8, "application/json"));
+        //        var classResponseString = await postResponse.Content.ReadAsStringAsync();
+        //        var classJson = JObject.Parse(classResponseString);
+        //        var classId = classJson["data"]["id"].ToObject<int>();
+
+        //        Console.WriteLine($"Successfully added class (ID = {classId}) to Azure...");
+
+        //        for (var index = 0; index < trainImages.Count; index++)
+        //        {
+        //            DatasetImageDto datasetImageDto = trainImages[index];
+        //            var filename = Path.GetFileName(new Uri(datasetImageDto.Url).LocalPath);
+        //            var destClassDir = Path.Combine(destDir, classId.ToString("D6"));
+        //            var destFilename = Path.Combine(destClassDir, filename);
+        //            var file = files[index];
+
+        //            Directory.CreateDirectory(destClassDir);
+        //            File.Copy(file, destFilename, true);
+        //        }
+
+        //        Console.WriteLine("Copied all images to local drive.");
+        //        Console.WriteLine();
         //    }
         //}
 
         static int Main(string[] args)
         {
+            //await Temp();
+            //return 0;
+
             var builder = new ConfigurationBuilder();
             BuildConfiguration(builder);
 

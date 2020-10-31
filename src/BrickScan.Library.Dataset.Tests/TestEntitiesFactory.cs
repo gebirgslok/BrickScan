@@ -30,6 +30,22 @@ namespace BrickScan.Library.Dataset.Tests
 {
     internal static class TestEntitiesFactory
     {
+        internal static DatasetImage[] CreateRandomDatasetImages(int count, string? urlTemplate = null,
+            EntityStatus status = EntityStatus.Unclassified)
+        {
+            var images = new DatasetImage[count];
+
+            for (var i = 0; i < count; i++)
+            {
+                images[i] = CreateRandomDatasetImage(string.IsNullOrEmpty(urlTemplate)
+                        ? $"https://www.foo.bar/img{i}.png"
+                        : string.Format(urlTemplate, i), 
+                    status);
+            }
+
+            return images;
+        }
+
         internal static DatasetImage CreateRandomDatasetImage(string? url = null, EntityStatus status = EntityStatus.Unclassified)
         {
             return new DatasetImage
@@ -37,6 +53,17 @@ namespace BrickScan.Library.Dataset.Tests
                 CreatedOn = DateTime.Now,
                 Status = status,
                 Url = string.IsNullOrEmpty(url) ? "https://www.foo.bar/img1.png" : url
+            };
+        }
+
+        internal static DatasetColor CreateRandomDatasetColor()
+        {
+            return new DatasetColor
+            {
+                BricklinkColorName = "White",
+                BricklinkColorType = "Solid",
+                BricklinkColorHtmlCode = "#ffffffff",
+                BricklinkColorId = 1
             };
         }
     }

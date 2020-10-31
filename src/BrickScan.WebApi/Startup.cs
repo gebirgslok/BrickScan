@@ -66,7 +66,7 @@ namespace BrickScan.WebApi
             }
             else
             {
-                services.AddTransient<IStorageService, AzureBlobStorageService>();
+                services.AddSingleton<IStorageService, AzureBlobStorageService>();
             }
         }
 

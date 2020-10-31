@@ -291,13 +291,13 @@
   <data name="ApplyingUpdate" xml:space="preserve">
     <value>Führe Update aus</value>
   </data>
-  <data name="Reboot" xml:space="preserve">
+  <data name="Restart" xml:space="preserve">
     <value>Neustart</value>
   </data>
-  <data name="RebootRequired" xml:space="preserve">
+  <data name="RestartRequired" xml:space="preserve">
     <value>Neustart erforderlich</value>
   </data>
-  <data name="RebootRequiredMessage" xml:space="preserve">
-    <value>Es ist ein Neustart erforderlich um das Update fertigzustellen.</value>
+  <data name="RestartRequiredMessage" xml:space="preserve">
+    <value>Es ist ein Neustart des Programms erforderlich um das Update fertigzustellen.</value>
   </data>
 </root>

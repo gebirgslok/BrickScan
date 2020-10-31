@@ -216,7 +216,7 @@ namespace BrickScan.WpfClient.Model
             {
                 if (exception is MsalException msalException)
                 {
-                    if (msalException.ErrorCode == "authentication_cancelled" || msalException.Message.StartsWith("AADB2C90091"))
+                    if (msalException.ErrorCode == "authentication_canceled" || msalException.Message.StartsWith("AADB2C90091"))
                     {
                         _logger.Debug("'Edit Profile' cancelled by user.");
                         return;

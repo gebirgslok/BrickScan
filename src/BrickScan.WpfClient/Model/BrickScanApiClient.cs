@@ -136,7 +136,11 @@ namespace BrickScan.WpfClient.Model
 
                 if (response.StatusCode != HttpStatusCode.Created)
                 {
-                    _logger.Error("Received unexpected status code from submit dataset request. Response = {@Response}.", response);
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    _logger.Error("Received unexpected status code from submit dataset request. Response = {@Response}." + 
+                                  Environment.NewLine + 
+                                  "Content: {Content}", responseContent);
+
                     return false;
                 }
 
@@ -209,6 +213,12 @@ namespace BrickScan.WpfClient.Model
             request.Content = formData;
 
             var response = await _httpClient.SendAsync(request);
+
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                //TODO: HANDLE INTERNAL SERVER ERR
+            }
+
             var responseString = await response.Content.ReadAsStringAsync();
             var jsonObj = JObject.Parse(responseString);
             var jsonData = jsonObj["data"];

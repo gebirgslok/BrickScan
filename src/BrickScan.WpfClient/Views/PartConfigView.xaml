@@ -68,6 +68,7 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     mah:TextBoxHelper.Watermark="{x:Static resx:Resources.PartNo}"
+                    MaxLength="64"
                     Text="{Binding Path=PartNo, Mode=TwoWay, TargetNullValue={x:Null}, UpdateSourceTrigger=PropertyChanged}" />
                 <ComboBox
                     Grid.Row="1"
@@ -117,6 +118,7 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     mah:TextBoxHelper.Watermark="'back', 'top', etc."
+                    MaxLength="20"
                     Text="{Binding Path=AdditionalIdentifier, Mode=TwoWay, TargetNullValue={x:Null}}" />
             </Grid>
 

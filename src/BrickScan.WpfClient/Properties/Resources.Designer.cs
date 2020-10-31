@@ -421,33 +421,6 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reboot.
-        /// </summary>
-        public static string Reboot {
-            get {
-                return ResourceManager.GetString("Reboot", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reboot required.
-        /// </summary>
-        public static string RebootRequired {
-            get {
-                return ResourceManager.GetString("RebootRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A reboot is required to finish the update of the application..
-        /// </summary>
-        public static string RebootRequiredMessage {
-            get {
-                return ResourceManager.GetString("RebootRequiredMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Remove.
         /// </summary>
         public static string Remove {
@@ -462,6 +435,33 @@ namespace BrickScan.WpfClient.Properties {
         public static string RequestFailedMessage {
             get {
                 return ResourceManager.GetString("RequestFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart.
+        /// </summary>
+        public static string Restart {
+            get {
+                return ResourceManager.GetString("Restart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart required.
+        /// </summary>
+        public static string RestartRequired {
+            get {
+                return ResourceManager.GetString("RestartRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A restart of the application is required to finish the update..
+        /// </summary>
+        public static string RestartRequiredMessage {
+            get {
+                return ResourceManager.GetString("RestartRequiredMessage", resourceCulture);
             }
         }
         

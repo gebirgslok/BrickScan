@@ -142,11 +142,11 @@ namespace BrickScan.WpfClient.ViewModels
 
                 StatusBarViewModel.Clear();
 
-                var settings = new MetroDialogSettings { AffirmativeButtonText = Properties.Resources.Reboot };
+                var settings = new MetroDialogSettings { AffirmativeButtonText = Properties.Resources.Restart };
 
                 await _dialogCoordinator.ShowMessageAsync(this, 
-                    Properties.Resources.RebootRequired,
-                    Properties.Resources.RebootRequiredMessage, 
+                    Properties.Resources.RestartRequired,
+                    Properties.Resources.RestartRequiredMessage, 
                     settings: settings);
 
                 UpdateManager.RestartApp();
@@ -154,6 +154,7 @@ namespace BrickScan.WpfClient.ViewModels
             catch (Exception exception)
             {
                 _logger.Error(exception, "Failed to update the application, received {ExceptionMessage}.", exception.Message);
+                StatusBarViewModel.Clear();
             }
         }
 

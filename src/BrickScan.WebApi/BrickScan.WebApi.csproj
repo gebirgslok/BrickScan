@@ -17,11 +17,11 @@
     <AssemblyName>BrickScan.WebApi</AssemblyName>
     <RepositoryUrl>https://github.com/gebirgslok/BrickScan</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
     <DocumentationFile>bin\$(PlatformTarget)\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
     <Platforms>x64</Platforms>
+    <UserSecretsId>6ca06119-4802-4ffb-b4eb-97d6fec63c52</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
@@ -33,13 +33,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.ML" Version="1.5.1" />
+    <PackageReference Include="Microsoft.Extensions.ML" Version="1.5.2" />
     <PackageReference Include="Microsoft.Identity.Web" Version="1.1.0" />
-    <PackageReference Include="Microsoft.ML" Version="1.5.1" />
-    <PackageReference Include="Microsoft.ML.ImageAnalytics" Version="1.5.1" />
-    <PackageReference Include="Microsoft.ML.TensorFlow" Version="1.5.1" />
-    <PackageReference Include="Microsoft.ML.Vision" Version="1.5.1" />
-    <PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.3.0" />
+    <PackageReference Include="Microsoft.ML" Version="1.5.2" />
+    <PackageReference Include="Microsoft.ML.ImageAnalytics" Version="1.5.2" />
+    <PackageReference Include="Microsoft.ML.TensorFlow" Version="1.5.2" />
+    <PackageReference Include="Microsoft.ML.Vision" Version="1.5.2" />
+    <PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.3.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.1.3" />
     <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.1" />
