@@ -37,6 +37,8 @@
     Title="{x:Static resx:Resources.BrickScan}"
     Width="1200"
     Height="800"
+    MaxWidth="{x:Static SystemParameters.PrimaryScreenWidth}"
+    MaxHeight="{x:Static SystemParameters.PrimaryScreenHeight}"
     mah:DialogParticipation.Register="{Binding Path=.}"
     Icon="pack://application:,,,/BrickScan.WpfClient;component/icon.png"
     Loaded="{s:Action OnLoaded}"
