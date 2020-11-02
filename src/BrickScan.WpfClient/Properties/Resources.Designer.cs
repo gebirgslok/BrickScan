@@ -421,6 +421,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Quickstart guide.
+        /// </summary>
+        public static string QuickstartGuide {
+            get {
+                return ResourceManager.GetString("QuickstartGuide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove.
         /// </summary>
         public static string Remove {

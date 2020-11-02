@@ -53,27 +53,45 @@
             Stroke="LightGreen"
             StrokeThickness="3" />
 
-        <Button
-            Grid.Row="2"
-            Margin="10"
-            Padding="10,5,10,5"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            mah:ControlsHelper.ContentCharacterCasing="Upper"
-            Command="{s:Action Predict}"
-            IsEnabled="{Binding Path=HasValidFrame, Mode=OneWay}"
-            Style="{DynamicResource MahApps.Styles.Button.Square.Accent}">
-            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                <iconPacks:PackIconMaterial
-                    Width="20"
-                    Height="20"
-                    Margin="5,1,5,1"
-                    Kind="Magnify" />
-                <TextBlock
-                    Margin="1,1,5,1"
-                    VerticalAlignment="Center"
-                    Text="{x:Static resx:Resources.Identify}" />
-            </StackPanel>
-        </Button>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="1"
+                Margin="10"
+                Padding="10,5,10,5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                mah:ControlsHelper.ContentCharacterCasing="Upper"
+                Command="{s:Action Predict}"
+                IsEnabled="{Binding Path=HasValidFrame, Mode=OneWay}"
+                Style="{DynamicResource MahApps.Styles.Button.Square.Accent}">
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial
+                        Width="20"
+                        Height="20"
+                        Margin="5,1,5,1"
+                        Kind="Magnify" />
+                    <TextBlock
+                        Margin="1,1,5,1"
+                        VerticalAlignment="Center"
+                        Text="{x:Static resx:Resources.Identify}" />
+                </StackPanel>
+            </Button>
+            <TextBlock
+                Grid.Column="2"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontSize="14">
+                <Hyperlink controls:HyperlinkExtensions.IsExternal="true" NavigateUri="https://www.stackoverflow.com">
+                    <Hyperlink.Inlines>
+                        <Run Text="{x:Static resx:Resources.QuickstartGuide}" />
+                    </Hyperlink.Inlines>
+                </Hyperlink>
+            </TextBlock>
+        </Grid>
     </Grid>
 </UserControl>

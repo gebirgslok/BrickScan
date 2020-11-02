@@ -280,4 +280,7 @@
   <data name="RestartRequiredMessage" xml:space="preserve">
     <value>A restart of the application is required to finish the update.</value>
   </data>
+  <data name="QuickstartGuide" xml:space="preserve">
+    <value>Quickstart guide</value>
+  </data>
 </root>
