@@ -27,20 +27,17 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
 
 namespace BrickScan.WpfClient.Converter
 {
-    [ValueConversion(typeof(BitmapSource), typeof(string))]
-    internal class BitmapImageToImageSizeStringConverter : IValueConverter
+    [ValueConversion(typeof(double), typeof(double))]
+    internal class WindowSizeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var bitmapSource = (BitmapSource) value;
-            return $"({bitmapSource.PixelWidth}×{bitmapSource.PixelHeight})";
+            return System.Convert.ToDouble(value) * System.Convert.ToDouble(parameter, CultureInfo.InvariantCulture);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
-            DependencyProperty.UnsetValue;
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => DependencyProperty.UnsetValue;
     }
 }
