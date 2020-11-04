@@ -126,7 +126,7 @@ namespace BrickScan.WpfClient.Model
 
                 using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("dataset/classes/submit", UriKind.Relative));
 
-                var accessToken = await _userSession.GetAccessTokenAsync();
+                var accessToken = await _userSession.GetAccessTokenAsync(false);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 var submitBody = JsonConvert.SerializeObject(datasetClass);
@@ -203,7 +203,7 @@ namespace BrickScan.WpfClient.Model
         {
             using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("prediction", UriKind.Relative));
 
-            var accessToken = await _userSession.GetAccessTokenAsync();
+            var accessToken = await _userSession.GetAccessTokenAsync(false);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var formData = new MultipartFormDataContent();

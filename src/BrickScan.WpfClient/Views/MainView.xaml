@@ -160,7 +160,7 @@
         <mah:HamburgerMenu
             CanResizeOpenPane="True"
             Foreground="White"
-            IsPaneOpen="true"
+            IsPaneOpen="False"
             ItemTemplate="{StaticResource MenuItemTemplate}"
             ItemsSource="{Binding MenuItems, Mode=OneTime}"
             OpenPaneLength="200"

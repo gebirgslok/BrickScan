@@ -36,10 +36,10 @@ using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.Model;
 using BrickScan.WpfClient.Properties;
 using BrickScan.WpfClient.ViewModels;
-using BrickScan.WpfClient.Views;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Identity.Client;
 using Serilog;
+using Squirrel;
 using VideoCapture = BrickScan.WpfClient.Model.VideoCapture;
 
 namespace BrickScan.WpfClient
@@ -68,7 +68,7 @@ namespace BrickScan.WpfClient
         {
             builder.RegisterAssemblyTypes(GetType().Assembly)
                 .Where(type => type.Name.EndsWith("View"))
-                .Where(type =>  !string.IsNullOrWhiteSpace(type.Namespace) && type.Namespace != null && type.Namespace.EndsWith("Views"))
+                .Where(type => !string.IsNullOrWhiteSpace(type.Namespace) && type.Namespace != null && type.Namespace.EndsWith("Views"))
                 .AsSelf()
                 .InstancePerDependency();
         }
@@ -114,9 +114,9 @@ namespace BrickScan.WpfClient
 
             builder.Register(c => PublicClientApplicationBuilder.Create(IdentitySettings.ClientId)
                     .WithB2CAuthority(IdentitySettings.AuthoritySignUpSignIn)
-                .WithRedirectUri(IdentitySettings.RedirectUri)
-                .WithLogging(LogCallback, LogLevel.Info, false)
-                .Build())
+                    .WithRedirectUri(IdentitySettings.RedirectUri)
+                    .WithLogging(LogCallback, LogLevel.Info, false)
+                    .Build())
                 .As<IPublicClientApplication>()
                 .SingleInstance();
 

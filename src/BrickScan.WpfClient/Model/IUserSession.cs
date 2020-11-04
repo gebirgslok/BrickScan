@@ -47,6 +47,6 @@ namespace BrickScan.WpfClient.Model
 
         Task EditProfileAsync();
 
-        Task<string?> GetAccessTokenAsync();
+        Task<string?> GetAccessTokenAsync(bool tryAcquireTokenInteractiveOnFailure);
     }
 }

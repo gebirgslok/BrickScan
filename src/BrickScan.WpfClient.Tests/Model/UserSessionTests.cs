@@ -23,39 +23,40 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.ComponentModel;
-using System.Windows;
-using BrickScan.WpfClient.Properties;
-using ControlzEx.Theming;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BrickScan.WpfClient.Model;
+using FakeItEasy;
+using Microsoft.Identity.Client;
 using Serilog;
+using Stylet;
+using Xunit;
 
-namespace BrickScan.WpfClient
+namespace BrickScan.WpfClient.Tests.Model
 {
-    public partial class App
+    public class UserSessionTests
     {
-        public App()
+        private static UserSession Create(ILogger? logger = null,
+            IPublicClientApplication? publicClientApplication = null,
+            IEventAggregator? eventAggregator = null)
         {
-            Settings.Default.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args)
-            {
-                if (args.PropertyName == nameof(Settings.Default.ThemeBaseColor) ||
-                    args.PropertyName == nameof(Settings.Default.ThemeColorScheme))
-                {
-                    ChangeTheme();
-                }
-            };
+            return new UserSession(logger ?? A.Dummy<ILogger>(),
+                publicClientApplication ?? A.Dummy<IPublicClientApplication>(),
+                eventAggregator ?? A.Dummy<IEventAggregator>());
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        [Fact]
+        public async Task GetAccessTokenAsync_AcquireTokenSilentThrowsMsalExecption_ReturnsNull()
         {
-            ChangeTheme();
-            base.OnStartup(e);
-        }
+            var publicClientApplication = A.Fake<IPublicClientApplication>();
+            A.CallTo(() => publicClientApplication.AcquireTokenSilent(A<IEnumerable<string>>._, A<IAccount>._))
+                .Throws(() => new MsalException());
 
-        private void ChangeTheme()
-        {
-            var themeName = $"{Settings.Default.ThemeBaseColor}.{Settings.Default.ThemeColorScheme}";
-            Log.ForContext<App>().Information("Changing theme to {ThemeName}.", themeName);
-            ThemeManager.Current.ChangeTheme(this, themeName);
+            var userSession = Create(publicClientApplication: publicClientApplication);
+
+            var token = await userSession.GetAccessTokenAsync(false);
+
+            Assert.Null(token);
         }
     }
 }

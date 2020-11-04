@@ -105,6 +105,7 @@
 
         <Label
             Grid.Column="6"
+            Visibility="{Binding Path=IsConnected, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
             Margin="2"
             VerticalAlignment="Center"
             Content="{x:Static resx:Resources.Sensitivity}" />
@@ -113,6 +114,7 @@
             Interval="1"
             IsSnapToTickEnabled="True"
             Maximum="9"
+            Visibility="{Binding Path=IsConnected, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
             Minimum="0"
             TickFrequency="1"
             TickPlacement="BottomRight"

@@ -45,7 +45,6 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly AddPartsConductorViewModel _addPartsConductorViewModel;
         private readonly SettingsViewModel _settingsViewModel;
         private readonly ILogger _logger;
-        private readonly IEventAggregator _eventAggregator;
         private readonly IDialogCoordinator _dialogCoordinator;
 
         public StatusBarViewModel StatusBarViewModel { get; }
@@ -64,7 +63,6 @@ namespace BrickScan.WpfClient.ViewModels
             StatusBarViewModel statusBarViewModel,
             IUserSession userManager,
             ILogger logger,
-            IEventAggregator eventAggregator,
             IDialogCoordinator dialogCoordinator)
         {
             _predictionConductorViewModel = predictionConductorViewModel;
@@ -73,7 +71,6 @@ namespace BrickScan.WpfClient.ViewModels
             StatusBarViewModel = statusBarViewModel;
             UserSession = userManager;
             _logger = logger;
-            _eventAggregator = eventAggregator;
             _dialogCoordinator = dialogCoordinator;
             SelectedItem = MenuItems[0] as HamburgerMenuIconItem;
         }
@@ -92,7 +89,7 @@ namespace BrickScan.WpfClient.ViewModels
                 {
                     Icon = new PackIconMaterial{ Kind = PackIconMaterialKind.CameraPlus },
                     Label = Properties.Resources.AddParts.ToUpperInvariant(),
-                    Tag = _addPartsConductorViewModel
+                    Tag = _addPartsConductorViewModel,
                 }
             };
 

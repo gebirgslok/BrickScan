@@ -30,7 +30,7 @@ namespace BrickScan.WpfClient.Tests
     public class LanguageOptionTests
     {
         [Fact]
-        public void ToStringReturnsDisplayName()
+        public void ToString_ReturnsDisplayName()
         {
             var option = new LanguageOption("en-US", "English");
 

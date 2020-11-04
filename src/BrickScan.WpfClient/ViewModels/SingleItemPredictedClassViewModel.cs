@@ -155,7 +155,7 @@ namespace BrickScan.WpfClient.ViewModels
                 using var request = new HttpRequestMessage(method,
                     new Uri($"dataset/images/confirm?imageId={imageId}&classId={classId}", UriKind.Relative));
 
-                var accessToken = await UserSession.GetAccessTokenAsync();
+                var accessToken = await UserSession.GetAccessTokenAsync(true);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 var response = await _httpClient.SendAsync(request);

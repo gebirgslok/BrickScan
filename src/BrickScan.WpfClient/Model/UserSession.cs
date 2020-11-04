@@ -232,7 +232,7 @@ namespace BrickScan.WpfClient.Model
             }
         }
 
-        public async Task<string?> GetAccessTokenAsync()
+        public async Task<string?> GetAccessTokenAsync(bool tryAcquireTokenInteractiveOnFailure)
         {
             var accounts = await _publicClientApplication.GetAccountsAsync(IdentitySettings.PolicySignUpSignIn);
             AuthenticationResult? authenticationResult;
@@ -247,6 +247,11 @@ namespace BrickScan.WpfClient.Model
             catch (MsalException msalException)
             {
                 _logger.Warning(msalException, $"Received a {nameof(MsalException)} after trying to acquire an access token silently.");
+
+                if (!tryAcquireTokenInteractiveOnFailure)
+                {
+                    return null;
+                }
 
                 try
                 {
