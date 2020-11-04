@@ -40,7 +40,7 @@ steps:
   displayName: Run Unit Tests
   inputs:
     command: 'test'
-    projects: 'src\BrickScan.Library.Dataset.Tests\BrickScan.Library.Dataset.Tests.csproj'
+    projects: '**/*.Tests.csproj'
     arguments: '-c $(buildConfiguration)'
     
 - task: CopyFiles@2

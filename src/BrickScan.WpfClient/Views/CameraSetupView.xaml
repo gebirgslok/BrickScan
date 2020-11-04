@@ -105,19 +105,19 @@
 
         <Label
             Grid.Column="6"
-            Visibility="{Binding Path=IsConnected, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
             Margin="2"
             VerticalAlignment="Center"
-            Content="{x:Static resx:Resources.Sensitivity}" />
+            Content="{x:Static resx:Resources.Sensitivity}"
+            Visibility="{Binding Path=IsConnected, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" />
         <Slider
             Grid.Column="7"
             Interval="1"
             IsSnapToTickEnabled="True"
             Maximum="9"
-            Visibility="{Binding Path=IsConnected, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
             Minimum="0"
             TickFrequency="1"
             TickPlacement="BottomRight"
+            Visibility="{Binding Path=IsConnected, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
             Value="{Binding Path=SelectedSensitivityLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
     </Grid>
 </UserControl>
