@@ -109,11 +109,21 @@ namespace BrickScan.WebApi.Images
             return new OkObjectResult(datasetImage);
         }
 
+        /// <summary>
+        /// Uploads one or many image files.
+        /// </summary>
+        /// <param name="images">A list of image files to upload.</param>
+        /// <returns></returns>
+        /// <response code="200">Image(s) uploaded successfully.</response>
+        /// <response code="400">Failed to convert (at least one) image(s).</response>
+        /// <response code="415">One or many images have an unsupported media type. Supported formats: <b>JPEG</b> and <b>PNG</b>.</response>
+        /// <response code="500">Internal server error occurred.</response>
+        [Authorize]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-        public async Task<IActionResult> UploadImagesAsync([FromForm] IEnumerable<IFormFile> images)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DatasetImage[]))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType, Type = typeof(ProblemDetails))]
+        public async Task<IActionResult> UploadImagesAsync(IEnumerable<IFormFile> images)
         {
             var conversionResult = await _imageFileConverter.TryConvertManyAsync(images.ToList());
 
@@ -127,11 +137,11 @@ namespace BrickScan.WebApi.Images
             if (imageDataList.Length == 1)
             {
                 var datasetImage = await _datasetService.AddUnclassifiedImageAsync(imageDataList.First());
-                return Ok(new ApiResponse(StatusCodes.Status201Created, data: new[] { datasetImage }));
+                return Ok(new[] { datasetImage });
             }
 
             var datasetImages = await _datasetService.AddUnclassifiedImagesAsync(conversionResult.ImageDataList.ToList());
-            return Ok(new ApiResponse(StatusCodes.Status201Created, data: datasetImages));
+            return Ok(datasetImages);
         }
     }
 }
