@@ -128,6 +128,7 @@ namespace BrickScan.WpfClient.Model
                 _videoCapture?.Dispose();
                 _videoCapture = null;
                 _logger.Information("Successfully closed (disposed) camera.");
+                _logger.Information("Sending empty frame.");
                 OnFrameCaptured(null, Rectangle.Empty);
             }
             catch (Exception exception)
