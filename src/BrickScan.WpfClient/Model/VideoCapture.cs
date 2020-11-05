@@ -75,7 +75,7 @@ namespace BrickScan.WpfClient.Model
             }
         }
 
-        private void OnFrameCaptured(Mat frame, Rectangle rectangle)
+        private void OnFrameCaptured(Mat? frame, Rectangle rectangle)
         {
             Interlocked.Increment(ref _frameCount);
             _logger.Verbose("Captured frame# {FrameCount}, detected rectangle = {Rectangle}.", _frameCount, rectangle.ToString());
@@ -128,6 +128,7 @@ namespace BrickScan.WpfClient.Model
                 _videoCapture?.Dispose();
                 _videoCapture = null;
                 _logger.Information("Successfully closed (disposed) camera.");
+                OnFrameCaptured(null, Rectangle.Empty);
             }
             catch (Exception exception)
             {

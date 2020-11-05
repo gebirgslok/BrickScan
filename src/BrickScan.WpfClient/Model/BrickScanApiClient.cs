@@ -37,6 +37,7 @@ using BrickScan.WpfClient.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace BrickScan.WpfClient.Model
 {
@@ -201,7 +202,7 @@ namespace BrickScan.WpfClient.Model
 
         public async Task<List<PredictedDatasetClassDto>> PredictAsync(byte[] imageBytes)
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("prediction", UriKind.Relative));
+            using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("prediction/predict", UriKind.Relative));
 
             var accessToken = await _userSession.GetAccessTokenAsync(false);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -218,19 +219,25 @@ namespace BrickScan.WpfClient.Model
             {
                 //TODO: HANDLE INTERNAL SERVER ERR
             }
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            var jsonObj = JObject.Parse(responseString);
-            var jsonData = jsonObj["data"];
-
-            if (jsonData == null)
+            else if (response.StatusCode != HttpStatusCode.OK)
             {
-                throw new InvalidOperationException(
-                    "Received JSON response (for request POST /images) did not contain a 'data' object.");
+                //TODO: HANDLE ANY OTHER ERROR
             }
 
-            var predictedClasses = jsonData.ToObject<List<PredictedDatasetClassDto>>() ??
-                                   new List<PredictedDatasetClassDto>();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var predictedClasses = JsonSerializer.Deserialize<List<PredictedDatasetClassDto>>(responseString);
+
+            //var jsonObj = JObject.Parse(responseString);
+            //var jsonData = jsonObj["data"];
+
+            //if (jsonData == null)
+            //{
+            //    throw new InvalidOperationException(
+            //        "Received JSON response (for request POST /images) did not contain a 'data' object.");
+            //}
+
+            //var predictedClasses = jsonData.ToObject<List<PredictedDatasetClassDto>>() ??
+            //                       new List<PredictedDatasetClassDto>();
 
             return predictedClasses;
         }
