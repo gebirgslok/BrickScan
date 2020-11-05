@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Dataset;
+using BrickScan.Library.Dataset.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -47,30 +48,36 @@ namespace BrickScan.WebApi.Images
             _datasetService = datasetService;
         }
 
+        private ProblemDetails ImageNotFoundProblemDetails(int imageId) => new ProblemDetails
+        {
+            Detail = $"Image for ID = {imageId} not found.",
+            Instance = HttpContext.Request.Path,
+            Status = 404,
+            Title = "Image not found",
+            Type = "https://httpstatuses.com/404",
+            Extensions = { { "traceId", HttpContext.TraceIdentifier } }
+        };
+
         /// <summary>
         /// Deletes the image resource with the posted <paramref name="imageId"/>.
         /// </summary>
         /// <param name="imageId">The ID of the image resource to delete.</param>
-        /// <returns>No content (204).</returns>
-        [Authorize]
+        /// <returns>No content (204) if successful or problem details.</returns>
+        /// <response code="204">Image deleted successfully.</response>
+        /// <response code="404">No image found for the posted image ID..</response>
+        /// <response code="500">Internal server error occurred.</response>
         [HttpDelete("{imageId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
+        [Authorize(Policy = Policies.RequiresTrustedUser)]
         public async Task<IActionResult> DeleteImageAsync([FromRoute] int imageId)
         {
             var success = await _datasetService.DeleteImageAsync(imageId);
 
             if (!success)
             {
-                return new NotFoundObjectResult(new ProblemDetails
-                {
-                    Detail = $"Image for ID = {imageId} not found.",
-                    Instance = HttpContext.Request.Path,
-                    Status = 404,
-                    Title = "Image not found",
-                    Type = "https://httpstatuses.com/404"
-                });
+                return new NotFoundObjectResult(ImageNotFoundProblemDetails(imageId));
             }
 
             return NoContent();
@@ -81,11 +88,14 @@ namespace BrickScan.WebApi.Images
         /// </summary>
         /// <param name="imageId">The ID of the image resource.</param>
         /// <returns>Returns the found <see cref="BrickScan.Library.Dataset.Model.DatasetImage"/>> or
-        /// <c>null</c> if no resource for <paramref name="imageId"/> was found.</returns>
+        /// problem details else.</returns>
+        /// <response code="200">Image was returned successfully.</response>
+        /// <response code="404">No image found for the posted image ID..</response>
+        /// <response code="500">Internal server error occurred.</response>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DatasetImage))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
         [Route("{imageId}")]
         public async Task<IActionResult> GetImageByIdAsync([FromRoute] int imageId)
         {
@@ -93,10 +103,10 @@ namespace BrickScan.WebApi.Images
 
             if (datasetImage == null)
             {
-                return new NotFoundObjectResult(new ApiResponse(404, errors: new[] { $"No image exists with ID = {imageId}." }));
+                return new NotFoundObjectResult(ImageNotFoundProblemDetails(imageId));
             }
 
-            return new OkObjectResult(new ApiResponse(200, data: datasetImage));
+            return new OkObjectResult(datasetImage);
         }
 
         [HttpPost]

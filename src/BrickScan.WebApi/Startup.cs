@@ -126,10 +126,13 @@ namespace BrickScan.WebApi
             {
                 options.AddPolicy(Policies.RequiresTrustedUser, policy =>
                     policy.RequireClaim(Claims.UserLevel, "trusted_user", "admin"));
+                options.AddPolicy(Policies.RequiresTrustedUser, policy =>
+                    policy.RequireClaim(Claims.UserLevel, "trusted_user", "admin"));
             });
 
             services.AddControllers();
             services.AddMvcCore();
+            services.AddRouting(options => options.LowercaseUrls = true);
 
             services.AddApiVersioning(options =>
             {
@@ -139,15 +142,19 @@ namespace BrickScan.WebApi
             });
 
             ConfigureDbContext(services, Configuration);
+
             var isDevelopment = Environment.IsDevelopment();
+
             ConfigurePredictionEngine(services, Configuration, isDevelopment);
             ConfigureStorageService(services, isDevelopment);
+
             services.AddProblemDetails(opts => { opts.IncludeExceptionDetails = (context, ex) => isDevelopment; });
 
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "BrickScan API", Version = "v1" });
                 options.OperationFilter<RemoveVersionFromParameter>();
+                options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
                 options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.XML";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
