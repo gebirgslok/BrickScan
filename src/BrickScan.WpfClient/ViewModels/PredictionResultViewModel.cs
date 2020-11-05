@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using BrickScan.Library.Core.Dto;
@@ -50,12 +51,12 @@ namespace BrickScan.WpfClient.ViewModels
 
         public BitmapSource ImageSource { get; }
 
-        public NotifyTask<List<PredictedDatasetClassDto>> InitializationNotifier { get; }
+        public NotifyTask<PredictionResult> InitializationNotifier { get; }
 
         public string ImageSizeString => $"{ImageSource.PixelWidth}×{ImageSource.PixelHeight}";
 
         public PredictionResultViewModel(Mat imageSection,
-            Func<Task<List<PredictedDatasetClassDto>>, List<PredictedDatasetClassDto>, NotifyTask<List<PredictedDatasetClassDto>>> notifyTaskFactory,
+            Func<Task<PredictionResult>, PredictionResult, NotifyTask<PredictionResult>> notifyTaskFactory,
             IEventAggregator eventAggregator,
             IPredictedClassViewModelFactory predictedClassViewModelFactory, 
             ILogger logger,
@@ -66,21 +67,23 @@ namespace BrickScan.WpfClient.ViewModels
             _logger = logger;
             _apiClient = apiClient;
             ImageSource = imageSection.ToBitmapSource();
+
             var task = StartPredictionAsync(imageSection);
-            InitializationNotifier = notifyTaskFactory.Invoke(task, new List<PredictedDatasetClassDto>());
+            InitializationNotifier = notifyTaskFactory.Invoke(task, PredictionResult.UnexpectedError);
 
             InitializationNotifier.PropertyChanged += delegate (object sender, PropertyChangedEventArgs args)
             {
                 if (args.PropertyName == nameof(InitializationNotifier.IsSuccessfullyCompleted))
                 {
-                    PredictedClassViewModels = BuildViewModels(InitializationNotifier.Result);
+                    PredictedClassViewModels = BuildViewModels(InitializationNotifier.Result.PredictedDatasetClasses);
                 }
             };
         }
 
-        private IEnumerable<PredictedClassViewModelBase> BuildViewModels(List<PredictedDatasetClassDto> predictedClases)
+        private IEnumerable<PredictedClassViewModelBase> BuildViewModels(List<PredictedDatasetClassDto>? predictedClases)
         {
-            return predictedClases.Select(x => _predictedClassViewModelFactory.Create(x));
+            return predictedClases?.Select(x => _predictedClassViewModelFactory.Create(x)) ?? 
+                   new List<PredictedClassViewModelBase>();
         }
 
         private Mat ResizeIfTooLarge(Mat input)
@@ -104,10 +107,17 @@ namespace BrickScan.WpfClient.ViewModels
             return input;
         }
 
-        private async Task<List<PredictedDatasetClassDto>> StartPredictionAsync(Mat imageSection)
+        private async Task<PredictionResult> StartPredictionAsync(Mat imageSection)
         {
             imageSection = ResizeIfTooLarge(imageSection);
-            return await _apiClient.PredictAsync(imageSection.ToBytes());
+            var result = await _apiClient.PredictAsync(imageSection.ToBytes());
+
+            if (!result.Sucess)
+            {
+                throw new HttpRequestException(result.ErrorMessage);
+            }
+
+            return result;
         }
 
         public void NavigateBack()

@@ -27,12 +27,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Dataset;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BrickScan.WebApi.Images
 {
-    //TODO: XML doc
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class ImagesController : ControllerBase
@@ -52,13 +52,27 @@ namespace BrickScan.WebApi.Images
         /// </summary>
         /// <param name="imageId">The ID of the image resource to delete.</param>
         /// <returns>No content (204).</returns>
-        [HttpDelete]
+        [Authorize]
+        [HttpDelete("{imageId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Route("{imageId}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
         public async Task<IActionResult> DeleteImageAsync([FromRoute] int imageId)
         {
-            await _datasetService.DeleteImageAsync(imageId);
+            var success = await _datasetService.DeleteImageAsync(imageId);
+
+            if (!success)
+            {
+                return new NotFoundObjectResult(new ProblemDetails
+                {
+                    Detail = $"Image for ID = {imageId} not found.",
+                    Instance = HttpContext.Request.Path,
+                    Status = 404,
+                    Title = "Image not found",
+                    Type = "https://httpstatuses.com/404"
+                });
+            }
+
             return NoContent();
         }
 

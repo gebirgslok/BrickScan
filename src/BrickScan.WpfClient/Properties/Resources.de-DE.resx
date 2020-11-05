@@ -303,4 +303,10 @@
   <data name="QuickstartGuide" xml:space="preserve">
     <value>Schnellstarthilfe</value>
   </data>
+  <data name="InternalServerErrorMessage" xml:space="preserve">
+    <value>Interner Serverfehler. Bitte versuche es in einem Moment noch einmal.</value>
+  </data>
+  <data name="UnexpectedErrorOccurred" xml:space="preserve">
+    <value>Es ist ein unerwarteter Fehler aufgetreten.</value>
+  </data>
 </root>

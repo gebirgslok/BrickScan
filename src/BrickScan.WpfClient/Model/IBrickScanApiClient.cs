@@ -26,7 +26,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using BrickScan.Library.Core.Dto;
 
 namespace BrickScan.WpfClient.Model
 {
@@ -38,6 +37,6 @@ namespace BrickScan.WpfClient.Model
         Task<PostImagesResult> PostImagesAsync(IEnumerable<BitmapSource> images,
             string filenameTemplate = "image[{0}].png");
 
-        Task<List<PredictedDatasetClassDto>> PredictAsync(byte[] imageBytes);
+        Task<PredictionResult> PredictAsync(byte[] imageBytes);
     }
 }

@@ -283,4 +283,10 @@
   <data name="QuickstartGuide" xml:space="preserve">
     <value>Quickstart guide</value>
   </data>
+  <data name="InternalServerErrorMessage" xml:space="preserve">
+    <value>Internal server error. Please try again in a moment.</value>
+  </data>
+  <data name="UnexpectedErrorOccurred" xml:space="preserve">
+    <value>An unexpected error occurred.</value>
+  </data>
 </root>

@@ -41,6 +41,25 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace BrickScan.WpfClient.Model
 {
+    public class PredictionResult
+    {
+        public bool Sucess { get; }
+
+        public string? ErrorMessage { get; }
+
+        public List<PredictedDatasetClassDto>? PredictedDatasetClasses { get; }
+
+        internal static PredictionResult UnexpectedError =>
+            new PredictionResult(false, errorMessage: Properties.Resources.UnexpectedErrorOccurred);
+
+        internal PredictionResult(bool sucess, List<PredictedDatasetClassDto>? predictedDatasetClasses = null, string? errorMessage = null)
+        {
+            Sucess = sucess;
+            PredictedDatasetClasses = predictedDatasetClasses;
+            ErrorMessage = errorMessage;
+        }
+    }
+
     public sealed class BrickScanApiClient : IBrickScanApiClient
     {
         private readonly HttpClient _httpClient;
@@ -138,8 +157,8 @@ namespace BrickScan.WpfClient.Model
                 if (response.StatusCode != HttpStatusCode.Created)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    _logger.Error("Received unexpected status code from submit dataset request. Response = {@Response}." + 
-                                  Environment.NewLine + 
+                    _logger.Error("Received unexpected status code from submit dataset request. Response = {@Response}." +
+                                  Environment.NewLine +
                                   "Content: {Content}", responseContent);
 
                     return false;
@@ -200,7 +219,7 @@ namespace BrickScan.WpfClient.Model
             }
         }
 
-        public async Task<List<PredictedDatasetClassDto>> PredictAsync(byte[] imageBytes)
+        public async Task<PredictionResult> PredictAsync(byte[] imageBytes)
         {
             using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("prediction/predict", UriKind.Relative));
 
@@ -214,32 +233,30 @@ namespace BrickScan.WpfClient.Model
             request.Content = formData;
 
             var response = await _httpClient.SendAsync(request);
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var predictedClasses = JsonSerializer.Deserialize<List<PredictedDatasetClassDto>>(responseString);
+                return new PredictionResult(true, predictedDatasetClasses: predictedClasses);
+            }
+
+            var problemDetails = JObject.Parse(responseString);
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
-                //TODO: HANDLE INTERNAL SERVER ERR
+                _logger.Error($"Received an {nameof(HttpStatusCode.InternalServerError)} ({{StatusCode}}) " +
+                              "from request URI = {RequestUri}. Problem details = {@ProblemDetails}.",
+                    (int)HttpStatusCode.InternalServerError, "prediction/predict", problemDetails);
+
+                return new PredictionResult(false, errorMessage: Properties.Resources.InternalServerErrorMessage);
             }
-            else if (response.StatusCode != HttpStatusCode.OK)
-            {
-                //TODO: HANDLE ANY OTHER ERROR
-            }
 
-            var responseString = await response.Content.ReadAsStringAsync();
-            var predictedClasses = JsonSerializer.Deserialize<List<PredictedDatasetClassDto>>(responseString);
+            _logger.Error("Received {Error} ({StatusCode}) from request URI = {RequestUri}." +
+                          "Problem details = {@ProblemDetails}.",
+                response.StatusCode.ToString(), (int)response.StatusCode, "prediction/predict", problemDetails);
 
-            //var jsonObj = JObject.Parse(responseString);
-            //var jsonData = jsonObj["data"];
-
-            //if (jsonData == null)
-            //{
-            //    throw new InvalidOperationException(
-            //        "Received JSON response (for request POST /images) did not contain a 'data' object.");
-            //}
-
-            //var predictedClasses = jsonData.ToObject<List<PredictedDatasetClassDto>>() ??
-            //                       new List<PredictedDatasetClassDto>();
-
-            return predictedClasses;
+            return new PredictionResult(false, errorMessage: Properties.Resources.RequestFailedMessage);
         }
     }
 }

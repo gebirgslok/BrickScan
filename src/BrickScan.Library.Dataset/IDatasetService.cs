@@ -60,7 +60,7 @@ namespace BrickScan.Library.Dataset
 
         Task<DatasetImage?> FindImageByIdAsync(int imageId);
 
-        Task DeleteImageAsync(int imageId);
+        Task<bool> DeleteImageAsync(int imageId);
 
         Task<List<PredictedDatasetClassDto>> GetPredictedDatasetClassesAsync(List<int> datasetClassesIndexes);
     }
