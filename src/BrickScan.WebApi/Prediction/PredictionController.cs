@@ -31,6 +31,7 @@ using BrickScan.Library.Core.Dto;
 using BrickScan.Library.Core.Extensions;
 using BrickScan.Library.Dataset;
 using BrickScan.WebApi.Images;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -38,6 +39,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BrickScan.WebApi.Prediction
 {
+    [Authorize]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class PredictionController : ControllerBase
