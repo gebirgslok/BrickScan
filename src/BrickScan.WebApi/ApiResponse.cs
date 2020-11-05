@@ -27,6 +27,40 @@ using System.Collections.Generic;
 
 namespace BrickScan.WebApi
 {
+    public class TypedApiResponse<TData> where TData : class
+    {
+        public int StatusCode { get; }
+
+        public IEnumerable<string> Errors { get; }
+
+        public string Message { get; }
+
+        public TData Data { get; }
+
+        internal TypedApiResponse(int statusCode, TData data, string? message = null)
+        {
+            StatusCode = statusCode;
+            Message = message ?? GetDefaultMessageForStatusCode(StatusCode);
+            Data = data;
+            Errors = new List<string>();
+        }
+
+        private static string GetDefaultMessageForStatusCode(int statusCode)
+        {
+            return statusCode switch
+            {
+                200 => "Request successful.",
+                201 => "Resource(s) created.",
+                204 => "No content",
+                400 => "Bad request.",
+                404 => "Resource not found.",
+                415 => "Unsupported media type.",
+                500 => "An internal server error occurred.",
+                _ => "An unknown error occurred."
+            };
+        }
+    }
+
     public class ApiResponse
     {
         public int StatusCode { get; }

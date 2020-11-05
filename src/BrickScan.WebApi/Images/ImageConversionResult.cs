@@ -24,33 +24,88 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
+using System.Net;
 using BrickScan.Library.Core;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace BrickScan.WebApi.Images
 {
     public class ImageConversionResult
     {
-        [JsonIgnore]
-        public IActionResult? ActionResult { get; }
+        public string Message { get; set; } = null!;
 
-        public bool Success { get; }
+        public bool IsUnsupportedMediaType { get; set; }
 
-        public IEnumerable<ImageData> ImageDataList { get; }
+        public bool Success { get; private set; }
 
-        public ImageConversionResult(bool success, IEnumerable<ImageData> imageData, IActionResult? actionResult)
+        public IEnumerable<ImageData> ImageDataList { get; private set; } = null!;
+
+        private ImageConversionResult()
         {
-            Success = success;
-            ImageDataList = imageData;
-            ActionResult = actionResult;
         }
 
-        internal ImageConversionResult(bool success, ImageData? imageData, IActionResult? actionResult)
+        internal IActionResult GetActionResult(string instance, string trace)
         {
-            Success = success;
-            ImageDataList = imageData == null ? new ImageData[0] : new[] { imageData };
-            ActionResult = actionResult;
+            if (Success)
+            {
+                return new OkResult();
+            }
+
+            var statusCode = (int)(IsUnsupportedMediaType ? HttpStatusCode.UnsupportedMediaType : HttpStatusCode.BadRequest);
+            var problemDetails = new ProblemDetails
+            {
+                Detail = Message,
+                Instance = instance,
+                Status = statusCode,
+                Title = ReasonPhrases.GetReasonPhrase(statusCode),
+                Type = $"https://httpstatuses.com/{statusCode}",
+            };
+
+            problemDetails.Extensions.Add("traceId", trace);
+            
+
+            if (IsUnsupportedMediaType)
+            {
+                return new ObjectResult(problemDetails)
+                {
+                    StatusCode = statusCode
+                };
+            }
+
+            return new BadRequestObjectResult(problemDetails);
         }
+
+        public static ImageConversionResult UnsupportedMediaTypeResult(string? message) => new ImageConversionResult
+        {
+            Success = false,
+            IsUnsupportedMediaType = true,
+            ImageDataList = new ImageData[0],
+            Message = message ?? "Unsupported image type. Supported formats: JPEG and PNG."
+        };
+
+        public static ImageConversionResult SuccessfulResult(ImageData imageData) => new ImageConversionResult
+        {
+            Success = true,
+            IsUnsupportedMediaType = false,
+            ImageDataList = new[] { imageData },
+            Message = "Image successfully converted."
+        };
+
+        public static ImageConversionResult SuccessfulResult(IEnumerable<ImageData> imageDataList) => new ImageConversionResult
+        {
+            Success = true,
+            IsUnsupportedMediaType = false,
+            ImageDataList = imageDataList,
+            Message = "Images successfully converted."
+        };
+
+        public static ImageConversionResult ConversionFailedResult(string message) => new ImageConversionResult
+        {
+            Success = false,
+            IsUnsupportedMediaType = false,
+            ImageDataList = new ImageData[0],
+            Message = message
+        };
     }
 }

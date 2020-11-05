@@ -29,8 +29,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
+using BrickScan.Library.Core.Extensions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace BrickScan.WebApi.Images
@@ -65,16 +65,16 @@ namespace BrickScan.WebApi.Images
             return _supportedImageFormats;
         }
 
-        private ImageValidationResult ValidateImageFile(IFormFile? imageFile)
+        public async Task<ImageConversionResult> TryConvertAsync(IFormFile? imageFile)
         {
             if (imageFile == null)
             {
-                return new ImageValidationResult(false, 400, "No image specified.");
+                return ImageConversionResult.ConversionFailedResult("No image specified.");
             }
 
             if (imageFile.Length == 0)
             {
-                return new ImageValidationResult(false, 400, $"Empty image (filename = {imageFile.FileName ?? "n/a"}).");
+                return ImageConversionResult.ConversionFailedResult($"Empty image (filename = {imageFile.FileName ?? "n/a"}).");
             }
 
             if (!GetSupportedImageContentTypes().Contains(imageFile.ContentType))
@@ -83,46 +83,7 @@ namespace BrickScan.WebApi.Images
                               $"'{imageFile.FileName ?? "n/a"}' is not supported. " +
                               $"Supported content types: {string.Join(',', GetSupportedImageContentTypes())}.";
 
-                return new ImageValidationResult(false, 415, message);
-            }
-
-            return new ImageValidationResult(true, 200, string.Empty);
-        }
-
-        private ImageValidationResult ValidateImageFiles(IEnumerable<IFormFile> imageFiles)
-        {
-            var index = 0;
-
-            foreach (var imageFile in imageFiles)
-            {
-                if (imageFile.Length == 0)
-                {
-                    return new ImageValidationResult(false, 400, $"Empty image (index = {index}, filename = {imageFile.FileName ?? "n/a"}).");
-                }
-
-                if (!GetSupportedImageContentTypes().Contains(imageFile.ContentType))
-                {
-                    var message = $"Image content type '{imageFile.ContentType}' on image (index = {index}, filename " +
-                                  $"'{imageFile.FileName ?? "n/a"})' is not supported. " +
-                                  $"Supported content types: {string.Join(',', GetSupportedImageContentTypes())}.";
-
-                    return new ImageValidationResult(false, 415, message);
-                }
-
-                index += 1;
-            }
-
-            return new ImageValidationResult(true, 200, string.Empty);
-        }
-
-        public async Task<ImageConversionResult> TryConvertAsync(IFormFile? imageFile)
-        {
-            var validationResult =ValidateImageFile(imageFile);
-
-            if (!validationResult.Success)
-            {
-                return new ImageConversionResult(false, (ImageData?)null, new BadRequestObjectResult(new ApiResponse(validationResult.StatusCode,
-                    errors: validationResult.Errors)));
+                return ImageConversionResult.UnsupportedMediaTypeResult(message);
             }
 
             await using var imageMemoryStream = new MemoryStream();
@@ -132,28 +93,33 @@ namespace BrickScan.WebApi.Images
 
             if (!GetSupportedImageFormats().Contains(imageFormat))
             {
-                var errors = new List<string>
-                {
-                    $"Image format '{imageFormat}' is not supported. Supported image formats: {string.Join(",", GetSupportedImageFormats())}."
-                };
-
-                return new ImageConversionResult(false, (ImageData?)null, new ObjectResult(new ApiResponse(415, errors: errors))
-                {
-                    StatusCode = 415
-                });
+                var message = $"Image format '{imageFormat}' is not supported. Supported image formats: {string.Join(",", GetSupportedImageFormats())}.";
+                return ImageConversionResult.UnsupportedMediaTypeResult(message);
             }
 
-            return new ImageConversionResult(true, new ImageData(rawBytes, imageFormat), null);
+            return ImageConversionResult.SuccessfulResult(new ImageData(rawBytes, imageFormat));
         }
 
         public async Task<ImageConversionResult> TryConvertManyAsync(List<IFormFile> imageFiles)
         {
-            var validationResult = ValidateImageFiles(imageFiles);
+            var index = 0;
 
-            if (!validationResult.Success)
+            foreach (var imageFile in imageFiles)
             {
-                return new ImageConversionResult(false, (ImageData?)null, new BadRequestObjectResult(new ApiResponse(validationResult.StatusCode,
-                    errors: validationResult.Errors)));
+                if (imageFile.Length == 0)
+                {
+                    return ImageConversionResult.ConversionFailedResult($"Empty image (index = {index}, filename = {imageFile.FileName ?? "n/a"}).");
+                }
+
+                if (!GetSupportedImageContentTypes().Contains(imageFile.ContentType))
+                {
+                    var message = $"Image content type '{imageFile.ContentType}' on image (index = {index}, filename " +
+                                  $"'{imageFile.FileName ?? "n/a"})' is not supported. " +
+                                  $"Supported content types: {string.Join(',', GetSupportedImageContentTypes())}.";
+                    return ImageConversionResult.UnsupportedMediaTypeResult(message);
+                }
+
+                index += 1;
             }
 
             var imageDataList = new ImageData[imageFiles.Count];
@@ -168,22 +134,17 @@ namespace BrickScan.WebApi.Images
 
                 if (!GetSupportedImageFormats().Contains(imageFormat))
                 {
-                    var errors = new List<string>
-                    {
-                        $"Image format '{imageFormat}' is not supported on image (index = {i}, filename = {imageFile.FileName ?? "null"}. " +
-                        $"Supported image formats: {string.Join(",", GetSupportedImageFormats())}."
-                    };
+                    var message =
+                        $"Image format '{imageFormat}' is not supported on image (index = {i}, filename = {imageFile.FileName.ToStringOrNullOrEmpty()}. " +
+                        $"Supported image formats: {string.Join(",", GetSupportedImageFormats())}.";
 
-                    return new ImageConversionResult(false, (ImageData?)null, new ObjectResult(new ApiResponse(415, errors: errors))
-                    {
-                        StatusCode = 415
-                    });
+                    return ImageConversionResult.UnsupportedMediaTypeResult(message);
                 }
 
                 imageDataList[i] = new ImageData(rawBytes, imageFormat);
             }
 
-            return new ImageConversionResult(true, imageDataList, null);
+            return ImageConversionResult.SuccessfulResult(imageDataList);
         }
     }
 }

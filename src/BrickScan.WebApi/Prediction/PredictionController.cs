@@ -24,8 +24,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BrickScan.Library.Core.Dto;
+using BrickScan.Library.Core.Extensions;
 using BrickScan.Library.Dataset;
 using BrickScan.WebApi.Images;
 using Microsoft.AspNetCore.Http;
@@ -35,7 +38,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BrickScan.WebApi.Prediction
 {
-    //TODO: XML DOC
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class PredictionController : ControllerBase
@@ -64,17 +66,21 @@ namespace BrickScan.WebApi.Prediction
         /// </summary>
         /// <param name="image">Image to to predict.</param>
         /// <remarks>Supported image file formats: <b>JPEG</b> and <b>PNG</b>.</remarks>
-        /// <returns></returns>
-        [HttpPost]
-        [ActionName("predict")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PredictAsync([FromForm] IFormFile image)
+        /// <response code="200">Returns a sorted list (descending by score) of matching class candidates.</response>
+        /// <response code="400">Invalid image file.</response>
+        /// <response code="415">Unsupported media type of the posted image. Supported formats: <b>JPEG</b> and <b>PNG</b>.</response>
+        /// <response code="500">Internal server error occurred.</response>
+        [HttpPost("predict")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PredictedDatasetClassDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType, Type = typeof(ProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
+        public async Task<IActionResult> PredictAsync(IFormFile? image)
         {
             _logger.LogInformation("Prediction requested, trying to convert image ({Filename}, {Bytes}, {ContentType})...",
-                image.FileName, image.Length, image.ContentType);
+                image?.FileName.ToStringOrNullOrEmpty(), 
+                image?.Length.ToStringOrNullOrEmpty(),
+                image?.ContentType.ToStringOrNullOrEmpty());
 
             var result = await _imageFileConverter.TryConvertAsync(image);
 
@@ -82,7 +88,7 @@ namespace BrickScan.WebApi.Prediction
 
             if (!result.Success)
             {
-                return result.ActionResult!;
+                return result.GetActionResult(HttpContext.Request.Path, HttpContext.TraceIdentifier);
             }
 
             _logger.LogDebug("Calling Image Predictor...");
@@ -141,7 +147,7 @@ namespace BrickScan.WebApi.Prediction
                 }
             }
 
-            return new OkObjectResult(new ApiResponse(200, data: predictedClasses));
+            return new OkObjectResult(predictedClasses);
         }
     }
 }

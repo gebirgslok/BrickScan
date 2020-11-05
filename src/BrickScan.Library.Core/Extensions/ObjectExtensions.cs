@@ -23,21 +23,28 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BrickScan.WebApi.Images
+namespace BrickScan.Library.Core.Extensions
 {
-    internal class ImageValidationResult
+    public static class ObjectExtensions
     {
-        public bool Success { get; }
-
-        public int StatusCode { get; }
-
-        public string Error { get; }
-
-        public ImageValidationResult(bool success, int statusCode, string error)
+        public static string ToStringOrNullOrEmpty(this object? value)
         {
-            Success = success;
-            StatusCode = statusCode;
-            Error = error;
+            if (value == null)
+            {
+                return "Null";
+            }
+
+            if (value is string s)
+            {
+                if (string.Equals(s, string.Empty))
+                {
+                    return "Empty";
+                }
+
+                return s;
+            }
+
+            return value.ToString();
         }
     }
 }

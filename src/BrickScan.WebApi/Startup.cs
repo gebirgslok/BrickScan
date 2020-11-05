@@ -31,6 +31,7 @@ using BrickScan.Library.Dataset;
 using BrickScan.Library.Dataset.Model;
 using BrickScan.WebApi.Images;
 using BrickScan.WebApi.Prediction;
+using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -117,13 +118,13 @@ namespace BrickScan.WebApi
                     },
                     options =>
                     {
-                        Configuration.Bind("AzureAdB2C", options); 
+                        Configuration.Bind("AzureAdB2C", options);
 
                     });
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(Policies.RequiresTrustedUser, policy => 
+                options.AddPolicy(Policies.RequiresTrustedUser, policy =>
                     policy.RequireClaim(Claims.UserLevel, "trusted_user", "admin"));
             });
 
@@ -141,6 +142,7 @@ namespace BrickScan.WebApi
             var isDevelopment = Environment.IsDevelopment();
             ConfigurePredictionEngine(services, Configuration, isDevelopment);
             ConfigureStorageService(services, isDevelopment);
+            services.AddProblemDetails(opts => { opts.IncludeExceptionDetails = (context, ex) => isDevelopment; });
 
             services.AddSwaggerGen(options =>
             {
@@ -157,17 +159,15 @@ namespace BrickScan.WebApi
         {
             //if (env.IsDevelopment())
             //{
-                app.UseDeveloperExceptionPage();
+            app.UseDeveloperExceptionPage();
             //}
 
+            app.UseProblemDetails();
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "BrickScan API");
             });
-
-            //TODO: do this in Pipeline
-            //context.Database.Migrate();
 
             app.UseHttpsRedirection();
             app.UseSerilogRequestLogging();

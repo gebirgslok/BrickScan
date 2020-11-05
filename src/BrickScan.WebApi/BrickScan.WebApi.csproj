@@ -18,7 +18,7 @@
     <RepositoryUrl>https://github.com/gebirgslok/BrickScan</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
-    <DocumentationFile>bin\$(PlatformTarget)\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
+    <DocumentationFile>bin\$(PlatformTarget)\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
     <Platforms>x64</Platforms>
     <UserSecretsId>6ca06119-4802-4ffb-b4eb-97d6fec63c52</UserSecretsId>
@@ -27,6 +27,7 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.0.1" />
     <PackageReference Include="BricklinkSharp" Version="0.3.0" />
+    <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="5.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.7">

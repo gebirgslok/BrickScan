@@ -95,7 +95,7 @@ namespace BrickScan.WebApi.Images
 
             if (!conversionResult.Success)
             {
-                return conversionResult.ActionResult!;
+                return conversionResult.GetActionResult(HttpContext.Request.Path, HttpContext.TraceIdentifier);
             }
 
             var imageDataList = conversionResult.ImageDataList!.ToArray();
