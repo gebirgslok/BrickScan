@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BrickScan.Library.Core;
 using BrickScan.Library.Core.Dto;
 using BrickScan.Library.Core.Extensions;
 using BrickScan.Library.Dataset;
@@ -59,6 +60,34 @@ namespace BrickScan.WebApi.Prediction
             _configuration = configuration;
             _datasetService = datasetService;
             _logger = logger;
+        }
+
+        private async Task HandleImageWithUncertainScores(List<PredictedDatasetClassDto> predictedClasses, ImageData imageData)
+        {
+            var scoreT = _configuration.GetValue<double>("Prediction:AddImageScoreThreshold");
+            var diffT = _configuration.GetValue<double>("Prediction:AddImageScoreDiffThreshold");
+            var maxScore = predictedClasses[0].Score;
+            var maxScore2 = predictedClasses.Count > 1 ? predictedClasses[1].Score : 0.0f;
+            var diff = maxScore - maxScore2;
+
+            _logger.LogInformation(
+                "KeepImagesWithLowScores is enabled. Checking whether to add image with the following parameters:" +
+                Environment.NewLine +
+                "score threshold = {ScoreT}, diff threshold = {DiffT}, " +
+                "max score = {MaxScore}, max score (2nd) = {MaxScore2}," +
+                "diff = {Diff}.", scoreT, diffT, maxScore, maxScore2, diff);
+
+            if (maxScore < scoreT || diff < diffT)
+            {
+                _logger.LogInformation("Adding posted image as 'Unclassified'.");
+
+                var datasetImage = await _datasetService.AddUnclassifiedImageAsync(imageData);
+
+                foreach (var predictedClass in predictedClasses)
+                {
+                    predictedClass.UnconfirmedImageId = datasetImage.Id;
+                }
+            }
         }
 
         /// <summary>
@@ -124,29 +153,7 @@ namespace BrickScan.WebApi.Prediction
 
             if (keepImagesWithLowScores)
             {
-                var scoreT = _configuration.GetValue<double>("Prediction:AddImageScoreThreshold");
-                var diffT = _configuration.GetValue<double>("Prediction:AddImageScoreDiffThreshold");
-                var maxScore = predictedClasses[0].Score;
-                var maxScore2 = predictedClasses.Count > 1 ? predictedClasses[1].Score : 0.0f;
-                var diff = maxScore - maxScore2;
-
-                _logger.LogInformation("KeepImagesWithLowScores is enabled. Checking whether to add image with the following parameters:" + 
-                                       Environment.NewLine +
-                                       "score threshold = {ScoreT}, diff threshold = {DiffT}, " +
-                                       "max score = {MaxScore}, max score (2nd) = {MaxScore2}," +
-                                       "diff = {Diff}.", scoreT, diffT, maxScore, maxScore2, diff);
-
-                if (maxScore < scoreT || diff < diffT)
-                {
-                    _logger.LogInformation("Adding posted image as 'Unclassified'.");
-
-                    var datasetImage = await _datasetService.AddUnclassifiedImageAsync(result.ImageDataList.First());
-
-                    foreach (var predictedClass in predictedClasses)
-                    {
-                        predictedClass.UnconfirmedImageId = datasetImage.Id;
-                    }
-                }
+                await HandleImageWithUncertainScores(predictedClasses, result.ImageDataList.First());
             }
 
             return new OkObjectResult(predictedClasses);
