@@ -41,25 +41,6 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace BrickScan.WpfClient.Model
 {
-    public class PredictionResult
-    {
-        public bool Sucess { get; }
-
-        public string? ErrorMessage { get; }
-
-        public List<PredictedDatasetClassDto>? PredictedDatasetClasses { get; }
-
-        internal static PredictionResult UnexpectedError =>
-            new PredictionResult(false, errorMessage: Properties.Resources.UnexpectedErrorOccurred);
-
-        internal PredictionResult(bool sucess, List<PredictedDatasetClassDto>? predictedDatasetClasses = null, string? errorMessage = null)
-        {
-            Sucess = sucess;
-            PredictedDatasetClasses = predictedDatasetClasses;
-            ErrorMessage = errorMessage;
-        }
-    }
-
     public sealed class BrickScanApiClient : IBrickScanApiClient
     {
         private readonly HttpClient _httpClient;
@@ -257,6 +238,21 @@ namespace BrickScan.WpfClient.Model
                 response.StatusCode.ToString(), (int)response.StatusCode, "prediction/predict", problemDetails);
 
             return new PredictionResult(false, errorMessage: Properties.Resources.RequestFailedMessage);
+        }
+
+        public async Task AssignTrainImageToClassAsync(int trainImageId, int classId)
+        {
+            var method = HttpMethod.Post;
+
+            using var request = new HttpRequestMessage(method,
+                new Uri($"classes/{classId}/assign-train-image?imageId={trainImageId}", UriKind.Relative));
+
+            var accessToken = await _userSession.GetAccessTokenAsync(true);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await _httpClient.SendAsync(request);
+
+            _logger.Information("Received status code = {StatusCode} for confirmation.", response.StatusCode);
         }
     }
 }

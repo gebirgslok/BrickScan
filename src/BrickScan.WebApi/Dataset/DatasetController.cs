@@ -39,7 +39,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BrickScan.WebApi.Dataset
 {
-    //TODO: XML doc
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class DatasetController : ControllerBase
@@ -98,6 +97,34 @@ namespace BrickScan.WebApi.Dataset
             }
 
             return !errors.Any();
+        }
+
+        private async Task<IActionResult> SubmitDatasetClassForTrustedUser(DatasetClassDto datasetClassDto, ApiVersion apiVersion)
+        {
+            var numberColorIdPairs =
+                datasetClassDto.Items.Select(x => new Tuple<string, int>(x.Number, x.DatasetColorId))
+                    .ToList();
+
+            var exisiting = await _datasetService.GetClassByNumberAndColorIdPairsAsync(numberColorIdPairs);
+
+            var userName = HttpContext.User.GetUserName();
+            DatasetClass datasetClass;
+            if (exisiting != null)
+            {
+                datasetClass = await _datasetService.AddRequiresMergeClassAsync(datasetClassDto, userName);
+            }
+            else
+            {
+                datasetClass = await _datasetService.AddClassifiedClassAsync(datasetClassDto, userName);
+            }
+
+            return CreatedAtRoute(nameof(GetDatasetClass),
+                new
+                {
+                    id = datasetClass?.Id ?? -1,
+                    version = apiVersion.ToString()
+                },
+                new ApiResponse(201, data: datasetClass));
         }
 
         [HttpPost]
@@ -167,30 +194,30 @@ namespace BrickScan.WebApi.Dataset
             return NoContent();
         }
 
-        //TODO: XML DOC
-        [HttpPatch("images/confirm")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Authorize(Policy = Policies.RequiresTrustedUser)]
-        public async Task<IActionResult> ConfirmDatasetImage([FromQuery] int imageId,
-            [FromQuery] int classId)
-        {
-            _logger.LogDebug("Confirming unclassified image (ID = {ImageId}) for class (ID = {ClassId}).", imageId, classId);
+        ////TODO: XML DOC
+        //[HttpPatch("images/confirm")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Policy = Policies.RequiresTrustedUser)]
+        //public async Task<IActionResult> ConfirmDatasetImage([FromQuery] int imageId,
+        //    [FromQuery] int classId)
+        //{
+        //    _logger.LogDebug("Confirming unclassified image (ID = {ImageId}) for class (ID = {ClassId}).", imageId, classId);
 
-            var result = await _datasetService.ConfirmUnclassififiedImageAsync(imageId, classId);
+        //    var result = await _datasetService.ConfirmUnclassififiedImageAsync(imageId, classId);
 
-            if (!result.Success)
-            {
-                _logger.LogWarning("Received erroneous confirmation result ({@Errors})", result.Errors);
+        //    if (!result.Success)
+        //    {
+        //        _logger.LogWarning("Received erroneous confirmation result ({@Errors})", result.Errors);
 
-                return new BadRequestObjectResult(new ApiResponse(StatusCodes.Status400BadRequest, errors: result.Errors));
-            }
+        //        return new BadRequestObjectResult(new ApiResponse(StatusCodes.Status400BadRequest, errors: result.Errors));
+        //    }
 
-            _logger.LogDebug("Confirmation of image (ID = {ImageId}) for class (ID = {ClassId}) successful.", imageId, classId);
+        //    _logger.LogDebug("Confirmation of image (ID = {ImageId}) for class (ID = {ClassId}) successful.", imageId, classId);
 
-            return new OkObjectResult(new ApiResponse(StatusCodes.Status200OK, data: result.Image));
-        }
+        //    return new OkObjectResult(new ApiResponse(StatusCodes.Status200OK, data: result.Image));
+        //}
 
         //TODO: XML doc
         [HttpGet("classes/{id:int}", Name = nameof(GetDatasetClass))]
@@ -225,34 +252,6 @@ namespace BrickScan.WebApi.Dataset
 
             var map = await _datasetService.GetClassTrainImagesListAsync(page, pageSize);
             return new OkObjectResult(new ApiResponse(200, data: map));
-        }
-
-        private async Task<IActionResult> SubmitDatasetClassForTrustedUser(DatasetClassDto datasetClassDto, ApiVersion apiVersion)
-        {
-            var numberColorIdPairs =
-                datasetClassDto.Items.Select(x => new Tuple<string, int>(x.Number, x.DatasetColorId))
-                    .ToList();
-
-            var exisiting = await _datasetService.GetClassByNumberAndColorIdPairsAsync(numberColorIdPairs);
-
-            var userName = HttpContext.User.GetUserName();
-            DatasetClass datasetClass;
-            if (exisiting != null)
-            {
-                datasetClass = await _datasetService.AddRequiresMergeClassAsync(datasetClassDto, userName);
-            }
-            else
-            {
-                datasetClass = await _datasetService.AddClassifiedClassAsync(datasetClassDto, userName);
-            }
-
-            return CreatedAtRoute(nameof(GetDatasetClass),
-                new
-                {
-                    id = datasetClass?.Id ?? -1,
-                    version = apiVersion.ToString()
-                },
-                new ApiResponse(201, data: datasetClass));
         }
 
         //TODO: XML DOC

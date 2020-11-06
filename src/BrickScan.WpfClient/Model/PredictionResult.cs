@@ -24,21 +24,26 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+using BrickScan.Library.Core.Dto;
 
 namespace BrickScan.WpfClient.Model
 {
-    public interface IBrickScanApiClient
+    public class PredictionResult
     {
-        Task<bool> SubmitClassAsync(BitmapSource? extraDisplayImage, IList<BitmapSource> trainImages, bool useFirstTrainImageAsDisp,
-            IList<SubmitDatasetItemDto> items);
+        public bool Sucess { get; }
 
-        Task<PostImagesResult> PostImagesAsync(IEnumerable<BitmapSource> images,
-            string filenameTemplate = "image[{0}].png");
+        public string? ErrorMessage { get; }
 
-        Task<PredictionResult> PredictAsync(byte[] imageBytes);
+        public List<PredictedDatasetClassDto>? PredictedDatasetClasses { get; }
 
-        Task AssignTrainImageToClassAsync(int trainImageId, int classId);
+        internal static PredictionResult UnexpectedError =>
+            new PredictionResult(false, errorMessage: Properties.Resources.UnexpectedErrorOccurred);
+
+        internal PredictionResult(bool sucess, List<PredictedDatasetClassDto>? predictedDatasetClasses = null, string? errorMessage = null)
+        {
+            Sucess = sucess;
+            PredictedDatasetClasses = predictedDatasetClasses;
+            ErrorMessage = errorMessage;
+        }
     }
 }

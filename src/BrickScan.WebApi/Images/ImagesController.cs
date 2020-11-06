@@ -113,6 +113,7 @@ namespace BrickScan.WebApi.Images
         /// Uploads one or many image files.
         /// </summary>
         /// <param name="images">A list of image files to upload.</param>
+        /// <remarks>Supported image file formats: <b>JPEG</b> and <b>PNG</b>.</remarks>
         /// <returns></returns>
         /// <response code="200">Image(s) uploaded successfully.</response>
         /// <response code="400">Failed to convert (at least one) image(s).</response>

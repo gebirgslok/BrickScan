@@ -26,8 +26,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
@@ -45,7 +43,7 @@ namespace BrickScan.WpfClient.ViewModels
             "https://www.bricklink.com/v2/catalog/catalogitem.page?P={0}#T=S&C={1}";
 
         private readonly ILogger _logger;
-        private readonly HttpClient _httpClient;
+        private readonly IBrickScanApiClient _apiClient;
         private readonly IDialogCoordinator _dialogCoordinator;
         private readonly IEventAggregator _eventAggregator;
         private readonly PredictedDatasetClassDto _predictedDatasetClassDto;
@@ -86,14 +84,14 @@ namespace BrickScan.WpfClient.ViewModels
 
         public SingleItemPredictedClassViewModel(PredictedDatasetClassDto predictedDatasetClassDto,
             ILogger logger,
-            HttpClient httpClient,
+            IBrickScanApiClient apiClient,
             IDialogCoordinator dialogCoordinator,
             IEventAggregator eventAggregator,
             IUserSession userSession)
         {
             _predictedDatasetClassDto = predictedDatasetClassDto;
             _logger = logger;
-            _httpClient = httpClient;
+            _apiClient = apiClient;
             _dialogCoordinator = dialogCoordinator;
             _eventAggregator = eventAggregator;
             UserSession = userSession;
@@ -135,39 +133,30 @@ namespace BrickScan.WpfClient.ViewModels
             //TODO FUTURE Feature.
         }
 
-        public async Task ConfirmImageBelongsToClassAsync()
+        public async Task ConfirmDatasetClassAsync()
         {
             _eventAggregator.PublishOnUIThread(new OnImageConfirmed());
 
+            var controller =
+                await _dialogCoordinator.ShowProgressAsync(this,
+                    Properties.Resources.Confirmation,
+                    Properties.Resources.WaitingForConfirmationResponse);
+            
+            controller.SetIndeterminate();
+
             try
             {
-                var controller =
-                    await _dialogCoordinator.ShowProgressAsync(this,
-                        Properties.Resources.Confirmation,
-                        Properties.Resources.WaitingForConfirmationResponse);
-
-                controller.SetIndeterminate();
-
                 var imageId = _predictedDatasetClassDto.UnconfirmedImageId!.Value;
                 var classId = _predictedDatasetClassDto.Id;
-                var method = new HttpMethod("PATCH");
-
-                using var request = new HttpRequestMessage(method,
-                    new Uri($"dataset/images/confirm?imageId={imageId}&classId={classId}", UriKind.Relative));
-
-                var accessToken = await UserSession.GetAccessTokenAsync(true);
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-                var response = await _httpClient.SendAsync(request);
-
-                _logger.Information("Received status code = {StatusCode} for confirmation.", response.StatusCode);
-
-                await controller.CloseAsync();
-
+                await _apiClient.AssignTrainImageToClassAsync(imageId, classId);
             }
             catch (Exception e)
             {
                 _logger.Error(e, e.Message);
+            }
+            finally
+            {
+                await controller.CloseAsync();
             }
         }
 

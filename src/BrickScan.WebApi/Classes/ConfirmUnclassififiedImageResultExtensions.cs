@@ -23,22 +23,40 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+using System.Net;
+using BrickScan.Library.Dataset;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
-namespace BrickScan.WpfClient.Model
+namespace BrickScan.WebApi.Classes
 {
-    public interface IBrickScanApiClient
+    internal static class ConfirmUnclassififiedImageResultExtensions
     {
-        Task<bool> SubmitClassAsync(BitmapSource? extraDisplayImage, IList<BitmapSource> trainImages, bool useFirstTrainImageAsDisp,
-            IList<SubmitDatasetItemDto> items);
+        public static IActionResult GetActionResult(this ConfirmUnclassififiedImageResult r, string instance, string trace)
+        {
+            if (r.Success)
+            {
+                return new OkResult();
+            }
 
-        Task<PostImagesResult> PostImagesAsync(IEnumerable<BitmapSource> images,
-            string filenameTemplate = "image[{0}].png");
+            var problemDetails = new ProblemDetails
+            {
+                Detail = r.ErrorMessage,
+                Instance = instance,
+                Status = r.StatusCode,
+                Title = ReasonPhrases.GetReasonPhrase(r.StatusCode),
+                Type = $"https://httpstatuses.com/{r.StatusCode}"
+            };
 
-        Task<PredictionResult> PredictAsync(byte[] imageBytes);
+            problemDetails.Extensions.Add("traceId", trace);
+            
 
-        Task AssignTrainImageToClassAsync(int trainImageId, int classId);
+            if (r.StatusCode == 404)
+            {
+                return new NotFoundObjectResult(problemDetails);
+            }
+
+            return new BadRequestObjectResult(problemDetails);
+        }
     }
 }

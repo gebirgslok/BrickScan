@@ -23,7 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
 using BrickScan.Library.Dataset.Model;
 
 namespace BrickScan.Library.Dataset
@@ -34,13 +33,25 @@ namespace BrickScan.Library.Dataset
 
         public DatasetImage? Image { get; }
 
-        public IEnumerable<string> Errors { get; }
+        public string? ErrorMessage { get; }
 
-        internal ConfirmUnclassififiedImageResult(bool success, DatasetImage? image, IEnumerable<string>? errors)
+        public int StatusCode { get; }
+
+        private ConfirmUnclassififiedImageResult(bool success, DatasetImage? image, string? errorMessage, int statusCode)
         {
             Success = success;
             Image = image;
-            Errors = errors ?? new string[0];
+            ErrorMessage = errorMessage;
+            StatusCode = statusCode;
         }
+
+        internal static ConfirmUnclassififiedImageResult InvalidResourceResult(int resourceId, string resourceName, string invalidReason) =>
+            new ConfirmUnclassififiedImageResult(false, null, $"Resource ({resourceName}, ID = {resourceId}) is invalid. Reason: {invalidReason}.", 400);
+
+        internal static ConfirmUnclassififiedImageResult SuccessfulResult(DatasetImage datasetImage) =>
+            new ConfirmUnclassififiedImageResult(true, datasetImage, null, 200);
+
+        internal static ConfirmUnclassififiedImageResult ResourceNotFoundResult(int resourceId, string resourceName) 
+            => new ConfirmUnclassififiedImageResult(false, null, $"Resource ({resourceName}, ID = {resourceId}) not found.", 404);
     }
 }

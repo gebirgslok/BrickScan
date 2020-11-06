@@ -245,27 +245,27 @@ namespace BrickScan.Library.Dataset
 
             if (datasetClass == null)
             {
-                return new ConfirmUnclassififiedImageResult(false, null, new List<string>
-                {
-                    $"No {nameof(DatasetClass)} found for {nameof(classId)} = {classId}."
-                });
+                return ConfirmUnclassififiedImageResult.ResourceNotFoundResult(classId, nameof(DatasetClass));
             }
 
             var image = await _datasetDbContext.DatasetImages.FirstOrDefaultAsync(x => x.Id == imageId);
 
             if (image == null)
             {
-                return new ConfirmUnclassififiedImageResult(false, null, new List<string>
-                {
-                    $"No {nameof(DatasetImage)} found for {nameof(imageId)} = {imageId}."
-                });
+                return ConfirmUnclassififiedImageResult.ResourceNotFoundResult(imageId, nameof(DatasetImage));
+            }
+
+            if (image.Status != EntityStatus.Unclassified)
+            {
+                return ConfirmUnclassififiedImageResult.InvalidResourceResult(imageId, nameof(DatasetImage),
+                    $"Expected image status = {EntityStatus.Unclassified} but received {image.Status}");
             }
 
             image.Status = EntityStatus.Inherited;
             image.TrainDatasetClassId = datasetClass.Id;
             var entry = _datasetDbContext.DatasetImages.Update(image);
             await _datasetDbContext.SaveChangesAsync();
-            return new ConfirmUnclassififiedImageResult(true, entry.Entity, null);
+            return ConfirmUnclassififiedImageResult.SuccessfulResult(entry.Entity);
         }
 
         public async Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData)
