@@ -39,17 +39,20 @@ using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    internal class MainViewModel : Screen, IHandle<OnDialogMessageBoxRequested>
+    internal class MainViewModel : Screen, IHandle<OnDialogMessageBoxRequested>, IDisposable
     {
         private readonly PredictionConductorViewModel _predictionConductorViewModel;
         private readonly AddPartsConductorViewModel _addPartsConductorViewModel;
         private readonly SettingsViewModel _settingsViewModel;
         private readonly ILogger _logger;
         private readonly IDialogCoordinator _dialogCoordinator;
+        private bool _isDisposed;
 
         public StatusBarViewModel StatusBarViewModel { get; }
 
-        public HamburgerMenuItemCollection MenuItems => BuildMenuItems();
+        private HamburgerMenuItemCollection? _menuItems;
+
+        public HamburgerMenuItemCollection MenuItems => _menuItems ??= BuildMenuItems();
 
         public HamburgerMenuItemCollection MenuOptionItems => BuildMenuOptionsItems();
 
@@ -69,10 +72,31 @@ namespace BrickScan.WpfClient.ViewModels
             _addPartsConductorViewModel = addPartsConductorViewModel;
             _settingsViewModel = settingsViewModel;
             StatusBarViewModel = statusBarViewModel;
+
             UserSession = userManager;
+            UserSession.UserChanged += OnUserChanged;
+
             _logger = logger;
             _dialogCoordinator = dialogCoordinator;
             SelectedItem = MenuItems[0] as HamburgerMenuIconItem;
+        }
+
+        private void OnUserChanged(object sender, UserChangedEventArgs e)
+        {
+            var item = MenuItems.FirstOrDefault(x => x.Tag == _addPartsConductorViewModel);
+
+            if (item == null)
+            {
+                return;
+            }
+
+            var isVisible = UserSession.IsTrusted;
+            item.IsVisible = isVisible;
+
+            if (!isVisible && ReferenceEquals(SelectedItem, item))
+            {
+                SelectedItem = MenuItems.FirstOrDefault() as HamburgerMenuItem;
+            }
         }
 
         private HamburgerMenuItemCollection BuildMenuItems()
@@ -90,6 +114,7 @@ namespace BrickScan.WpfClient.ViewModels
                     Icon = new PackIconMaterial{ Kind = PackIconMaterialKind.CameraPlus },
                     Label = Properties.Resources.AddParts.ToUpperInvariant(),
                     Tag = _addPartsConductorViewModel,
+                    IsVisible = UserSession.IsTrusted
                 }
             };
 
@@ -141,9 +166,9 @@ namespace BrickScan.WpfClient.ViewModels
 
                 var settings = new MetroDialogSettings { AffirmativeButtonText = Properties.Resources.Restart };
 
-                await _dialogCoordinator.ShowMessageAsync(this, 
+                await _dialogCoordinator.ShowMessageAsync(this,
                     Properties.Resources.RestartRequired,
-                    Properties.Resources.RestartRequiredMessage, 
+                    Properties.Resources.RestartRequiredMessage,
                     settings: settings);
 
                 UpdateManager.RestartApp();
@@ -153,6 +178,21 @@ namespace BrickScan.WpfClient.ViewModels
                 _logger.Error(exception, "Failed to update the application, received {ExceptionMessage}.", exception.Message);
                 StatusBarViewModel.Clear();
             }
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                UserSession.UserChanged -= OnUserChanged;
+            }
+
+            _isDisposed = true;
         }
 
         public void CloseApplication()
@@ -196,6 +236,12 @@ namespace BrickScan.WpfClient.ViewModels
         public void Handle(OnDialogMessageBoxRequested message)
         {
             MessageBox.Show(message.Message, message.Caption, MessageBoxButton.OK, message.Icon);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

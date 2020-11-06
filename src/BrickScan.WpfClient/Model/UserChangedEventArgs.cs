@@ -23,30 +23,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Newtonsoft.Json;
+using System;
 
 namespace BrickScan.WpfClient.Model
 {
-    public class IdentityUser
+    public class UserChangedEventArgs : EventArgs
     {
-        public string Name { get; set; } = null!;
+        public IdentityUser? CurrentUser { get; }
 
-        [JsonProperty("extension_UserLevel")]
-        public string? Level { get; set; }
-
-        [JsonProperty("oid")] 
-        public string ObjectId { get; set; } = null!;
-
-        [JsonProperty("extension_BricklinkTokenValue")]
-        public string? BricklinkTokenValue { get; set; }
-
-        [JsonProperty("extension_BricklinkTokenSecret")]
-        public string? BricklinkTokenSecret { get; set; }
-
-        [JsonProperty("extension_BricklinkConsumerKey")]
-        public string? BricklinkConsumerKey { get; set; }
-
-        [JsonProperty("extension_BricklinkConsumerSecret")]
-        public string? BricklinkConsumerSecret { get; set; }
+        internal UserChangedEventArgs(IdentityUser? currentUser)
+        {
+            CurrentUser = currentUser;
+        }
     }
 }

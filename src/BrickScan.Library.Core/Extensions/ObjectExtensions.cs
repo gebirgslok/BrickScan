@@ -44,7 +44,7 @@ namespace BrickScan.Library.Core.Extensions
                 return s;
             }
 
-            return value.ToString();
+            return value!.ToString();
         }
     }
 }

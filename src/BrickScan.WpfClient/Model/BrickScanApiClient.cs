@@ -37,7 +37,6 @@ using BrickScan.WpfClient.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace BrickScan.WpfClient.Model
 {
@@ -218,7 +217,7 @@ namespace BrickScan.WpfClient.Model
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                var predictedClasses = JsonSerializer.Deserialize<List<PredictedDatasetClassDto>>(responseString);
+                var predictedClasses = JsonConvert.DeserializeObject<List<PredictedDatasetClassDto>>(responseString);
                 return new PredictionResult(true, predictedDatasetClasses: predictedClasses);
             }
 

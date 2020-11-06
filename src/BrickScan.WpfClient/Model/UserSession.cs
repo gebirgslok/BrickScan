@@ -39,14 +39,15 @@ using Application = System.Windows.Application;
 
 namespace BrickScan.WpfClient.Model
 {
-    internal class UserSession : PropertyChangedBase, IUserSession
+    internal sealed class UserSession : PropertyChangedBase, IUserSession
     {
+        public event EventHandler<UserChangedEventArgs>? UserChanged;
+
         private static readonly string[] _apiScopes = { "https://brickscan.onmicrosoft.com/api/access_as_user" };
 
         private readonly ILogger _logger;
         private readonly IPublicClientApplication _publicClientApplication;
         private readonly IEventAggregator _eventAggregator;
-
         public IdentityUser? CurrentUser { get; private set; }
 
         [DependsOn(nameof(CurrentUser))]
@@ -105,6 +106,11 @@ namespace BrickScan.WpfClient.Model
             var payload = idToken.Split('.')[1];
             var payloadJson = Base64UrlDecode(payload);
             return JsonConvert.DeserializeObject<IdentityUser>(payloadJson);
+        }
+
+        private void HandleUserChanged(UserChangedEventArgs e)
+        {
+            UserChanged?.Invoke(this, e);
         }
 
         public async Task LogOnAsync()
@@ -276,6 +282,16 @@ namespace BrickScan.WpfClient.Model
                                          Environment.NewLine +
                                          "Received an unexpected exception.");
                 return null;
+            }
+        }
+
+        protected override void NotifyOfPropertyChange(string propertyName = "")
+        {
+            base.NotifyOfPropertyChange(propertyName);
+
+            if (propertyName == nameof(CurrentUser))
+            {
+                HandleUserChanged(new UserChangedEventArgs(CurrentUser));
             }
         }
     }

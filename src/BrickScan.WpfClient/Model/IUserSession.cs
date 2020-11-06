@@ -23,12 +23,15 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Threading.Tasks;
 
 namespace BrickScan.WpfClient.Model
 {
     public interface IUserSession
     {
+        event EventHandler<UserChangedEventArgs>? UserChanged;
+
         IdentityUser? CurrentUser { get; }
 
         bool IsUserLoggedOn { get; }

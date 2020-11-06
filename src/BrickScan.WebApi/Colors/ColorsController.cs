@@ -195,7 +195,7 @@ namespace BrickScan.WebApi.Colors
 
             var colors = await _datasetService.GetColorsAsync();
 
-            _logger.LogDebug("Retrieved {NumOfColors} from DB.", colors.Count);
+            _logger.LogDebug("Retrieved #{NumOfColors} colors from DB.", colors.Count);
 
             return new OkObjectResult(colors);
         }
