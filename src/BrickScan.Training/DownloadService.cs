@@ -71,7 +71,7 @@ namespace BrickScan.Training
 
                 while (hasNextPage)
                 {
-                    var response = await httpClient.GetAsync($"dataset/classes/training-images?page={page}&pageSize=200");
+                    var response = await httpClient.GetAsync($"classes/training-images?page={page}&pageSize=200");
                     var json = await response.Content.ReadAsStringAsync();
                     using var document = JsonDocument.Parse(json);
 

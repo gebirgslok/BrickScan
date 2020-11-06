@@ -23,16 +23,15 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Net;
 using BrickScan.Library.Dataset;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace BrickScan.WebApi.Classes
 {
-    internal static class ConfirmUnclassififiedImageResultExtensions
+    internal static class ConfirmUnclassifiedImageResultExtensions
     {
-        public static IActionResult GetActionResult(this ConfirmUnclassififiedImageResult r, string instance, string trace)
+        public static IActionResult GetActionResult(this ConfirmUnclassifiedImageResult r, string instance, string trace)
         {
             if (r.Success)
             {

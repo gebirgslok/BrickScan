@@ -125,7 +125,7 @@ namespace BrickScan.WpfClient.Model
                     datasetClass.Items.Add(item);
                 }
 
-                using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("dataset/classes/submit", UriKind.Relative));
+                using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("classes/submit", UriKind.Relative));
 
                 var accessToken = await _userSession.GetAccessTokenAsync(false);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);

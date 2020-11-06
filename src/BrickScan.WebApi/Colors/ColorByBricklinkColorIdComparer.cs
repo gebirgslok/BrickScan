@@ -28,7 +28,7 @@ using BrickScan.Library.Dataset.Model;
 
 namespace BrickScan.WebApi.Dataset
 {
-    internal class DatasetByColorComparer : IEqualityComparer<DatasetColor>
+    internal class ColorByBricklinkColorIdComparer : IEqualityComparer<DatasetColor>
     {
         public bool Equals(DatasetColor? x, DatasetColor? y)
         {

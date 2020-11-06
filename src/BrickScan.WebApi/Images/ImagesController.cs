@@ -66,7 +66,7 @@ namespace BrickScan.WebApi.Images
         /// <response code="204">Image deleted successfully.</response>
         /// <response code="404">No image found for the posted image ID..</response>
         /// <response code="500">Internal server error occurred.</response>
-        [HttpDelete("{imageId}")]
+        [HttpDelete("{imageId:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
@@ -96,7 +96,7 @@ namespace BrickScan.WebApi.Images
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DatasetImage))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
-        [Route("{imageId}")]
+        [Route("{imageId:int}")]
         public async Task<IActionResult> GetImageByIdAsync([FromRoute] int imageId)
         {
             var datasetImage = await _datasetService.FindImageByIdAsync(imageId);

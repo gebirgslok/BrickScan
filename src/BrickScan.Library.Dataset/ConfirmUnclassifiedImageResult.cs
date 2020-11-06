@@ -27,7 +27,7 @@ using BrickScan.Library.Dataset.Model;
 
 namespace BrickScan.Library.Dataset
 {
-    public class ConfirmUnclassififiedImageResult
+    public class ConfirmUnclassifiedImageResult
     {
         public bool Success { get; }
 
@@ -37,7 +37,7 @@ namespace BrickScan.Library.Dataset
 
         public int StatusCode { get; }
 
-        private ConfirmUnclassififiedImageResult(bool success, DatasetImage? image, string? errorMessage, int statusCode)
+        private ConfirmUnclassifiedImageResult(bool success, DatasetImage? image, string? errorMessage, int statusCode)
         {
             Success = success;
             Image = image;
@@ -45,13 +45,13 @@ namespace BrickScan.Library.Dataset
             StatusCode = statusCode;
         }
 
-        internal static ConfirmUnclassififiedImageResult InvalidResourceResult(int resourceId, string resourceName, string invalidReason) =>
-            new ConfirmUnclassififiedImageResult(false, null, $"Resource ({resourceName}, ID = {resourceId}) is invalid. Reason: {invalidReason}.", 400);
+        internal static ConfirmUnclassifiedImageResult InvalidResourceResult(int resourceId, string resourceName, string invalidReason) =>
+            new ConfirmUnclassifiedImageResult(false, null, $"Resource ({resourceName}, ID = {resourceId}) is invalid. Reason: {invalidReason}.", 400);
 
-        internal static ConfirmUnclassififiedImageResult SuccessfulResult(DatasetImage datasetImage) =>
-            new ConfirmUnclassififiedImageResult(true, datasetImage, null, 200);
+        internal static ConfirmUnclassifiedImageResult SuccessfulResult(DatasetImage datasetImage) =>
+            new ConfirmUnclassifiedImageResult(true, datasetImage, null, 200);
 
-        internal static ConfirmUnclassififiedImageResult ResourceNotFoundResult(int resourceId, string resourceName) 
-            => new ConfirmUnclassififiedImageResult(false, null, $"Resource ({resourceName}, ID = {resourceId}) not found.", 404);
+        internal static ConfirmUnclassifiedImageResult ResourceNotFoundResult(int resourceId, string resourceName) 
+            => new ConfirmUnclassifiedImageResult(false, null, $"Resource ({resourceName}, ID = {resourceId}) not found.", 404);
     }
 }

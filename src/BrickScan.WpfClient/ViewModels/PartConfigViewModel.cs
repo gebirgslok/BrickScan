@@ -31,6 +31,7 @@ using System.Windows.Media.Imaging;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Model;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PropertyChanged;
 using Stylet;
@@ -68,10 +69,9 @@ namespace BrickScan.WpfClient.ViewModels
         {
             if (_cachedColors == null)
             {
-                var response = await httpClient.GetAsync("dataset/colors");
+                var response = await httpClient.GetAsync("colors");
                 var responseString = await response.Content.ReadAsStringAsync();
-                var json = JObject.Parse(responseString);
-                _cachedColors = json["data"]?.ToObject<List<ColorDto>>() ?? new List<ColorDto>();
+                _cachedColors = JsonConvert.DeserializeObject<List<ColorDto>>(responseString);
             }
 
             return _cachedColors;

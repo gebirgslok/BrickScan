@@ -46,7 +46,7 @@ namespace BrickScan.Library.Dataset
 
         Task<DatasetClass> AddRequiresMergeClassAsync(DatasetClassDto datasetClassDto, string createdBy);
 
-        Task<ConfirmUnclassififiedImageResult> ConfirmUnclassififiedImageAsync(int imageId, int classId);
+        Task<ConfirmUnclassifiedImageResult> ConfirmUnclassififiedImageAsync(int imageId, int classId);
 
         Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData);
 
@@ -55,6 +55,10 @@ namespace BrickScan.Library.Dataset
         Task<DatasetColor> AddColorAsync(ColorDto color);
 
         Task<List<DatasetColor>> AddColorsAsync(List<DatasetColor> colors);
+
+        Task<DatasetColor?> FindColorByIdAsync(int colorId);
+
+        Task<DatasetColor?> FindColorByBricklinkId(int bricklinkId);
 
         Task<List<DatasetColor>> GetColorsAsync();
 

@@ -238,26 +238,26 @@ namespace BrickScan.Library.Dataset
             return await AddClassAsync(datasetClassDto, createdBy, EntityStatus.RequiresMerge);
         }
 
-        public async Task<ConfirmUnclassififiedImageResult> ConfirmUnclassififiedImageAsync(int imageId, int classId)
+        public async Task<ConfirmUnclassifiedImageResult> ConfirmUnclassififiedImageAsync(int imageId, int classId)
         {
             var datasetClass = await _datasetDbContext.DatasetClasses
                 .FirstOrDefaultAsync(x => x.Id == classId);
 
             if (datasetClass == null)
             {
-                return ConfirmUnclassififiedImageResult.ResourceNotFoundResult(classId, nameof(DatasetClass));
+                return ConfirmUnclassifiedImageResult.ResourceNotFoundResult(classId, nameof(DatasetClass));
             }
 
             var image = await _datasetDbContext.DatasetImages.FirstOrDefaultAsync(x => x.Id == imageId);
 
             if (image == null)
             {
-                return ConfirmUnclassififiedImageResult.ResourceNotFoundResult(imageId, nameof(DatasetImage));
+                return ConfirmUnclassifiedImageResult.ResourceNotFoundResult(imageId, nameof(DatasetImage));
             }
 
             if (image.Status != EntityStatus.Unclassified)
             {
-                return ConfirmUnclassififiedImageResult.InvalidResourceResult(imageId, nameof(DatasetImage),
+                return ConfirmUnclassifiedImageResult.InvalidResourceResult(imageId, nameof(DatasetImage),
                     $"Expected image status = {EntityStatus.Unclassified} but received {image.Status}");
             }
 
@@ -265,7 +265,7 @@ namespace BrickScan.Library.Dataset
             image.TrainDatasetClassId = datasetClass.Id;
             var entry = _datasetDbContext.DatasetImages.Update(image);
             await _datasetDbContext.SaveChangesAsync();
-            return ConfirmUnclassififiedImageResult.SuccessfulResult(entry.Entity);
+            return ConfirmUnclassifiedImageResult.SuccessfulResult(entry.Entity);
         }
 
         public async Task<DatasetImage> AddUnclassifiedImageAsync(ImageData imageData)
@@ -324,6 +324,36 @@ namespace BrickScan.Library.Dataset
             await _datasetDbContext.DatasetColors.AddRangeAsync(colors);
             await _datasetDbContext.SaveChangesAsync();
             return colors;
+        }
+
+        public async Task<DatasetColor?> FindColorByIdAsync(int colorId)
+        {
+            _logger.LogDebug($"Trying to find {nameof(DatasetColor)} for {nameof(colorId)}: {{Id}}.", colorId);
+            var datasetColor = await _datasetDbContext.DatasetColors.FindAsync(colorId);
+
+            if (datasetColor == null)
+            {
+                _logger.LogInformation($"No {nameof(DatasetColor)} found for {nameof(colorId)}: {{Id}}.", colorId);
+                return null;
+            }
+
+            return datasetColor;
+        }
+
+        public async Task<DatasetColor?> FindColorByBricklinkId(int bricklinkId)
+        {
+            _logger.LogDebug($"Trying to find {nameof(DatasetColor)} for {nameof(bricklinkId)}: {{BricklinkId}}.", bricklinkId);
+
+            var datasetColor =
+                await _datasetDbContext.DatasetColors.FirstOrDefaultAsync(x => x.BricklinkColorId == bricklinkId);
+
+            if (datasetColor == null)
+            {
+                _logger.LogInformation($"No {nameof(DatasetColor)} found for {nameof(bricklinkId)}: {{BricklinkId}}.", bricklinkId);
+                return null;
+            }
+
+            return datasetColor;
         }
 
         public async Task<List<DatasetColor>> GetColorsAsync()
