@@ -147,9 +147,12 @@ namespace BrickScan.WpfClient.ViewModels
                 using var manager = new UpdateManager(url);
                 var updateInfo = await manager.CheckForUpdate(true);
 
+                StatusBarViewModel.Clear();
+
                 if (updateInfo == null)
                 {
-                    _logger.Warning($"Received no update info (Null) from {nameof(UpdateManager.CheckForUpdate)} call.");
+                    _logger.Warning(
+                        $"Received no update info (Null) from {nameof(UpdateManager.CheckForUpdate)} call.");
                     return;
                 }
 
@@ -159,7 +162,8 @@ namespace BrickScan.WpfClient.ViewModels
                     return;
                 }
 
-                _logger.Information("Received update info: {CurrentlyInstalledVersion}, {FutureEntry}, {@ReleasesToApply}.",
+                _logger.Information(
+                    "Received update info: {CurrentlyInstalledVersion}, {FutureEntry}, {@ReleasesToApply}.",
                     updateInfo.CurrentlyInstalledVersion.EntryAsString,
                     updateInfo.FutureReleaseEntry.EntryAsString,
                     updateInfo.ReleasesToApply.Select(x => x.EntryAsString));
@@ -170,7 +174,7 @@ namespace BrickScan.WpfClient.ViewModels
 
                 StatusBarViewModel.Clear();
 
-                var settings = new MetroDialogSettings { AffirmativeButtonText = Properties.Resources.Restart };
+                var settings = new MetroDialogSettings {AffirmativeButtonText = Properties.Resources.Restart};
 
                 await _dialogCoordinator.ShowMessageAsync(this,
                     Properties.Resources.RestartRequired,
@@ -181,8 +185,13 @@ namespace BrickScan.WpfClient.ViewModels
             }
             catch (Exception exception)
             {
-                _logger.Error(exception, "Failed to update the application, received {ExceptionMessage}.", exception.Message);
+                _logger.Error(exception, "Failed to update the application, received {ExceptionMessage}.",
+                    exception.Message);
                 StatusBarViewModel.Clear();
+            }
+            finally
+            {
+
             }
         }
 
