@@ -33,9 +33,9 @@ using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.IconPacks;
-using Serilog;
 using Squirrel;
 using Stylet;
+using ILogger = Serilog.ILogger;
 
 namespace BrickScan.WpfClient.ViewModels
 {
@@ -150,6 +150,12 @@ namespace BrickScan.WpfClient.ViewModels
                 if (updateInfo == null)
                 {
                     _logger.Warning($"Received no update info (Null) from {nameof(UpdateManager.CheckForUpdate)} call.");
+                    return;
+                }
+
+                if (!updateInfo.ReleasesToApply.Any())
+                {
+                    _logger.Information("No releases to apply.");
                     return;
                 }
 
