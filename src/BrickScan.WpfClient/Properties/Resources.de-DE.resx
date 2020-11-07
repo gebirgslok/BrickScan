@@ -289,7 +289,7 @@
     <value>Prüfe auf Updates</value>
   </data>
   <data name="ApplyingUpdate" xml:space="preserve">
-    <value>Führe Update aus</value>
+    <value>Update wird ausgeführt</value>
   </data>
   <data name="Restart" xml:space="preserve">
     <value>Neustart</value>
@@ -308,5 +308,8 @@
   </data>
   <data name="UnexpectedErrorOccurred" xml:space="preserve">
     <value>Es ist ein unerwarteter Fehler aufgetreten.</value>
+  </data>
+  <data name="DownloadingNewRelease" xml:space="preserve">
+    <value>Neue Version wird heruntergeladen</value>
   </data>
 </root>

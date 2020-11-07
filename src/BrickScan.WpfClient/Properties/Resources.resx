@@ -289,4 +289,7 @@
   <data name="UnexpectedErrorOccurred" xml:space="preserve">
     <value>An unexpected error occurred.</value>
   </data>
+  <data name="DownloadingNewRelease" xml:space="preserve">
+    <value>Download new release</value>
+  </data>
 </root>

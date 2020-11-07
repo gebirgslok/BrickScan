@@ -259,6 +259,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download new release.
+        /// </summary>
+        public static string DownloadingNewRelease {
+            get {
+                return ResourceManager.GetString("DownloadingNewRelease", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to edit profile. Please sign out and then sign in again and try again..
         /// </summary>
         public static string EditProfileFailedMessage {
