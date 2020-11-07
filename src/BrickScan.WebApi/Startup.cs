@@ -83,8 +83,11 @@ namespace BrickScan.WebApi
             }
             else
             {
+                var pollingPeriodInMinutes = configuration.GetValue<int>("MlModel:PollingPeriodInMinutes");
                 services.AddPredictionEnginePool<ModelImageInput, ModelImagePrediction>()
-                    .FromUri(modelName: configuration["MlModel:ModelName"], uri: configuration["MlModel:Uri"], TimeSpan.FromDays(1));
+                    .FromUri(modelName: configuration["MlModel:ModelName"], uri: 
+                        configuration["MlModel:Uri"], 
+                        TimeSpan.FromMinutes(pollingPeriodInMinutes));
             }
         }
 
@@ -126,8 +129,8 @@ namespace BrickScan.WebApi
             {
                 options.AddPolicy(Policies.RequiresTrustedUser, policy =>
                     policy.RequireClaim(Claims.UserLevel, "trusted_user", "admin"));
-                options.AddPolicy(Policies.RequiresTrustedUser, policy =>
-                    policy.RequireClaim(Claims.UserLevel, "trusted_user", "admin"));
+                options.AddPolicy(Policies.RequiresAdmin, policy =>
+                    policy.RequireClaim(Claims.UserLevel, "admin"));
             });
 
             services.AddControllers();

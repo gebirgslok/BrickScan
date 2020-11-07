@@ -205,12 +205,14 @@ namespace BrickScan.WebApi.Colors
         /// </summary>
         /// <returns>No content response or problem details if request failed.</returns>
         /// <response code="204">Colors updated successfully (no content).</response>
+        /// <response code="401">Not authorized.</response>
         /// <response code="500">Internal server error occurred.</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
         [Route("update-from-bl")]
-        [Authorize(Policy = Policies.RequiresTrustedUser)]
+        [Authorize(Policy = Policies.RequiresAdmin)]
         public async Task<IActionResult> UpdateDatasetColorsFromBricklink()
         {
             BricklinkClientConfiguration.Instance.TokenValue = "2EBD09FD75BE4A3BBA9E556B297D0CAF";

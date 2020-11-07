@@ -71,7 +71,7 @@ namespace BrickScan.Training
 
                 while (hasNextPage)
                 {
-                    var response = await httpClient.GetAsync($"classes/training-images?page={page}&pageSize=200");
+                    var response = await httpClient.GetAsync($"dataset/classes/training-images?page={page}&pageSize=200");
                     var json = await response.Content.ReadAsStringAsync();
                     using var document = JsonDocument.Parse(json);
 
@@ -152,10 +152,13 @@ namespace BrickScan.Training
 
                 var classId = dto.ClassId;
                 var classBasePath = Path.Combine(destinationDirectory, classId.ToString("D6"));
-                Directory.CreateDirectory(classBasePath);
 
-                _writer.WriteLine($"Set Directory = {classBasePath} for class ID = {classId}.");
-                _logger.LogInformation("Set {Directory} for {ClassId}.", classBasePath, classId);
+                if (!Directory.Exists(classBasePath))
+                {
+                    Directory.CreateDirectory(classBasePath); 
+                    _writer.WriteLine($"Set Directory = {classBasePath} for class ID = {classId}.");
+                    _logger.LogInformation("Set {Directory} for {ClassId}.", classBasePath, classId);
+                }
 
                 await Task.WhenAll(dto.ImageUrls.Select(url => Task.Run(() =>
                 {

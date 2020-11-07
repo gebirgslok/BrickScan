@@ -29,5 +29,6 @@ namespace BrickScan.WebApi
     internal static class Policies
     {
         public const string RequiresTrustedUser = "RequiresTrustedUser";
+        public const string RequiresAdmin = "RequiresAdmin";
     }
 }
