@@ -49,6 +49,8 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly PredictedDatasetClassDto _predictedDatasetClassDto;
         private readonly Uri[] _displayImages;
 
+        public override int PredictedClassId => _predictedDatasetClassDto.Id;
+
         public IUserSession UserSession { get; }
 
         public Uri? SelectedDisplayImage { get; set; }
@@ -133,9 +135,9 @@ namespace BrickScan.WpfClient.ViewModels
             //TODO FUTURE Feature.
         }
 
-        public async Task ConfirmDatasetClassAsync()
+        public async Task ConfirmImageBelongsToClassAsync()
         {
-            _eventAggregator.PublishOnUIThread(new OnImageConfirmed());
+            _eventAggregator.PublishOnUIThread(new OnImageConfirmed(_predictedDatasetClassDto.Id));
 
             var controller =
                 await _dialogCoordinator.ShowProgressAsync(this,

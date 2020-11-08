@@ -29,5 +29,6 @@ namespace BrickScan.WpfClient.ViewModels
 {
     public abstract class PredictedClassViewModelBase : PropertyChangedBase
     {
+        public abstract int PredictedClassId { get; }
     }
 }

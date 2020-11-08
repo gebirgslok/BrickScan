@@ -74,14 +74,14 @@ namespace BrickScan.WpfClient.ViewModels
             StatusBarViewModel = statusBarViewModel;
 
             UserSession = userManager;
-            UserSession.UserChanged += OnUserChanged;
+            UserSession.UserChanged += HandleUserChanged;
 
             _logger = logger;
             _dialogCoordinator = dialogCoordinator;
             SelectedItem = MenuItems[0] as HamburgerMenuIconItem;
         }
 
-        private void OnUserChanged(object sender, UserChangedEventArgs e)
+        private void HandleUserChanged(object sender, UserChangedEventArgs e)
         {
             var item = MenuItems.FirstOrDefault(x => x.Tag == _addPartsConductorViewModel);
 
@@ -205,7 +205,7 @@ namespace BrickScan.WpfClient.ViewModels
 
             if (disposing)
             {
-                UserSession.UserChanged -= OnUserChanged;
+                UserSession.UserChanged -= HandleUserChanged;
             }
 
             _isDisposed = true;

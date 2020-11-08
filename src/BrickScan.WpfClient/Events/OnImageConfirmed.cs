@@ -27,8 +27,11 @@ namespace BrickScan.WpfClient.Events
 {
     public class OnImageConfirmed
     {
-        internal OnImageConfirmed()
+        public int PredictedClassId { get; }
+
+        internal OnImageConfirmed(int predictedClassId)
         {
+            PredictedClassId = predictedClassId;
         }
     }
 }

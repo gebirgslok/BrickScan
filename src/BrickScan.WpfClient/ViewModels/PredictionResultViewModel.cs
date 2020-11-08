@@ -40,14 +40,14 @@ using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
 {
-    public class PredictionResultViewModel : PropertyChangedBase
+    public class PredictionResultViewModel : PropertyChangedBase, IHandle<OnImageConfirmed>
     {
         private readonly IEventAggregator _eventAggregator;
         private readonly IPredictedClassViewModelFactory _predictedClassViewModelFactory;
         private readonly IBrickScanApiClient _apiClient;
         private readonly ILogger _logger;
 
-        public IEnumerable<PredictedClassViewModelBase>? PredictedClassViewModels { get; set; }
+        public BindableCollection<PredictedClassViewModelBase>? PredictedClassViewModels { get; set; }
 
         public BitmapSource ImageSource { get; }
 
@@ -75,7 +75,8 @@ namespace BrickScan.WpfClient.ViewModels
             {
                 if (args.PropertyName == nameof(InitializationNotifier.IsSuccessfullyCompleted))
                 {
-                    PredictedClassViewModels = BuildViewModels(InitializationNotifier.Result.PredictedDatasetClasses);
+                    var viewModels = BuildViewModels(InitializationNotifier.Result.PredictedDatasetClasses);
+                    PredictedClassViewModels = new BindableCollection<PredictedClassViewModelBase>(viewModels);
                 }
             };
         }
@@ -123,6 +124,20 @@ namespace BrickScan.WpfClient.ViewModels
         public void NavigateBack()
         {
             _eventAggregator.PublishOnUIThread(new OnPredictionResultCloseRequested());
+        }
+
+        public void Handle(OnImageConfirmed message)
+        {
+            if (PredictedClassViewModels != null)
+            {
+                for (var i = PredictedClassViewModels.Count - 1; i >= 0; i--)
+                {
+                    if (PredictedClassViewModels[i].PredictedClassId != message.PredictedClassId)
+                    {
+                        PredictedClassViewModels.RemoveAt(i);
+                    }
+                }
+            }
         }
     }
 }

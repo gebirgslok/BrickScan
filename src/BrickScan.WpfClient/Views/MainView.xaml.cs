@@ -24,20 +24,20 @@
 #endregion
 
 using System;
-using System.Globalization;
 using System.Windows;
-using System.Windows.Data;
 
-namespace BrickScan.WpfClient.Converter
+namespace BrickScan.WpfClient.Views
 {
-    [ValueConversion(typeof(double), typeof(double))]
-    internal class WindowSizeConverter : IValueConverter
+    public partial class MainView
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return System.Convert.ToDouble(value) * System.Convert.ToDouble(parameter, CultureInfo.InvariantCulture);
-        }
+        private const int TARGET_WIDTH = 1200;
+        private const int TARGET_HEIGHT = 800;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => DependencyProperty.UnsetValue;
+        public MainView()
+        {
+            Width = Math.Min(SystemParameters.PrimaryScreenWidth, TARGET_WIDTH);
+            Height = Math.Min(SystemParameters.PrimaryScreenHeight, TARGET_HEIGHT);
+            InitializeComponent();
+        }
     }
 }
