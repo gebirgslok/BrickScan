@@ -138,7 +138,7 @@ namespace BrickScan.WebApi.Colors
             return CreatedAtRoute(nameof(GetColorByIdAsync),
                 new
                 {
-                    id = datasetColor.Id,
+                    colorId = datasetColor.Id,
                     version = apiVersion.ToString()
                 },
                 datasetColor);

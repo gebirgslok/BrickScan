@@ -171,19 +171,26 @@ namespace BrickScan.WpfClient.Model
                     count++;
                 }
 
-                var response = await _httpClient.PostAsync("images", formData);
-                var responseString = await response.Content.ReadAsStringAsync();
-                var jsonObj = JObject.Parse(responseString);
-                var jsonData = jsonObj["data"];
+                using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("images", UriKind.Relative));
 
-                if (jsonData == null)
+                var accessToken = await _userSession.GetAccessTokenAsync(true);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                request.Content = formData;
+                var response = await _httpClient.SendAsync(request);
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
                 {
-                    throw new InvalidOperationException(
-                        "Received JSON response (for request POST /images) did not contain a 'data' object.");
+                    var message = "Received JSON response (for request POST /images) did not have a success code." +
+                                  Environment.NewLine +
+                                  $"Expected code = 200, received = {response.StatusCode}." +
+                                  Environment.NewLine +
+                                  $"Body = {responseString}.";
+                    throw new HttpRequestException(message);
                 }
 
-                var data = jsonData.ToObject<List<DatasetImageDto>>();
-                return new PostImagesResult(true, data);
+                var datasetImages = JsonConvert.DeserializeObject<List<DatasetImageDto>>(responseString);
+                return new PostImagesResult(true, datasetImages);
             }
             catch (Exception exception)
             {

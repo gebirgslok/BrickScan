@@ -102,7 +102,7 @@ namespace BrickScan.WebApi.Classes
             return CreatedAtRoute(nameof(GetClassByIdAsync),
                 new
                 {
-                    id = datasetClass.Id,
+                    classId = datasetClass.Id,
                     version = apiVersion.ToString()
                 },
                 datasetClass);
@@ -157,7 +157,7 @@ namespace BrickScan.WebApi.Classes
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DatasetClass))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
-        public async Task<IActionResult> SubmitClassAsync([FromBody] DatasetClassDto datasetClassDto, ApiVersion apiVersion)
+        public async Task<IActionResult> SubmitClassAsync([FromBody] DatasetClassDto datasetClassDto, [FromRoute] ApiVersion apiVersion)
         {
             if (!Validate(datasetClassDto, out var errorMessage))
             {
@@ -184,7 +184,7 @@ namespace BrickScan.WebApi.Classes
             return CreatedAtRoute(nameof(GetClassByIdAsync),
                 new
                 {
-                    id = datasetClass.Id,
+                    classId = datasetClass.Id,
                     version = apiVersion.ToString()
                 },
                 datasetClass);
