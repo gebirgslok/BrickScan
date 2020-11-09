@@ -25,13 +25,13 @@
 
 using System;
 using BrickScan.WpfClient.Properties;
+using Serilog;
 
 namespace BrickScan.WpfClient
 {
     internal class UserConfiguration : IUserConfiguration
     {
-        private static UserConfiguration? _instance;
-        public static UserConfiguration Instance => _instance ??= new UserConfiguration();
+        private readonly ILogger _logger;
 
         public int SelectedSensitivityLevel
         {
@@ -98,14 +98,15 @@ namespace BrickScan.WpfClient
             }
         }
 
-        private UserConfiguration()
+        public UserConfiguration(ILogger logger)
         {
-            if (Settings.Default.IsUpgradeRequired)
-            {
-                Settings.Default.Upgrade();
-                Settings.Default.IsUpgradeRequired = false;
-                Settings.Default.Save();
-            }
+            _logger = logger;
+            //if (Settings.Default.IsUpgradeRequired)
+            //{
+            //    Settings.Default.Upgrade();
+            //    Settings.Default.IsUpgradeRequired = false;
+            //    Settings.Default.Save();
+            //}
         }
 
         public void Save()

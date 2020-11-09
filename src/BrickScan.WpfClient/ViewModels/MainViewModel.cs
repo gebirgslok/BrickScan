@@ -172,6 +172,8 @@ namespace BrickScan.WpfClient.ViewModels
                 await manager.DownloadReleases(updateInfo.ReleasesToApply); 
                 
                 StatusBarViewModel.Message = Properties.Resources.ApplyingUpdate;
+
+                SettingsHelper.BackupSettings();
                 await manager.ApplyReleases(updateInfo);
 
                 StatusBarViewModel.Clear();

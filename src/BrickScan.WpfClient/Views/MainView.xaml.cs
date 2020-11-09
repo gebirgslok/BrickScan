@@ -32,11 +32,12 @@ namespace BrickScan.WpfClient.Views
     {
         private const int TARGET_WIDTH = 1200;
         private const int TARGET_HEIGHT = 800;
+        private const double MAX_WIDTH_HEIGHT_PERC = 0.9;
 
         public MainView()
         {
-            Width = Math.Min(SystemParameters.PrimaryScreenWidth, TARGET_WIDTH);
-            Height = Math.Min(SystemParameters.PrimaryScreenHeight, TARGET_HEIGHT);
+            Width = Math.Min((int)(SystemParameters.PrimaryScreenWidth * MAX_WIDTH_HEIGHT_PERC), TARGET_WIDTH);
+            Height = Math.Min((int)(SystemParameters.PrimaryScreenHeight * MAX_WIDTH_HEIGHT_PERC), TARGET_HEIGHT);
             InitializeComponent();
         }
     }

@@ -47,6 +47,7 @@ namespace BrickScan.WpfClient
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            SettingsHelper.RestoreSettings();
             ChangeTheme();
             base.OnStartup(e);
         }

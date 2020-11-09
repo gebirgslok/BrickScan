@@ -71,20 +71,19 @@ namespace BrickScan.Training
 
                 while (hasNextPage)
                 {
-                    var response = await httpClient.GetAsync($"dataset/classes/training-images?page={page}&pageSize=200");
+                    var response = await httpClient.GetAsync($"classes/training-images?page={page}&pageSize=200");
                     var json = await response.Content.ReadAsStringAsync();
-                    using var document = JsonDocument.Parse(json);
 
-                    if (document.RootElement.TryGetProperty("data", out var dataElement))
+                    if (response.IsSuccessStatusCode)
                     {
-                        var pagedResult = dataElement.ToObject<PagedResult<DatasetClassTrainImagesDto>>();
+                        var pagedResult = JsonSerializer.Deserialize<PagedResult<DatasetClassTrainImagesDto>>(json);
                         hasNextPage = pagedResult.HasNextPage;
                         list.AddRange(pagedResult.Results);
                         page += 1;
                     }
                     else
                     {
-                        //TODO: log; return error message.
+                        //Log error.
                     }
                 }
             }
