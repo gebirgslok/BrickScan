@@ -32,7 +32,7 @@ namespace BrickScan.WpfClient.Controls
 {
     //Source code adapted from https://stackoverflow.com/questions/2006729/how-can-i-have-a-listbox-auto-scroll-when-a-new-item-is-added/2007072,
     //contribution by user 'denis morozov'.
-    public class ScrollOnCollectionChangedBehavior : Behavior<ItemsControl>
+    internal class ScrollOnCollectionChangedBehavior : Behavior<ItemsControl>
     {
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
