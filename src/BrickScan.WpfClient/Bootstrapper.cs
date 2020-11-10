@@ -35,10 +35,12 @@ using AutofacSerilogIntegration;
 using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.Model;
 using BrickScan.WpfClient.Properties;
+using BrickScan.WpfClient.Updater;
 using BrickScan.WpfClient.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Identity.Client;
 using Serilog;
+using Squirrel;
 using VideoCapture = BrickScan.WpfClient.Model.VideoCapture;
 
 namespace BrickScan.WpfClient
@@ -146,6 +148,21 @@ namespace BrickScan.WpfClient
                 .As<IUserConfiguration>()
                 .SingleInstance()
                 .AutoActivate();
+
+#if DEBUG
+            builder.Register(c =>
+                {
+                    var url = ConfigurationManager.AppSettings["SquirrelReleasesUrl"];
+                    return new UpdateManager(url);
+                })
+                .As<IUpdateManager>()
+                .ExternallyOwned();
+
+            builder.RegisterType<UserSettingsHelper>().As<IUserSettingsHelper>();
+            builder.RegisterType<BrickScanSquirrelUpdater>().As<IBrickScanUpdater>();
+#else
+            builder.RegisterType<DummyUpdater>().As<IBrickScanUpdater>();
+#endif
 
             builder.RegisterType<PredictedClassViewModelFactory>().As<IPredictedClassViewModelFactory>().SingleInstance();
             builder.RegisterLogger();

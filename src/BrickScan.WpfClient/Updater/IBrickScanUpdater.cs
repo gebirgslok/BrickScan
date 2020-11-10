@@ -23,16 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Configuration;
+using System;
+using System.Threading.Tasks;
 
-namespace BrickScan.WpfClient
+namespace BrickScan.WpfClient.Updater
 {
-    internal static class AppConfig
+    internal interface IBrickScanUpdater
     {
-        public static int MaxNonDisplayImageWidthOrHeight =>
-            int.Parse(ConfigurationManager.AppSettings["MaxNonDisplayImageWidthOrHeight"]);
-
-        public static int MaxDisplayImageWidthOrHeight =>
-            int.Parse(ConfigurationManager.AppSettings["MaxDisplayImageWidthOrHeight"]);
+        Task TryUpdateApplicationAsync(Action<string> messagesCallback, 
+            Action clearMessageCallback, 
+            Func<Task> confirmRestartTaskFactory, 
+            Action restartAppCallback);
     }
 }

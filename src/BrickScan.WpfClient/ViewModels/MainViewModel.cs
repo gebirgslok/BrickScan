@@ -24,12 +24,12 @@
 #endregion
 
 using System;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Model;
+using BrickScan.WpfClient.Updater;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.IconPacks;
@@ -46,6 +46,7 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly SettingsViewModel _settingsViewModel;
         private readonly ILogger _logger;
         private readonly IDialogCoordinator _dialogCoordinator;
+        private readonly IBrickScanUpdater _updater;
         private bool _isDisposed;
 
         public StatusBarViewModel StatusBarViewModel { get; }
@@ -66,7 +67,8 @@ namespace BrickScan.WpfClient.ViewModels
             StatusBarViewModel statusBarViewModel,
             IUserSession userManager,
             ILogger logger,
-            IDialogCoordinator dialogCoordinator)
+            IDialogCoordinator dialogCoordinator,
+            IBrickScanUpdater updater)
         {
             _predictionConductorViewModel = predictionConductorViewModel;
             _addPartsConductorViewModel = addPartsConductorViewModel;
@@ -78,6 +80,7 @@ namespace BrickScan.WpfClient.ViewModels
 
             _logger = logger;
             _dialogCoordinator = dialogCoordinator;
+            _updater = updater;
             SelectedItem = MenuItems[0] as HamburgerMenuIconItem;
         }
 
@@ -138,64 +141,15 @@ namespace BrickScan.WpfClient.ViewModels
 
         private async Task UpdateApplication()
         {
-            try
-            {
-                StatusBarViewModel.Message = Properties.Resources.CheckingForUpdates;
+            var settings = new MetroDialogSettings { AffirmativeButtonText = Properties.Resources.Restart };
 
-                var url = ConfigurationManager.AppSettings["SquirrelReleasesUrl"];
-
-                using var manager = new UpdateManager(url);
-                var updateInfo = await manager.CheckForUpdate(true);
-
-                StatusBarViewModel.Clear();
-
-                if (updateInfo == null)
-                {
-                    _logger.Warning(
-                        $"Received no update info (Null) from {nameof(UpdateManager.CheckForUpdate)} call.");
-                    return;
-                }
-
-                if (!updateInfo.ReleasesToApply.Any())
-                {
-                    _logger.Information("No releases to apply.");
-                    return;
-                }
-
-                _logger.Information(
-                    "Received update info: {CurrentlyInstalledVersion}, {FutureEntry}, {@ReleasesToApply}.",
-                    updateInfo.CurrentlyInstalledVersion.EntryAsString,
-                    updateInfo.FutureReleaseEntry.EntryAsString,
-                    updateInfo.ReleasesToApply.Select(x => x.EntryAsString));
-
-                StatusBarViewModel.Message = Properties.Resources.DownloadingNewRelease;
-                await manager.DownloadReleases(updateInfo.ReleasesToApply); 
-                
-                StatusBarViewModel.Message = Properties.Resources.ApplyingUpdate;
-
-                SettingsHelper.BackupSettings();
-                await manager.ApplyReleases(updateInfo);
-
-                StatusBarViewModel.Clear();
-
-                var settings = new MetroDialogSettings { AffirmativeButtonText = Properties.Resources.Restart };
-
-                await _dialogCoordinator.ShowMessageAsync(this,
+            await _updater.TryUpdateApplicationAsync(message => { StatusBarViewModel.Message = message; },
+                () => StatusBarViewModel.Clear(),
+                () => _dialogCoordinator.ShowMessageAsync(this,
                     Properties.Resources.RestartRequired,
                     Properties.Resources.RestartRequiredMessage,
-                    settings: settings);
-
-                UpdateManager.RestartApp();
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "Failed to update the application, received {ExceptionMessage}.",
-                    exception.Message);
-            }
-            finally
-            {
-                StatusBarViewModel.Clear();
-            }
+                    settings: settings),
+                () => UpdateManager.RestartApp());
         }
 
         private void Dispose(bool disposing)
@@ -240,10 +194,8 @@ namespace BrickScan.WpfClient.ViewModels
 
         public async Task OnLoaded()
         {
-#if !DEBUG
-            await UpdateApplication();
-#endif
             await UserSession.TryAutoLogOnAsync();
+            await UpdateApplication();
         }
 
         public async Task EditProfileAsync()

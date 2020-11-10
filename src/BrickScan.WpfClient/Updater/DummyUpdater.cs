@@ -23,16 +23,26 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Configuration;
+using System;
+using System.Threading.Tasks;
+using Serilog;
 
-namespace BrickScan.WpfClient
+namespace BrickScan.WpfClient.Updater
 {
-    internal static class AppConfig
+    internal class DummyUpdater : IBrickScanUpdater
     {
-        public static int MaxNonDisplayImageWidthOrHeight =>
-            int.Parse(ConfigurationManager.AppSettings["MaxNonDisplayImageWidthOrHeight"]);
+        private readonly ILogger _logger;
 
-        public static int MaxDisplayImageWidthOrHeight =>
-            int.Parse(ConfigurationManager.AppSettings["MaxDisplayImageWidthOrHeight"]);
+        public DummyUpdater(ILogger logger)
+        {
+            _logger = logger;
+        }
+
+        public Task TryUpdateApplicationAsync(Action<string> messagesCallback, Action clearMessageCallback, Func<Task> confirmRestartTaskFactory,
+            Action restartAppCallback)
+        {
+            _logger.Information($"Calling {nameof(TryUpdateApplicationAsync)} of {nameof(DummyUpdater)}. No actions performed.");
+            return Task.CompletedTask;
+        }
     }
 }

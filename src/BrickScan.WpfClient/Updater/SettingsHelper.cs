@@ -28,20 +28,20 @@ using System.Configuration;
 using System.IO;
 using BrickScan.WpfClient.Properties;
 
-namespace BrickScan.WpfClient
+namespace BrickScan.WpfClient.Updater
 {
     internal static class SettingsHelper
     {
-        private static readonly string _lastConfigFile =
+        internal static readonly string TempConfigFile =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "BrickScan",
-                "last.config");
+                "temp.config");
 
         public static void RestoreSettings()
         {
             var destFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
             var destDir = Path.GetDirectoryName(destFile)!;
-            var sourceFile = _lastConfigFile;
+            var sourceFile = TempConfigFile;
 
             if (!File.Exists(sourceFile))
             {
@@ -76,20 +76,6 @@ namespace BrickScan.WpfClient
             }
 
             Settings.Default.Reload();
-        }
-
-        public static void BackupSettings()
-        {
-            var settingsFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
-
-            try
-            {
-                File.Copy(settingsFile, _lastConfigFile, true);
-            }
-            catch
-            {
-                // ignored
-            }
         }
     }
 }

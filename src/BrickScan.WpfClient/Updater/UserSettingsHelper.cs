@@ -23,16 +23,38 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Configuration;
+using System.IO;
+using Serilog;
 
-namespace BrickScan.WpfClient
+namespace BrickScan.WpfClient.Updater
 {
-    internal static class AppConfig
+    internal class UserSettingsHelper : IUserSettingsHelper
     {
-        public static int MaxNonDisplayImageWidthOrHeight =>
-            int.Parse(ConfigurationManager.AppSettings["MaxNonDisplayImageWidthOrHeight"]);
+        private readonly ILogger _logger;
 
-        public static int MaxDisplayImageWidthOrHeight =>
-            int.Parse(ConfigurationManager.AppSettings["MaxDisplayImageWidthOrHeight"]);
+        public UserSettingsHelper(ILogger logger)
+        {
+            _logger = logger;
+        }
+
+        public void Backup()
+        {
+            var settingsFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+
+            try
+            {
+                _logger.Information("Backing up {CurrentSettingsFile} to {TempSettingsFile}...", settingsFile, SettingsHelper.TempConfigFile);
+
+                File.Copy(settingsFile, SettingsHelper.TempConfigFile, true);
+
+                _logger.Information("Successfully copied {CurrentSettingsFile} to {TempSettingsFile}.", settingsFile, SettingsHelper.TempConfigFile);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to copy {CurrentSettingsFile} to {TempSettingsFile}.", settingsFile, SettingsHelper.TempConfigFile);
+            }
+        }
     }
 }

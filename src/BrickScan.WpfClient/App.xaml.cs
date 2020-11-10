@@ -26,6 +26,7 @@
 using System.ComponentModel;
 using System.Windows;
 using BrickScan.WpfClient.Properties;
+using BrickScan.WpfClient.Updater;
 using ControlzEx.Theming;
 using Serilog;
 
