@@ -117,14 +117,13 @@ namespace BrickScan.WpfClient
         public UserConfiguration(ILogger logger)
         {
             _logger = logger;
-            if (Settings.Default.IsUpgradeRequired)
-            {
-                Settings.Default.Upgrade();
-                Settings.Default.IsUpgradeRequired = false;
-                Settings.Default.Save();
-            }
-
             ReadBricklinkCredentialsIfFileExists();
+            //if (Settings.Default.IsUpgradeRequired)
+            //{
+            //    Settings.Default.Upgrade();
+            //    Settings.Default.IsUpgradeRequired = false;
+            //    Settings.Default.Save();
+            //}
         }
 
         private static string Unprotect(byte[] bytes, byte[] entropy)

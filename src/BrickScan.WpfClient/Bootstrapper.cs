@@ -141,7 +141,12 @@ namespace BrickScan.WpfClient
                 .SingleInstance();
 
             builder.RegisterType<BrickScanApiClient>().As<IBrickScanApiClient>();
-            builder.RegisterType<UserConfiguration>().As<IUserConfiguration>().SingleInstance();
+
+            builder.RegisterType<UserConfiguration>()
+                .As<IUserConfiguration>()
+                .SingleInstance()
+                .AutoActivate();
+
             builder.RegisterType<PredictedClassViewModelFactory>().As<IPredictedClassViewModelFactory>().SingleInstance();
             builder.RegisterLogger();
         }

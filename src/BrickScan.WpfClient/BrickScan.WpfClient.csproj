@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <!-- Versions will be updated by CI -->
-    <FileVersion>0.4.0.0</FileVersion>
+    <FileVersion>0.4.1.0</FileVersion>
     <Version>0.0.0.0</Version>
     <InformationalVersion>0.0.0</InformationalVersion>
     <Authors>Jens Eisenbach</Authors>
     <Product>BrickScan</Product>
+    <Company>BrickScan</Company>
     <Description>Native BrickScan App for Windows</Description>
     <Copyright>Copyright © Jens Eisenbach 2020</Copyright>
     <OutputType>WinExe</OutputType>
