@@ -71,6 +71,30 @@ namespace BrickScan.WpfClient.ViewModels
             set => _userConfiguration.ThemeColorScheme = value;
         }
 
+        public string BricklinkTokenValue
+        {
+            get => _userConfiguration.BricklinkTokenValue;
+            set => _userConfiguration.BricklinkTokenValue = value;
+        }
+
+        public string BricklinkTokenSecret
+        {
+            get => _userConfiguration.BricklinkTokenSecret;
+            set => _userConfiguration.BricklinkTokenSecret = value;
+        }
+
+        public string BricklinkConsumerKey
+        {
+            get => _userConfiguration.BricklinkConsumerKey;
+            set => _userConfiguration.BricklinkConsumerKey = value;
+        }
+
+        public string BricklinkConsumerSecret
+        {
+            get => _userConfiguration.BricklinkConsumerSecret;
+            set => _userConfiguration.BricklinkConsumerSecret = value;
+        }
+        
         public SettingsViewModel(IUserConfiguration userConfiguration)
         {
             _userConfiguration = userConfiguration;

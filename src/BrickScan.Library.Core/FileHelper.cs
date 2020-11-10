@@ -23,30 +23,34 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BrickScan.WpfClient
+using System.Collections.Generic;
+using System.IO;
+
+namespace BrickScan.Library.Core
 {
-    public interface IUserConfiguration
+    public static class FileHelper
     {
-        int SelectedSensitivityLevel { get; set; }
+        public static void WriteByteArrays(string file, IEnumerable<byte[]> byteArrays)
+        {
+            using FileStream fs = new FileStream(file, FileMode.Create);
+            using BinaryWriter bw = new BinaryWriter(fs);
 
-        int SelectedCameraIndex { get; set; }
+            foreach (var byteArray in byteArrays)
+            {
+                bw.Write(byteArray.Length);
+                bw.Write(byteArray, 0, byteArray.Length);
+            }
+        }
 
-        string ThemeBaseColor { get; set; }
+        public static IEnumerable<byte[]> ReadByteArrays(string file)
+        {
+            using FileStream fs = new FileStream(file, FileMode.Open);
+            using BinaryReader br = new BinaryReader(fs);
 
-        string ThemeColorScheme { get; set; }
-
-        string SelectedCultureKey { get; set; }
-
-        string BricklinkTokenValue { get; set; }
-
-        string BricklinkTokenSecret { get; set; }
-
-        string BricklinkConsumerKey { get; set; }
-
-        string BricklinkConsumerSecret { get; set; }
-        
-        void Save();
-
-        void SaveBricklinkCredentials();
+            while (br.BaseStream.Position != br.BaseStream.Length)
+            {
+                yield return br.ReadBytes(br.ReadInt32());
+            }
+        }
     }
 }

@@ -38,7 +38,10 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
+            <!--UI SETTINGS-->
             <Label
                 Grid.Row="0"
                 Margin="5"
@@ -102,6 +105,81 @@
                     VerticalAlignment="Center"
                     ItemsSource="{Binding Path=AvailableLanguageOptions, Mode=OneTime}"
                     SelectedItem="{Binding Path=SelectedLanguageOption, Mode=TwoWay}" />
+            </Grid>
+            <!--BL SETTINGS-->
+            <Label
+                Grid.Row="2"
+                Margin="5"
+                VerticalAlignment="Center"
+                Content="{x:Static resx:Resources.BricklinkIntegration}"
+                FontSize="14"
+                FontWeight="SemiBold" />
+            <Grid
+                Grid.Row="3"
+                Margin="5"
+                IsSharedSizeScope="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" SharedSizeGroup="BLRow" />
+                    <RowDefinition Height="Auto" SharedSizeGroup="BLRow" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />                    
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="2"
+                    VerticalAlignment="Center"
+                    Content="Token Value" />
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Text="{Binding Path=BricklinkTokenValue, Mode=TwoWay}" />
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="2"
+                    VerticalAlignment="Center"
+                    Content="Token Secret" />
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Text="{Binding Path=BricklinkTokenSecret, Mode=TwoWay}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="2"
+                    VerticalAlignment="Center"
+                    Content="Consumer Key" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Text="{Binding Path=BricklinkConsumerKey, Mode=TwoWay}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Margin="2"
+                    VerticalAlignment="Center"
+                    Content="Consumer Secret" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Text="{Binding Path=BricklinkConsumerSecret, Mode=TwoWay}" />
             </Grid>
         </Grid>
     </ScrollViewer>

@@ -292,4 +292,7 @@
   <data name="DownloadingNewRelease" xml:space="preserve">
     <value>Download new release</value>
   </data>
+  <data name="BricklinkIntegration" xml:space="preserve">
+    <value>Bricklink integration</value>
+  </data>
 </root>

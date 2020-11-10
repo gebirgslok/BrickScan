@@ -24,14 +24,25 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using BrickScan.Library.Core;
 using BrickScan.WpfClient.Properties;
+using Serilog;
 
 namespace BrickScan.WpfClient
 {
     internal class UserConfiguration : IUserConfiguration
     {
-        private static UserConfiguration? _instance;
-        public static UserConfiguration Instance => _instance ??= new UserConfiguration();
+        private static readonly string _bricklinkCredentialsFilename = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "BrickScan",
+            $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.blcredentials.bin");
+
+        private readonly ILogger _logger;
 
         public int SelectedSensitivityLevel
         {
@@ -98,19 +109,87 @@ namespace BrickScan.WpfClient
             }
         }
 
-        private UserConfiguration()
+        public string BricklinkTokenValue { get; set; } = "32398298298329832";
+        public string BricklinkTokenSecret { get; set; } = "142432323232";
+        public string BricklinkConsumerKey { get; set; } = "321832983298";
+        public string BricklinkConsumerSecret { get; set; } = "32893298";
+
+        public UserConfiguration(ILogger logger)
         {
+            _logger = logger;
             if (Settings.Default.IsUpgradeRequired)
             {
                 Settings.Default.Upgrade();
                 Settings.Default.IsUpgradeRequired = false;
                 Settings.Default.Save();
             }
+
+            ReadBricklinkCredentialsIfFileExists();
+        }
+
+        private static string Unprotect(byte[] bytes, byte[] entropy)
+        {
+            byte[] plaintext = ProtectedData.Unprotect(bytes, entropy,
+                DataProtectionScope.CurrentUser);
+
+            return Encoding.UTF8.GetString(plaintext);
+        }
+
+        private static byte[] Protect(string s, byte[] entropy)
+        {
+            var plainBytes = Encoding.UTF8.GetBytes(s);
+            var cipherBytes = ProtectedData.Protect(plainBytes, entropy, DataProtectionScope.CurrentUser);
+            return cipherBytes;
         }
 
         public void Save()
         {
             Settings.Default.Save();
+        }
+
+        public void SaveBricklinkCredentials()
+        {
+            byte[] entropy = new byte[20];
+            using(RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(entropy);
+            }
+
+            var binaryData = new List<byte[]>
+            {
+                entropy,
+                Protect(BricklinkTokenValue, entropy),
+                Protect(BricklinkTokenSecret, entropy),
+                Protect(BricklinkConsumerKey, entropy),
+                Protect(BricklinkConsumerSecret, entropy),
+            };
+
+            FileHelper.WriteByteArrays(_bricklinkCredentialsFilename, binaryData);
+        }
+
+        public void ReadBricklinkCredentialsIfFileExists()
+        {
+            if (!File.Exists(_bricklinkCredentialsFilename))
+            {
+                return;
+            }
+            
+            try
+            {
+                var binaryData = FileHelper
+                    .ReadByteArrays(_bricklinkCredentialsFilename)
+                    .ToArray();
+
+                var entropy = binaryData[0];
+                BricklinkTokenValue = Unprotect(binaryData[1], entropy);
+                BricklinkTokenSecret = Unprotect(binaryData[2], entropy);
+                BricklinkConsumerKey = Unprotect(binaryData[3], entropy);
+                BricklinkConsumerSecret = Unprotect(binaryData[4], entropy);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to read BL credentials from {File}.", _bricklinkCredentialsFilename);
+            }
         }
     }
 }

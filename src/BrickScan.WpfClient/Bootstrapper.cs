@@ -39,7 +39,6 @@ using BrickScan.WpfClient.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Identity.Client;
 using Serilog;
-using Squirrel;
 using VideoCapture = BrickScan.WpfClient.Model.VideoCapture;
 
 namespace BrickScan.WpfClient
@@ -142,7 +141,7 @@ namespace BrickScan.WpfClient
                 .SingleInstance();
 
             builder.RegisterType<BrickScanApiClient>().As<IBrickScanApiClient>();
-            builder.Register(c => UserConfiguration.Instance).As<IUserConfiguration>();
+            builder.RegisterType<UserConfiguration>().As<IUserConfiguration>().SingleInstance();
             builder.RegisterType<PredictedClassViewModelFactory>().As<IPredictedClassViewModelFactory>().SingleInstance();
             builder.RegisterLogger();
         }

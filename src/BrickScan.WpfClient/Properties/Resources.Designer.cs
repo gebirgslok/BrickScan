@@ -142,6 +142,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bricklink integration.
+        /// </summary>
+        public static string BricklinkIntegration {
+            get {
+                return ResourceManager.GetString("BricklinkIntegration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to BrickScan.
         /// </summary>
         public static string BrickScan {

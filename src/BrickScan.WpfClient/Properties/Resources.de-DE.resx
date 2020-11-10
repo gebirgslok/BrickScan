@@ -312,4 +312,7 @@
   <data name="DownloadingNewRelease" xml:space="preserve">
     <value>Neue Version wird heruntergeladen</value>
   </data>
+  <data name="BricklinkIntegration" xml:space="preserve">
+    <value>Bricklink-Integration</value>
+  </data>
 </root>
