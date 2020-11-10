@@ -315,4 +315,7 @@
   <data name="BricklinkIntegration" xml:space="preserve">
     <value>Bricklink-Integration</value>
   </data>
+  <data name="HowToGenerateAccessTokens" xml:space="preserve">
+    <value>Wie kann ich die Zugriffsschlüssel generieren?</value>
+  </data>
 </root>

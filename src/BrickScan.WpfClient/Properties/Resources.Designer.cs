@@ -304,6 +304,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to How can I generate these access token?.
+        /// </summary>
+        public static string HowToGenerateAccessTokens {
+            get {
+                return ResourceManager.GetString("HowToGenerateAccessTokens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identify.
         /// </summary>
         public static string Identify {
