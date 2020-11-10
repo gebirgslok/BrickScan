@@ -50,12 +50,19 @@ namespace BrickScan.WpfClient.Tests.Updater
             }
         }
 
+        private static UpdateInfo CreateUpdateInfoWithoutNewerReleases()
+        {
+            return new DummyUpdateInfo(new DummyReleaseEntry("1234", "foo.1.0.0.nupkg"),
+                new List<ReleaseEntry>(),
+                "\\path\\to\\my\\non\\existing\\packages");
+        }
+
         private static UpdateInfo CreateUpdateInfoWithNewerReleases()
         {
             return new DummyUpdateInfo(new DummyReleaseEntry("1234", "foo.1.0.0.nupkg"), new List<ReleaseEntry>
                 {
                     new DummyReleaseEntry("12345", "foo.1.0.0.nupkg")
-                }, 
+                },
                 "\\path\\to\\my\\non\\existing\\packages");
         }
 
@@ -92,7 +99,44 @@ namespace BrickScan.WpfClient.Tests.Updater
                 .Then(A.CallTo(() => restartAppCallback.Invoke()).MustHaveHappenedOnceExactly());
 
             A.CallTo(() => clearMessagesCallback.Invoke()).MustHaveHappenedANumberOfTimesMatching(num => num == 3);
+        }
 
+        [Fact]
+        public async Task TryUpdateApplicationAsync_EnsureDependencyCallorder_NoNewerReleaseAvailable()
+        {
+            var updateManager = A.Fake<IUpdateManager>();
+            var updateInfo = CreateUpdateInfoWithoutNewerReleases();
+            A.CallTo(() => updateManager.CheckForUpdate(true, null, UpdaterIntention.Update))
+                .Returns(Task.FromResult(updateInfo));
+
+            var updateManagerFactory = A.Fake<Func<IUpdateManager>>();
+            A.CallTo(() => updateManagerFactory.Invoke()).Returns(updateManager);
+            var userSettingsHelper = A.Fake<IUserSettingsHelper>();
+
+            var updater = new BrickScanSquirrelUpdater(updateManagerFactory, A.Dummy<ILogger>(), userSettingsHelper);
+
+            var messageCallback = A.Fake<Action<string>>();
+            var clearMessagesCallback = A.Fake<Action>();
+            var confirmRestartTaskFactory = A.Fake<Func<Task>>();
+            var restartAppCallback = A.Fake<Action>();
+
+            await updater.TryUpdateApplicationAsync(messageCallback, clearMessagesCallback, confirmRestartTaskFactory, restartAppCallback);
+
+            A.CallTo(() => messageCallback.Invoke(Properties.Resources.CheckingForUpdates))
+                .MustHaveHappenedOnceExactly()
+                .Then(A.CallTo(() => updateManagerFactory.Invoke()).MustHaveHappenedOnceExactly())
+                .Then(A.CallTo(() => updateManager.CheckForUpdate(true, null, UpdaterIntention.Update)).MustHaveHappenedOnceExactly());
+
+            A.CallTo(() => messageCallback.Invoke(Properties.Resources.DownloadingNewRelease)).MustNotHaveHappened();
+            A.CallTo(() => updateManager.DownloadReleases(updateInfo.ReleasesToApply, null))
+                .MustNotHaveHappened();
+            A.CallTo(() => messageCallback.Invoke(Properties.Resources.ApplyingUpdate))
+                .MustNotHaveHappened();
+            A.CallTo(() => userSettingsHelper.Backup()).MustNotHaveHappened();
+            A.CallTo(() => updateManager.ApplyReleases(updateInfo, null)).MustNotHaveHappened();
+            A.CallTo(() => confirmRestartTaskFactory.Invoke()).MustNotHaveHappened();
+            A.CallTo(() => restartAppCallback.Invoke()).MustNotHaveHappened();
+            A.CallTo(() => clearMessagesCallback.Invoke()).MustHaveHappenedTwiceExactly();
         }
     }
 }
