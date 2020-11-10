@@ -29,11 +29,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:BrickScan.WpfClient.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:BrickScan.WpfClient.Properties"
     xmlns:s="https://github.com/canton7/Stylet"
-    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -124,7 +124,6 @@
                 IsSharedSizeScope="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" SharedSizeGroup="BLRow" />
                     <RowDefinition Height="Auto" SharedSizeGroup="BLRow" />
                     <RowDefinition Height="Auto" />
@@ -135,26 +134,8 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <!--<StackPanel
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="4"
-                    Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Left">
-                    <Label
-                        Margin="2"
-                        VerticalAlignment="Center"
-                        Content="{x:Static resx:Resources.UseAsDefaultInventory}" />
-                    <CheckBox 
-                        IsChecked="True"
-                        Width="20"
-                        Height="20"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Left"/>
-                </StackPanel>-->
                 <TextBlock
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Grid.Column="0"
                     Grid.ColumnSpan="4"
                     Margin="5"
@@ -167,65 +148,66 @@
                     </Hyperlink>
                 </TextBlock>
                 <Label
-                    Grid.Row="2"
+                    Grid.Row="1"
                     Grid.Column="0"
                     Margin="2"
                     VerticalAlignment="Center"
                     Content="Token Value" />
                 <TextBox
-                    Grid.Row="2"
+                    Grid.Row="1"
                     Grid.Column="1"
                     Margin="2"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     Text="{Binding Path=BricklinkTokenValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Label
-                    Grid.Row="2"
+                    Grid.Row="1"
                     Grid.Column="2"
                     Margin="2"
                     VerticalAlignment="Center"
                     Content="Token Secret" />
                 <TextBox
-                    Grid.Row="2"
+                    Grid.Row="1"
                     Grid.Column="3"
                     Margin="2"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     Text="{Binding Path=BricklinkTokenSecret, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Label
-                    Grid.Row="3"
+                    Grid.Row="2"
                     Grid.Column="0"
                     Margin="2"
                     VerticalAlignment="Center"
                     Content="Consumer Key" />
                 <TextBox
-                    Grid.Row="3"
+                    Grid.Row="2"
                     Grid.Column="1"
                     Margin="2"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     Text="{Binding Path=BricklinkConsumerKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Label
-                    Grid.Row="3"
+                    Grid.Row="2"
                     Grid.Column="2"
                     Margin="2"
                     VerticalAlignment="Center"
                     Content="Consumer Secret" />
                 <TextBox
-                    Grid.Row="3"
+                    Grid.Row="2"
                     Grid.Column="3"
                     Margin="2"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     Text="{Binding Path=BricklinkConsumerSecret, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <StackPanel
-                    Grid.Row="4"
+                    Grid.Row="3"
                     Grid.Column="0"
                     Grid.ColumnSpan="4"
-                    Orientation="Horizontal"
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    HorizontalAlignment="Left">
+                    Orientation="Horizontal">
                     <Button
+                        MinWidth="100"
                         Margin="5"
                         Padding="10,0,10,0"
                         HorizontalAlignment="Center"
@@ -234,12 +216,13 @@
                         Command="{s:Action SaveBricklinkCredentials}"
                         Content="{x:Static resx:Resources.Save}"
                         IsEnabled="{Binding Path=HasUnsavedBlTokenProperties, Mode=OneWay}" />
-                    <iconPacks:PackIconMaterial Kind="AlertCircleOutline" 
-                                                Foreground="Orange"
-                                                Width="20"
-                                                Visibility="{Binding Path=HasUnsavedBlTokenProperties, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                VerticalAlignment="Center" 
-                                                Height="20"/>
+                    <iconPacks:PackIconMaterial
+                        Width="20"
+                        Height="20"
+                        VerticalAlignment="Center"
+                        Foreground="Orange"
+                        Kind="AlertCircleOutline"
+                        Visibility="{Binding Path=HasUnsavedBlTokenProperties, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </StackPanel>
             </Grid>
         </Grid>

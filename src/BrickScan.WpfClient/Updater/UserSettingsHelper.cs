@@ -46,14 +46,17 @@ namespace BrickScan.WpfClient.Updater
             try
             {
                 _logger.Information("Backing up {CurrentSettingsFile} to {TempSettingsFile}...", settingsFile, SettingsHelper.TempConfigFile);
-
                 File.Copy(settingsFile, SettingsHelper.TempConfigFile, true);
-
                 _logger.Information("Successfully copied {CurrentSettingsFile} to {TempSettingsFile}.", settingsFile, SettingsHelper.TempConfigFile);
+
+                var settingsDir = Directory.GetParent(Path.GetDirectoryName(settingsFile)!).FullName;
+                _logger.Information("Deleting old settings directory = {SettingsDirectory}...", settingsDir);
+                Directory.Delete(settingsDir, true);
+                _logger.Information("Old settings directory = {SettingsDirectory} deleted successfully.", settingsDir);
             }
             catch (Exception exception)
             {
-                _logger.Error(exception, "Failed to copy {CurrentSettingsFile} to {TempSettingsFile}.", settingsFile, SettingsHelper.TempConfigFile);
+                _logger.Error(exception, "Failed to backup {CurrentSettingsFile} to {TempSettingsFile}.", settingsFile, SettingsHelper.TempConfigFile);
             }
         }
     }

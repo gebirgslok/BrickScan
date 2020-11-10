@@ -40,8 +40,11 @@ using BrickScan.WpfClient.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Identity.Client;
 using Serilog;
-using Squirrel;
 using VideoCapture = BrickScan.WpfClient.Model.VideoCapture;
+
+#if DEBUG
+using Squirrel;
+#endif
 
 namespace BrickScan.WpfClient
 {
