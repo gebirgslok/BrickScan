@@ -42,7 +42,7 @@ using Microsoft.Identity.Client;
 using Serilog;
 using VideoCapture = BrickScan.WpfClient.Model.VideoCapture;
 
-#if DEBUG
+#if !DEBUG
 using Squirrel;
 #endif
 
@@ -152,7 +152,7 @@ namespace BrickScan.WpfClient
                 .SingleInstance()
                 .AutoActivate();
 
-#if DEBUG
+#if !DEBUG
             builder.Register(c =>
                 {
                     var url = ConfigurationManager.AppSettings["SquirrelReleasesUrl"];
