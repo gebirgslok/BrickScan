@@ -109,21 +109,18 @@ namespace BrickScan.WpfClient
             }
         }
 
-        public string BricklinkTokenValue { get; set; } = "32398298298329832";
-        public string BricklinkTokenSecret { get; set; } = "142432323232";
-        public string BricklinkConsumerKey { get; set; } = "321832983298";
-        public string BricklinkConsumerSecret { get; set; } = "32893298";
+        public string? BricklinkTokenValue { get; set; }
+
+        public string? BricklinkTokenSecret { get; set; }
+
+        public string? BricklinkConsumerKey { get; set; }
+
+        public string? BricklinkConsumerSecret { get; set; }
 
         public UserConfiguration(ILogger logger)
         {
             _logger = logger;
             ReadBricklinkCredentialsIfFileExists();
-            //if (Settings.Default.IsUpgradeRequired)
-            //{
-            //    Settings.Default.Upgrade();
-            //    Settings.Default.IsUpgradeRequired = false;
-            //    Settings.Default.Save();
-            //}
         }
 
         private static string Unprotect(byte[] bytes, byte[] entropy)
@@ -134,8 +131,13 @@ namespace BrickScan.WpfClient
             return Encoding.UTF8.GetString(plaintext);
         }
 
-        private static byte[] Protect(string s, byte[] entropy)
+        private static byte[] Protect(string? s, byte[] entropy)
         {
+            if (s == null)
+            {
+                return new byte[0];
+            }
+
             var plainBytes = Encoding.UTF8.GetBytes(s);
             var cipherBytes = ProtectedData.Protect(plainBytes, entropy, DataProtectionScope.CurrentUser);
             return cipherBytes;

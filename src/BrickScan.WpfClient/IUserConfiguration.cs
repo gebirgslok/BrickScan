@@ -37,14 +37,14 @@ namespace BrickScan.WpfClient
 
         string SelectedCultureKey { get; set; }
 
-        string BricklinkTokenValue { get; set; }
+        string? BricklinkTokenValue { get; set; }
 
-        string BricklinkTokenSecret { get; set; }
+        string? BricklinkTokenSecret { get; set; }
 
-        string BricklinkConsumerKey { get; set; }
+        string? BricklinkConsumerKey { get; set; }
 
-        string BricklinkConsumerSecret { get; set; }
-        
+        string? BricklinkConsumerSecret { get; set; }
+
         void Save();
 
         void SaveBricklinkCredentials();

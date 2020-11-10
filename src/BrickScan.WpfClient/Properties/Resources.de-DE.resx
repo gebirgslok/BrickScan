@@ -318,4 +318,10 @@
   <data name="HowToGenerateAccessTokens" xml:space="preserve">
     <value>Wie kann ich die Zugriffsschlüssel generieren?</value>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="UseAsDefaultInventory" xml:space="preserve">
+    <value>Als standardmäßiges Inventar verwenden</value>
+  </data>
 </root>

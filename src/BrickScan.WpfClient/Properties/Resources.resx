@@ -298,4 +298,10 @@
   <data name="HowToGenerateAccessTokens" xml:space="preserve">
     <value>How can I generate these access token?</value>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="UseAsDefaultInventory" xml:space="preserve">
+    <value>Use as default inventory</value>
+  </data>
 </root>

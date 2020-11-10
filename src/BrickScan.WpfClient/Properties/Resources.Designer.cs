@@ -529,6 +529,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string Save {
+            get {
+                return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Score.
         /// </summary>
         public static string Score {
@@ -642,6 +651,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string Upload {
             get {
                 return ResourceManager.GetString("Upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use as default inventory.
+        /// </summary>
+        public static string UseAsDefaultInventory {
+            get {
+                return ResourceManager.GetString("UseAsDefaultInventory", resourceCulture);
             }
         }
         
