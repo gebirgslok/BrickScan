@@ -40,7 +40,7 @@ using Microsoft.Extensions.Logging;
 namespace BrickScan.WebApi.Prediction
 {
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("v{version:apiVersion}/[controller]")]
     public class PredictionController : ControllerBase
     {
         private readonly IConfiguration _configuration;

@@ -35,7 +35,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BrickScan.WebApi.Images
 {
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("v{version:apiVersion}/[controller]")]
     public class ImagesController : ControllerBase
     {
         private readonly IImageFileConverter _imageFileConverter;

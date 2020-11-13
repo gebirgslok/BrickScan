@@ -25,7 +25,6 @@
 
 using System.Diagnostics;
 using System.Reflection;
-using BrickScan.WpfClient.Events;
 using PropertyChanged;
 using Stylet;
 
@@ -46,6 +45,7 @@ namespace BrickScan.WpfClient.ViewModels
         public StatusBarViewModel()
         {
             var assembly = Assembly.GetExecutingAssembly();
+            
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             AssemblyFileVersion = $"{Properties.Resources.ProgramVersion}: {fileVersionInfo.FileVersion}";
         }
@@ -54,16 +54,5 @@ namespace BrickScan.WpfClient.ViewModels
         {
             Message = null;
         }
-
-        //public void Handle(OnStatusBarMessageChanged message)
-        //{
-        //    if (message.ClearMessage)
-        //    {
-        //        Message = null;
-        //        return;
-        //    }
-
-        //    Message = message.Message;
-        //}
     }
 }

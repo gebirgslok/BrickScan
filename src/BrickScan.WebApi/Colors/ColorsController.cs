@@ -40,7 +40,7 @@ using Microsoft.Extensions.Logging;
 namespace BrickScan.WebApi.Colors
 {
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("v{version:apiVersion}/[controller]")]
     public class ColorsController : ControllerBase
     {
         private readonly IDatasetService _datasetService;

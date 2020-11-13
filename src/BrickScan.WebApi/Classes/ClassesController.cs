@@ -41,7 +41,7 @@ using Microsoft.Extensions.Logging;
 namespace BrickScan.WebApi.Classes
 {
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("v{version:apiVersion}/[controller]")]
     public class ClassesController : ControllerBase
     {
         private const int MIN_NUM_OF_TRAIN_IMAGES = 5;

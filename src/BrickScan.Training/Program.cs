@@ -91,7 +91,7 @@ namespace BrickScan.Training
         ////TODO: keep this snippet.
         //static async Task Temp()
         //{
-        //    var httpClient = new HttpClient { BaseAddress = new Uri("https://brickscan-app-prod-001.azurewebsites.net/api/v1/") };
+        //    var httpClient = new HttpClient { BaseAddress = new Uri("https://api.brickscan.io/v1/") };
         //    const string dir = @"D:\Baygent\Pictures\BrickScan";
         //    const string destDir = @"E:\dataset_images_downloaded";
 

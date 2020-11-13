@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": false,
-      "launchUrl": "api/v1/predict",
+      "launchUrl": "v1/predict",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
