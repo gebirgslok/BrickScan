@@ -502,7 +502,7 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A restart of the application is required to finish the update..
+        ///   Looks up a localized string similar to Version {0} was installed successfully. A restart of the application is required to finish the update..
         /// </summary>
         public static string RestartRequiredMessage {
             get {

@@ -44,7 +44,6 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly PredictionConductorViewModel _predictionConductorViewModel;
         private readonly AddPartsConductorViewModel _addPartsConductorViewModel;
         private readonly SettingsViewModel _settingsViewModel;
-        private readonly ILogger _logger;
         private readonly IDialogCoordinator _dialogCoordinator;
         private readonly IBrickScanUpdater _updater;
         private bool _isDisposed;
@@ -66,7 +65,6 @@ namespace BrickScan.WpfClient.ViewModels
             SettingsViewModel settingsViewModel,
             StatusBarViewModel statusBarViewModel,
             IUserSession userManager,
-            ILogger logger,
             IDialogCoordinator dialogCoordinator,
             IBrickScanUpdater updater)
         {
@@ -78,7 +76,6 @@ namespace BrickScan.WpfClient.ViewModels
             UserSession = userManager;
             UserSession.UserChanged += HandleUserChanged;
 
-            _logger = logger;
             _dialogCoordinator = dialogCoordinator;
             _updater = updater;
             SelectedItem = MenuItems[0] as HamburgerMenuIconItem;
@@ -145,9 +142,9 @@ namespace BrickScan.WpfClient.ViewModels
 
             await _updater.TryUpdateApplicationAsync(message => { StatusBarViewModel.Message = message; },
                 () => StatusBarViewModel.Clear(),
-                () => _dialogCoordinator.ShowMessageAsync(this,
+                version => _dialogCoordinator.ShowMessageAsync(this,
                     Properties.Resources.RestartRequired,
-                    Properties.Resources.RestartRequiredMessage,
+                    string.Format(Properties.Resources.RestartRequiredMessage, version.ToString(3)),
                     settings: settings),
                 () => UpdateManager.RestartApp());
         }

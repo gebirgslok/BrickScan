@@ -38,7 +38,9 @@ namespace BrickScan.WpfClient.Updater
             _logger = logger;
         }
 
-        public Task TryUpdateApplicationAsync(Action<string> messagesCallback, Action clearMessageCallback, Func<Task> confirmRestartTaskFactory,
+        public Task TryUpdateApplicationAsync(Action<string> messagesCallback, 
+            Action clearMessageCallback, 
+            Func<Version, Task> confirmRestartTaskFactory,
             Action restartAppCallback)
         {
             _logger.Information($"Calling {nameof(TryUpdateApplicationAsync)} of {nameof(DummyUpdater)}. No actions performed.");

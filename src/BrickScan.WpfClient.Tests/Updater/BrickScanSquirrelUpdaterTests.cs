@@ -82,7 +82,7 @@ namespace BrickScan.WpfClient.Tests.Updater
 
             var messageCallback = A.Fake<Action<string>>();
             var clearMessagesCallback = A.Fake<Action>();
-            var confirmRestartTaskFactory = A.Fake<Func<Task>>();
+            var confirmRestartTaskFactory = A.Fake<Func<Version, Task>>();
             var restartAppCallback = A.Fake<Action>();
 
             await updater.TryUpdateApplicationAsync(messageCallback, clearMessagesCallback, confirmRestartTaskFactory, restartAppCallback);
@@ -95,7 +95,7 @@ namespace BrickScan.WpfClient.Tests.Updater
                 .Then(A.CallTo(() => messageCallback.Invoke(Properties.Resources.ApplyingUpdate)).MustHaveHappenedOnceExactly())
                 .Then(A.CallTo(() => userSettingsHelper.Backup()).MustHaveHappenedOnceExactly())
                 .Then(A.CallTo(() => updateManager.ApplyReleases(updateInfo, null)).MustHaveHappenedOnceExactly())
-                .Then(A.CallTo(() => confirmRestartTaskFactory.Invoke()).MustHaveHappenedOnceExactly())
+                .Then(A.CallTo(() => confirmRestartTaskFactory.Invoke(A<Version>._)).MustHaveHappenedOnceExactly())
                 .Then(A.CallTo(() => restartAppCallback.Invoke()).MustHaveHappenedOnceExactly());
 
             A.CallTo(() => clearMessagesCallback.Invoke()).MustHaveHappenedANumberOfTimesMatching(num => num == 3);
@@ -117,10 +117,13 @@ namespace BrickScan.WpfClient.Tests.Updater
 
             var messageCallback = A.Fake<Action<string>>();
             var clearMessagesCallback = A.Fake<Action>();
-            var confirmRestartTaskFactory = A.Fake<Func<Task>>();
+            var confirmRestartTaskFactory = A.Fake<Func<Version, Task>>();
             var restartAppCallback = A.Fake<Action>();
 
-            await updater.TryUpdateApplicationAsync(messageCallback, clearMessagesCallback, confirmRestartTaskFactory, restartAppCallback);
+            await updater.TryUpdateApplicationAsync(messageCallback, 
+                clearMessagesCallback, 
+                confirmRestartTaskFactory, 
+                restartAppCallback);
 
             A.CallTo(() => messageCallback.Invoke(Properties.Resources.CheckingForUpdates))
                 .MustHaveHappenedOnceExactly()
@@ -134,7 +137,7 @@ namespace BrickScan.WpfClient.Tests.Updater
                 .MustNotHaveHappened();
             A.CallTo(() => userSettingsHelper.Backup()).MustNotHaveHappened();
             A.CallTo(() => updateManager.ApplyReleases(updateInfo, null)).MustNotHaveHappened();
-            A.CallTo(() => confirmRestartTaskFactory.Invoke()).MustNotHaveHappened();
+            A.CallTo(() => confirmRestartTaskFactory.Invoke(A<Version>._)).MustNotHaveHappened();
             A.CallTo(() => restartAppCallback.Invoke()).MustNotHaveHappened();
             A.CallTo(() => clearMessagesCallback.Invoke()).MustHaveHappenedTwiceExactly();
         }

@@ -49,13 +49,14 @@ namespace BrickScan.WpfClient.Updater
 
         public async Task TryUpdateApplicationAsync(Action<string> messagesCallback, 
             Action clearMessageCallback, 
-            Func<Task> confirmRestartTaskFactory, 
+            Func<Version, Task> confirmRestartTaskFactory, 
             Action restartAppCallback)
         {
             try
             {
                 messagesCallback.Invoke(Properties.Resources.CheckingForUpdates);
-                
+
+                Version newVersion;
                 using (var manager = _updateManagerFactory.Invoke())
                 {
                     var updateInfo = await manager.CheckForUpdate(true);
@@ -85,10 +86,12 @@ namespace BrickScan.WpfClient.Updater
 
                     _userSettingsHelper.Backup();
                     await manager.ApplyReleases(updateInfo);
+
+                    newVersion = updateInfo.FutureReleaseEntry?.Version.Version ?? new Version(0, 0, 0);
                 }
 
                 clearMessageCallback.Invoke();
-                await confirmRestartTaskFactory.Invoke();
+                await confirmRestartTaskFactory.Invoke(newVersion);
 
                 restartAppCallback.Invoke();
             }

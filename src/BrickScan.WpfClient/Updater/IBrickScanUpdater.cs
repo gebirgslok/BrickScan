@@ -32,7 +32,7 @@ namespace BrickScan.WpfClient.Updater
     {
         Task TryUpdateApplicationAsync(Action<string> messagesCallback, 
             Action clearMessageCallback, 
-            Func<Task> confirmRestartTaskFactory, 
+            Func<Version, Task> confirmRestartTaskFactory, 
             Action restartAppCallback);
     }
 }
