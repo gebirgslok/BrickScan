@@ -55,6 +55,8 @@ namespace BrickScan.WpfClient.ViewModels
 
         public string ImageSizeString => $"{ImageSource.PixelWidth}×{ImageSource.PixelHeight}";
 
+        public string ErrorMessage => InitializationNotifier.ErrorMessage ?? Properties.Resources.RequestFailedMessage;
+
         public PredictionResultViewModel(Mat imageSection,
             Func<Task<PredictionResult>, PredictionResult, NotifyTask<PredictionResult>> notifyTaskFactory,
             IEventAggregator eventAggregator,
@@ -77,6 +79,11 @@ namespace BrickScan.WpfClient.ViewModels
                 {
                     var viewModels = BuildViewModels(InitializationNotifier.Result.PredictedDatasetClasses);
                     PredictedClassViewModels = new BindableCollection<PredictedClassViewModelBase>(viewModels);
+                }
+
+                if (args.PropertyName == nameof(InitializationNotifier.IsFaulted))
+                {
+                    NotifyOfPropertyChange(nameof(ErrorMessage));
                 }
             };
         }

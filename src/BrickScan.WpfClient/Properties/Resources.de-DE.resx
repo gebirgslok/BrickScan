@@ -324,4 +324,7 @@
   <data name="UseAsDefaultInventory" xml:space="preserve">
     <value>Als standardmäßiges Inventar verwenden</value>
   </data>
+  <data name="TooManyRequestsErrorMessage" xml:space="preserve">
+    <value>Zu viele Anforderungen. Bitte warte ein paar Sekunden und versuche es erneut.</value>
+  </data>
 </root>

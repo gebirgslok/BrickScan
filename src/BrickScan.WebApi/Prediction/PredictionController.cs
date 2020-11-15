@@ -98,6 +98,7 @@ namespace BrickScan.WebApi.Prediction
         /// <response code="200">Returns a sorted list (descending by score) of matching class candidates.</response>
         /// <response code="400">Invalid image file.</response>
         /// <response code="415">Unsupported media type of the posted image. Supported formats: <b>JPEG</b> and <b>PNG</b>.</response>
+        /// <response code="429">Too many requests. Allowed quota: 1 call per every 3 seconds.</response>
         /// <response code="500">Internal server error occurred.</response>
         /// <returns>Returns a sorted list (descending by score) of matching class candidates
         /// if successful or a problem details object else.</returns>
@@ -105,6 +106,7 @@ namespace BrickScan.WebApi.Prediction
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PredictedDatasetClassDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType, Type = typeof(ProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
         public async Task<IActionResult> PredictAsync(IFormFile? image)
         {

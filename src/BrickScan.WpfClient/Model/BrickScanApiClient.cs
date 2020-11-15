@@ -230,6 +230,15 @@ namespace BrickScan.WpfClient.Model
 
             var problemDetails = JObject.Parse(responseString);
 
+            if ((int) response.StatusCode == 429)
+            {
+                _logger.Error("Received an 'too many requests' status code ({{StatusCode}}) " +
+                              "from request URI = {RequestUri}. Problem details = {@ProblemDetails}.", 
+                    429, "prediction/predict", problemDetails);
+
+                return new PredictionResult(false, errorMessage: Properties.Resources.TooManyRequestsErrorMessage);
+            }
+
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 _logger.Error($"Received an {nameof(HttpStatusCode.InternalServerError)} ({{StatusCode}}) " +

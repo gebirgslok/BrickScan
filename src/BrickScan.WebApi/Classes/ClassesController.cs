@@ -167,7 +167,8 @@ namespace BrickScan.WebApi.Classes
                     Instance = HttpContext.Request.Path,
                     Status = 400,
                     Title = ReasonPhrases.GetReasonPhrase(400),
-                    Type = "https://httpstatuses.com/400"
+                    Type = "https://httpstatuses.com/400",
+                    Extensions = { { "traceId", HttpContext.TraceIdentifier } }
                 });
             }
 

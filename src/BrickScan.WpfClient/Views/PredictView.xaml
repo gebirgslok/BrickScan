@@ -86,7 +86,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="14">
-                <Hyperlink controls:HyperlinkExtensions.IsExternal="true" NavigateUri="https://www.stackoverflow.com">
+                <Hyperlink controls:HyperlinkExtensions.IsExternal="true" NavigateUri="https://github.com/gebirgslok/BrickScan/wiki/Windows-App-Identify-Parts-Quickstart">
                     <Hyperlink.Inlines>
                         <Run Text="{x:Static resx:Resources.QuickstartGuide}" />
                     </Hyperlink.Inlines>

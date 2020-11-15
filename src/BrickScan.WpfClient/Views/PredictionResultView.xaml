@@ -92,7 +92,7 @@
             <Label
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
-                Content="{x:Static resx:Resources.RequestFailedMessage}"
+                Content="{Binding Path=ErrorMessage, Mode=OneWay}"
                 FontSize="14"
                 FontWeight="SemiBold"
                 Foreground="OrangeRed" />

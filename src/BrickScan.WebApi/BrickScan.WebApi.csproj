@@ -24,6 +24,7 @@
     <UserSecretsId>6ca06119-4802-4ffb-b4eb-97d6fec63c52</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AspNetCoreRateLimit" Version="3.2.2" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.0.1" />
     <PackageReference Include="BricklinkSharp" Version="0.3.0" />

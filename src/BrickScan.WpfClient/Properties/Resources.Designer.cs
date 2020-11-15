@@ -628,6 +628,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Too many requests. Please wait a few seconds and try again..
+        /// </summary>
+        public static string TooManyRequestsErrorMessage {
+            get {
+                return ResourceManager.GetString("TooManyRequestsErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Training images.
         /// </summary>
         public static string TrainImages {

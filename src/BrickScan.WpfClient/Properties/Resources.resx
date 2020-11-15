@@ -304,4 +304,7 @@
   <data name="UseAsDefaultInventory" xml:space="preserve">
     <value>Use as default inventory</value>
   </data>
+  <data name="TooManyRequestsErrorMessage" xml:space="preserve">
+    <value>Too many requests. Please wait a few seconds and try again.</value>
+  </data>
 </root>

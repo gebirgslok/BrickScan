@@ -26,6 +26,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using AspNetCoreRateLimit;
 using Autofac;
 using BrickScan.Library.Dataset;
 using BrickScan.Library.Dataset.Model;
@@ -35,6 +36,7 @@ using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -105,6 +107,17 @@ namespace BrickScan.WebApi
             });
         }
 
+        private static void ConfigureRateLimit(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOptions();
+            services.AddMemoryCache();
+            services.Configure<IpRateLimitOptions>(configuration.GetSection("IpRateLimiting"));
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+        }
+
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterType<ImageFileConverter>().As<IImageFileConverter>();
@@ -114,6 +127,8 @@ namespace BrickScan.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureRateLimit(services, Configuration);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(options =>
                     {
@@ -173,6 +188,8 @@ namespace BrickScan.WebApi
             //}
 
             app.UseProblemDetails();
+            app.UseMiddleware<ProblemDetailsIpRateLimitMiddleware>();
+            //app.UseIpRateLimiting();
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
