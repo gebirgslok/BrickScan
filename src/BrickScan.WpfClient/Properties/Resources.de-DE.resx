@@ -298,7 +298,7 @@
     <value>Neustart erforderlich</value>
   </data>
   <data name="RestartRequiredMessage" xml:space="preserve">
-    <value>Es ist ein Neustart des Programms erforderlich um das Update fertigzustellen.</value>
+    <value>Version {0} wurde erfolgreich installiert. Es ist ein Neustart des Programms erforderlich um das Update fertigzustellen.</value>
   </data>
   <data name="QuickstartGuide" xml:space="preserve">
     <value>Schnellstarthilfe</value>
