@@ -36,17 +36,5 @@ namespace BrickScan.WpfClient.Model
 
         [JsonProperty("oid")] 
         public string ObjectId { get; set; } = null!;
-
-        [JsonProperty("extension_BricklinkTokenValue")]
-        public string? BricklinkTokenValue { get; set; }
-
-        [JsonProperty("extension_BricklinkTokenSecret")]
-        public string? BricklinkTokenSecret { get; set; }
-
-        [JsonProperty("extension_BricklinkConsumerKey")]
-        public string? BricklinkConsumerKey { get; set; }
-
-        [JsonProperty("extension_BricklinkConsumerSecret")]
-        public string? BricklinkConsumerSecret { get; set; }
     }
 }
