@@ -49,10 +49,15 @@ namespace BrickScan.Library.Dataset.Model
                 .IsRequired()
                 .IsUnicode(false);
 
+            //modelBuilder.Entity<DatasetClass>()
+            //    .Property(x => x.CreatedBy)
+            //    .HasMaxLength(32)
+            //    .IsRequired();
+
             modelBuilder.Entity<DatasetClass>()
-                .Property(x => x.CreatedBy)
-                .HasMaxLength(32)
-                .IsRequired();
+                .Property(x => x.CreatedByUserId)
+                .HasMaxLength(36)
+                .IsUnicode(false);
 
             modelBuilder.Entity<DatasetItem>()
                 .Property(x => x.Number)

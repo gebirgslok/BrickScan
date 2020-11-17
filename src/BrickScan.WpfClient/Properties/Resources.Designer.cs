@@ -142,11 +142,11 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bricklink integration.
+        ///   Looks up a localized string similar to Bricklink API integration.
         /// </summary>
-        public static string BricklinkIntegration {
+        public static string BricklinkApiIntegration {
             get {
-                return ResourceManager.GetString("BricklinkIntegration", resourceCulture);
+                return ResourceManager.GetString("BricklinkApiIntegration", resourceCulture);
             }
         }
         
@@ -304,7 +304,7 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to How can I generate these access token?.
+        ///   Looks up a localized string similar to How can I generate the access token?.
         /// </summary>
         public static string HowToGenerateAccessTokens {
             get {

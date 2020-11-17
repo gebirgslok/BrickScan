@@ -34,6 +34,11 @@ namespace BrickScan.WebApi.Extensions
             return user?.FindFirstValue("name") ?? "Unknown";
         }
 
+        public static string? GetUserId(this ClaimsPrincipal? user)
+        {
+            return user?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier");
+        }
+
         public static bool IsTrusted(this ClaimsPrincipal? user)
         {
             if (user == null)

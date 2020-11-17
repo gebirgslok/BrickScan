@@ -69,13 +69,13 @@ namespace BrickScan.Library.Dataset
             return map;
         }
 
-        private async Task<DatasetClass> AddClassAsync(DatasetClassDto datasetClassDto, string createdBy, EntityStatus status)
+        private async Task<DatasetClass> AddClassAsync(DatasetClassDto datasetClassDto, string? createdByUserId, EntityStatus status)
         {
             _logger.LogInformation($"Adding {nameof(DatasetClass)} (status = {{Status}}) " +
-                                   "with {NumOfTrainImages} train images from user = {CreatedBy}.",
+                                   "with {NumOfTrainImages} train images from user = {CreatedByUserId}.",
                 status,
                 datasetClassDto.TrainingImageIds.Count,
-                createdBy);
+                createdByUserId ?? "Null");
 
             var map = await FetchDatasetImages(datasetClassDto);
 
@@ -83,7 +83,7 @@ namespace BrickScan.Library.Dataset
             {
                 CreatedOn = DateTime.Now,
                 Status = status,
-                CreatedBy = createdBy
+                CreatedByUserId = createdByUserId
             };
 
             foreach (var trainingImageId in datasetClassDto.TrainingImageIds)
@@ -223,19 +223,19 @@ namespace BrickScan.Library.Dataset
                 .FirstOrDefaultAsync(x => classIds.Contains(x.Id));
         }
 
-        public async Task<DatasetClass> AddUnclassifiedClassAsync(DatasetClassDto datasetClassDto, string createdBy)
+        public async Task<DatasetClass> AddUnclassifiedClassAsync(DatasetClassDto datasetClassDto, string? createdByUserId)
         {
-            return await AddClassAsync(datasetClassDto, createdBy, EntityStatus.Unclassified);
+            return await AddClassAsync(datasetClassDto, createdByUserId, EntityStatus.Unclassified);
         }
 
-        public async Task<DatasetClass> AddClassifiedClassAsync(DatasetClassDto datasetClassDto, string createdBy)
+        public async Task<DatasetClass> AddClassifiedClassAsync(DatasetClassDto datasetClassDto, string? createdByUserId)
         {
-            return await AddClassAsync(datasetClassDto, createdBy, EntityStatus.Classified);
+            return await AddClassAsync(datasetClassDto, createdByUserId, EntityStatus.Classified);
         }
 
-        public async Task<DatasetClass> AddRequiresMergeClassAsync(DatasetClassDto datasetClassDto, string createdBy)
+        public async Task<DatasetClass> AddRequiresMergeClassAsync(DatasetClassDto datasetClassDto, string? createdByUserId)
         {
-            return await AddClassAsync(datasetClassDto, createdBy, EntityStatus.RequiresMerge);
+            return await AddClassAsync(datasetClassDto, createdByUserId, EntityStatus.RequiresMerge);
         }
 
         public async Task<ConfirmUnclassifiedImageResult> ConfirmUnclassififiedImageAsync(int imageId, int classId)

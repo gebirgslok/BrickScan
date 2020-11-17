@@ -87,16 +87,16 @@ namespace BrickScan.WebApi.Classes
                     .ToList();
 
             var exisiting = await _datasetService.GetClassByNumberAndColorIdPairsAsync(numberColorIdPairs);
-            var userName = HttpContext.User.GetUserName();
+            var userId = HttpContext.User.GetUserId();
 
             DatasetClass datasetClass;
             if (exisiting != null)
             {
-                datasetClass = await _datasetService.AddRequiresMergeClassAsync(datasetClassDto, userName);
+                datasetClass = await _datasetService.AddRequiresMergeClassAsync(datasetClassDto, userId);
             }
             else
             {
-                datasetClass = await _datasetService.AddClassifiedClassAsync(datasetClassDto, userName);
+                datasetClass = await _datasetService.AddClassifiedClassAsync(datasetClassDto, userId);
             }
 
             return CreatedAtRoute(nameof(GetClassByIdAsync),
@@ -179,8 +179,8 @@ namespace BrickScan.WebApi.Classes
                 return await SubmitDatasetClassForTrustedUser(datasetClassDto, apiVersion);
             }
 
-            var userName = HttpContext.User.GetUserName();
-            var datasetClass = await _datasetService.AddUnclassifiedClassAsync(datasetClassDto, userName);
+            var userId = HttpContext.User.GetUserId();
+            var datasetClass = await _datasetService.AddUnclassifiedClassAsync(datasetClassDto, userId);
 
             return CreatedAtRoute(nameof(GetClassByIdAsync),
                 new

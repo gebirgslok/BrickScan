@@ -312,8 +312,8 @@
   <data name="DownloadingNewRelease" xml:space="preserve">
     <value>Neue Version wird heruntergeladen</value>
   </data>
-  <data name="BricklinkIntegration" xml:space="preserve">
-    <value>Bricklink-Integration</value>
+  <data name="BricklinkApiIntegration" xml:space="preserve">
+    <value>Bricklink-API-Integration</value>
   </data>
   <data name="HowToGenerateAccessTokens" xml:space="preserve">
     <value>Wie kann ich die Zugriffsschlüssel generieren?</value>

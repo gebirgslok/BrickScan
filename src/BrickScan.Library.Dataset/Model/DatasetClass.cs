@@ -32,7 +32,9 @@ namespace BrickScan.Library.Dataset.Model
     {
         public EntityStatus Status { get; set; }
 
-        public string CreatedBy { get; set; } = null!;
+        //public string CreatedBy { get; set; } = null!;
+
+        public string? CreatedByUserId { get; set; }
 
         public DateTime CreatedOn { get; set; }
 
