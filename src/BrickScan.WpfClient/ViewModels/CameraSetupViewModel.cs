@@ -110,8 +110,19 @@ namespace BrickScan.WpfClient.ViewModels
         public async Task ConnectCameraAsync()
         {
             CameraCaptureState = CameraCaptureState.Connecting;
-            var success = await Task.Run(() => _videoCapture.Open(SelectedUsbCamera!.Index));
-            CameraCaptureState = success ? CameraCaptureState.Capturing : CameraCaptureState.Error;
+
+            const int timeout = 10000;
+            var task = Task.Run(() => _videoCapture.Open(SelectedUsbCamera!.Index));
+
+            if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+            {
+                var success = task.Result;
+                CameraCaptureState = success ? CameraCaptureState.Capturing : CameraCaptureState.Error;
+            }
+            else
+            {
+                CameraCaptureState = CameraCaptureState.Error;
+            }
         }
 
         public async Task DisconnectCameraAsync()
