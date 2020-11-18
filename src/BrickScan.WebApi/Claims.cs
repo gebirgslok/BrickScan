@@ -28,5 +28,6 @@ namespace BrickScan.WebApi
     internal static class Claims
     {
         public const string UserLevel = "extension_UserLevel";
+        public const string Oid = "http://schemas.microsoft.com/identity/claims/objectidentifier";
     }
 }

@@ -123,6 +123,7 @@ namespace BrickScan.WebApi
             builder.RegisterType<ImageFileConverter>().As<IImageFileConverter>();
             builder.RegisterType<ImagePredictor>().As<IImagePredictor>();
             builder.RegisterType<DatasetService>().As<IDatasetService>();
+            builder.RegisterType<ImageWithUncertainScoresHandler>().As<IPredictedClassesHandler>();
         }
 
         public void ConfigureServices(IServiceCollection services)

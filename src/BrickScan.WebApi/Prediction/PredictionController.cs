@@ -23,18 +23,15 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BrickScan.Library.Core;
 using BrickScan.Library.Core.Dto;
 using BrickScan.Library.Core.Extensions;
 using BrickScan.Library.Dataset;
 using BrickScan.WebApi.Images;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace BrickScan.WebApi.Prediction
@@ -43,51 +40,23 @@ namespace BrickScan.WebApi.Prediction
     [Route("v{version:apiVersion}/[controller]")]
     public class PredictionController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly IImageFileConverter _imageFileConverter;
         private readonly IImagePredictor _imagePredictor;
         private readonly IDatasetService _datasetService;
         private readonly ILogger<PredictionController> _logger;
+        private readonly IEnumerable<IPredictedClassesHandler> _handlers;
 
         public PredictionController(IImageFileConverter imageFileConverter,
             IImagePredictor imagePredictor,
-            IConfiguration configuration,
             IDatasetService datasetService,
-            ILogger<PredictionController> logger)
+            ILogger<PredictionController> logger, 
+            IEnumerable<IPredictedClassesHandler> handlers)
         {
             _imageFileConverter = imageFileConverter;
             _imagePredictor = imagePredictor;
-            _configuration = configuration;
             _datasetService = datasetService;
             _logger = logger;
-        }
-
-        private async Task HandleImageWithUncertainScores(List<PredictedDatasetClassDto> predictedClasses, ImageData imageData)
-        {
-            var scoreT = _configuration.GetValue<double>("Prediction:AddImageScoreThreshold");
-            var diffT = _configuration.GetValue<double>("Prediction:AddImageScoreDiffThreshold");
-            var maxScore = predictedClasses[0].Score;
-            var maxScore2 = predictedClasses.Count > 1 ? predictedClasses[1].Score : 0.0f;
-            var diff = maxScore - maxScore2;
-
-            _logger.LogInformation(
-                "KeepImagesWithLowScores is enabled. Checking whether to add image with the following parameters:" +
-                Environment.NewLine +
-                "score threshold = {ScoreT}, diff threshold = {DiffT}, " +
-                "max score = {MaxScore}, max score (2nd) = {MaxScore2}," +
-                "diff = {Diff}.", scoreT, diffT, maxScore, maxScore2, diff);
-
-            if (maxScore < scoreT || diff < diffT)
-            {
-                _logger.LogInformation("Adding posted image as 'Unclassified'.");
-
-                var datasetImage = await _datasetService.AddUnclassifiedImageAsync(imageData);
-
-                foreach (var predictedClass in predictedClasses)
-                {
-                    predictedClass.UnconfirmedImageId = datasetImage.Id;
-                }
-            }
+            _handlers = handlers;
         }
 
         /// <summary>
@@ -151,11 +120,9 @@ namespace BrickScan.WebApi.Prediction
 
             _logger.LogInformation("Retrieved the following classes: {@PredictedClasses}.", predictedClasses);
 
-            var keepImagesWithLowScores = _configuration.GetValue<bool>("Prediction:KeepImagesWithLowScores");
-
-            if (keepImagesWithLowScores)
+            foreach (var handler in _handlers)
             {
-                await HandleImageWithUncertainScores(predictedClasses, result.ImageDataList.First());
+                await handler.HandleAsync(predictedClasses, result.ImageDataList.First());
             }
 
             return new OkObjectResult(predictedClasses);

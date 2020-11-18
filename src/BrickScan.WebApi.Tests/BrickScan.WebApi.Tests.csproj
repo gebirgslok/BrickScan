@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <FileVersion>0.1.0.0</FileVersion>
+    <Version>0.0.0.0</Version>
+    <InformationalVersion>0.1.0</InformationalVersion>
+    <Authors>Jens Eisenbach</Authors>
+    <Product>BrickScan</Product>
+    <Description>Unit Test project for BrickScan.WebApi</Description>
+    <Copyright>Copyright © Jens Eisenbach 2020</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Title>BrickScan.WebApi.Tests</Title>
+    <RootNamespace>BrickScan.WebApiTests</RootNamespace>
+    <AssemblyName>BrickScan.WebApi.Tests</AssemblyName>
+    <RepositoryUrl>https://github.com/gebirgslok/BrickScan</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <Nullable>enable</Nullable>
+    <LangVersion>8.0</LangVersion>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FakeItEasy" Version="6.2.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BrickScan.WebApi\BrickScan.WebApi.csproj" />
+  </ItemGroup>
+</Project>

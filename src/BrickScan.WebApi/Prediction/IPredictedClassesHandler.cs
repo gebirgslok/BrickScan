@@ -23,28 +23,15 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BrickScan.Library.Core.Extensions
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BrickScan.Library.Core;
+using BrickScan.Library.Core.Dto;
+
+namespace BrickScan.WebApi.Prediction
 {
-    public static class ObjectExtensions
+    public interface IPredictedClassesHandler
     {
-        public static string ToStringOrNullOrEmpty(this object? value)
-        {
-            if (value == null)
-            {
-                return "Null";
-            }
-
-            if (value is string s)
-            {
-                if (string.Equals(s, string.Empty))
-                {
-                    return "Empty";
-                }
-
-                return s;
-            }
-
-            return value.ToString();
-        }
+        Task HandleAsync(List<PredictedDatasetClassDto> predictedClasses, ImageData imageData);
     }
 }

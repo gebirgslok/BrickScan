@@ -29,14 +29,9 @@ namespace BrickScan.WebApi.Extensions
 {
     internal static class ClaimsPrincipalExtensions
     {
-        public static string GetUserName(this ClaimsPrincipal? user)
-        {
-            return user?.FindFirstValue("name") ?? "Unknown";
-        }
-
         public static string? GetUserId(this ClaimsPrincipal? user)
         {
-            return user?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier");
+            return user?.FindFirstValue(Claims.Oid);
         }
 
         public static bool IsTrusted(this ClaimsPrincipal? user)
@@ -46,7 +41,7 @@ namespace BrickScan.WebApi.Extensions
                 return false;
             }
 
-            return user.HasClaim("extension_UserLevel", "trusted_user");
+            return user.HasClaim(Claims.UserLevel, "trusted_user");
         }
     }
 }
