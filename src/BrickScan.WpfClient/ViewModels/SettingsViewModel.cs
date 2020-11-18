@@ -23,11 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Configuration;
-using System.Linq;
-using ControlzEx.Theming;
 using PropertyChanged;
 using Stylet;
 
@@ -35,45 +30,11 @@ namespace BrickScan.WpfClient.ViewModels
 {
     internal class SettingsViewModel : PropertyChangedBase
     {
-        private static readonly IReadOnlyCollection<LanguageOption> _availableLanguageOptions = GetAvailableLanguageOptions();
         private readonly IUserConfiguration _userConfiguration;
         private string? _tokenValueBeforeSave;
         private string? _tokenSecretBeforeSave;
         private string? _consumerKeyBeforeSave;
         private string? _consumerSecretBeforeSave;
-
-        public IReadOnlyCollection<string> AvailableThemeColorSchemes => ThemeManager.Current.ColorSchemes;
-
-        public IReadOnlyCollection<string> AvailableThemeBaseColors => ThemeManager.Current.BaseColors;
-
-        public IReadOnlyCollection<LanguageOption> AvailableLanguageOptions => _availableLanguageOptions;
-
-        private LanguageOption _selectedLanguageOption = null!;
-        public LanguageOption SelectedLanguageOption
-        {
-            get { return _selectedLanguageOption; }
-            set
-            {
-                if (!ReferenceEquals(value, _selectedLanguageOption))
-                {
-                    _selectedLanguageOption = value;
-                    _userConfiguration.SelectedCultureKey = _selectedLanguageOption.CultureKey;
-                    NotifyOfPropertyChange(nameof(SelectedLanguageOption));
-                }
-            }
-        }
-
-        public string SelectedThemeBaseColor
-        {
-            get => _userConfiguration.ThemeBaseColor;
-            set => _userConfiguration.ThemeBaseColor = value;
-        }
-
-        public string SelectedThemeColorScheme
-        {
-            get => _userConfiguration.ThemeColorScheme;
-            set => _userConfiguration.ThemeColorScheme = value;
-        }
 
         public string? BricklinkTokenValue
         {
@@ -105,12 +66,14 @@ namespace BrickScan.WpfClient.ViewModels
                                                    !string.Equals(_consumerKeyBeforeSave, BricklinkConsumerKey) ||
                                                    !string.Equals(_consumerSecretBeforeSave, BricklinkConsumerSecret);
         
-        public SettingsViewModel(IUserConfiguration userConfiguration)
+        public UiSettingsViewModel UiSettingsViewModel { get; }
+
+        public SettingsViewModel(IUserConfiguration userConfiguration, 
+            UiSettingsViewModel uiSettingsViewModel)
         {
             _userConfiguration = userConfiguration;
+            UiSettingsViewModel = uiSettingsViewModel;
             UpdateTokenPropertiesBeforeSave();
-            SelectedLanguageOption =
-                AvailableLanguageOptions.First(option => option.CultureKey == _userConfiguration.SelectedCultureKey);
         }
 
         private void UpdateTokenPropertiesBeforeSave()
@@ -119,17 +82,6 @@ namespace BrickScan.WpfClient.ViewModels
             _tokenSecretBeforeSave = _userConfiguration.BricklinkTokenSecret;
             _consumerKeyBeforeSave = _userConfiguration.BricklinkConsumerKey;
             _consumerSecretBeforeSave = _userConfiguration.BricklinkConsumerSecret;
-        }
-
-        private static IReadOnlyCollection<LanguageOption> GetAvailableLanguageOptions()
-        {
-            var settingCollection = (NameValueCollection)ConfigurationManager.GetSection("languageOptions");
-
-            var options = settingCollection.AllKeys
-                .Select(key => new LanguageOption(key, settingCollection[key]))
-                .ToArray();
-
-            return options;
         }
 
         public void SaveBricklinkCredentials()

@@ -89,6 +89,7 @@ namespace BrickScan.WpfClient
             builder.RegisterType<PredictionResultViewModel>().AsSelf();
             builder.RegisterType<PredictViewModel>().AsSelf();
             builder.RegisterType<SettingsViewModel>().AsSelf();
+            builder.RegisterType<UiSettingsViewModel>().AsSelf();
             builder.RegisterType<SingleItemPredictedClassViewModel>().AsSelf();
             builder.RegisterType<StatusBarViewModel>().AsSelf();
         }

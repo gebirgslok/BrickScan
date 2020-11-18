@@ -45,71 +45,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <!--  UI SETTINGS  -->
-            <Label
-                Grid.Row="0"
-                Margin="5"
-                VerticalAlignment="Center"
-                Content="{x:Static resx:Resources.UserInterface}"
-                FontSize="14"
-                FontWeight="SemiBold" />
-            <Grid
-                Grid.Row="1"
-                Margin="5"
-                IsSharedSizeScope="True">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" SharedSizeGroup="UserInterfaceRow" />
-                    <RowDefinition Height="Auto" SharedSizeGroup="UserInterfaceRow" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Label
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Margin="2"
-                    VerticalAlignment="Center"
-                    Content="{x:Static resx:Resources.BaseColor}" />
-                <ComboBox
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Margin="2"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    ItemsSource="{Binding Path=AvailableThemeBaseColors, Mode=OneTime}"
-                    SelectedItem="{Binding Path=SelectedThemeBaseColor, Mode=TwoWay}" />
-                <Label
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    Margin="2"
-                    VerticalAlignment="Center"
-                    Content="{x:Static resx:Resources.ColorScheme}" />
-                <ComboBox
-                    Grid.Row="0"
-                    Grid.Column="3"
-                    Margin="2"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    ItemsSource="{Binding Path=AvailableThemeColorSchemes, Mode=OneTime}"
-                    SelectedItem="{Binding Path=SelectedThemeColorScheme, Mode=TwoWay}" />
-                <Label
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Margin="2"
-                    VerticalAlignment="Center"
-                    Content="{x:Static resx:Resources.Language}" />
-                <ComboBox
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="2"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    ItemsSource="{Binding Path=AvailableLanguageOptions, Mode=OneTime}"
-                    SelectedItem="{Binding Path=SelectedLanguageOption, Mode=TwoWay}" />
-            </Grid>
+            <ContentControl s:View.Model="{Binding Path=UiSettingsViewModel, Mode=OneTime}"
+                            Grid.Row="0"/>
             <!--  BL SETTINGS  -->
             <Label
                 Grid.Row="2"
