@@ -30,31 +30,40 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 {
     public class InventoryServiceViewModelFactory : IInventoryServiceViewModelFactory
     {
-        private readonly BricklinkApiSettingsViewModel _bricklinkApiSettingsViewModel;
+        private readonly Lazy<BricklinkApiSettingsViewModel> _bricklinkApiSettingsVmFactory;
+        private readonly Func<OnInventoryServiceRequested, BricklinkApiInventoryOverviewViewModel> _bricklinkApiInventoryOverviewVmFactory;
 
-        public InventoryServiceViewModelFactory(BricklinkApiSettingsViewModel bricklinkApiSettingsViewModel)
+        public InventoryServiceViewModelFactory(Lazy<BricklinkApiSettingsViewModel> bricklinkApiSettingsVmFactory, 
+            Func<OnInventoryServiceRequested, BricklinkApiInventoryOverviewViewModel> bricklinkApiInventoryOverviewVmFactory)
         {
-            _bricklinkApiSettingsViewModel = bricklinkApiSettingsViewModel;
+            _bricklinkApiSettingsVmFactory = bricklinkApiSettingsVmFactory;
+            _bricklinkApiInventoryOverviewVmFactory = bricklinkApiInventoryOverviewVmFactory;
         }
 
         public PropertyChangedBase CreateSettingsViewModel(InventoryServiceType inventoryServiceType)
         {
-            switch (inventoryServiceType)
+            return inventoryServiceType switch
             {
-                case InventoryServiceType.BricklinkApi:
-                    return _bricklinkApiSettingsViewModel;
-
+                InventoryServiceType.BricklinkApi => _bricklinkApiSettingsVmFactory.Value,
                 //TODO: change this
-                case InventoryServiceType.BricklinkXml:
-                    return _bricklinkApiSettingsViewModel;
-
+                InventoryServiceType.BricklinkXml => _bricklinkApiSettingsVmFactory.Value,
                 //TODO: change this
-                case InventoryServiceType.CustomRestApi:
-                    return _bricklinkApiSettingsViewModel;
+                InventoryServiceType.CustomRestApi => _bricklinkApiSettingsVmFactory.Value,
+                _ => throw new ArgumentOutOfRangeException(nameof(inventoryServiceType), inventoryServiceType, null)
+            };
+        }
 
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(inventoryServiceType), inventoryServiceType, null);
-            }
+        public PropertyChangedBase CreateViewModel(OnInventoryServiceRequested request, InventoryServiceType inventoryServiceType)
+        {
+            return inventoryServiceType switch
+            {
+                InventoryServiceType.BricklinkApi => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
+                //TODO: change this
+                InventoryServiceType.BricklinkXml => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
+                //TODO: change this
+                InventoryServiceType.CustomRestApi => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
+                _ => throw new ArgumentOutOfRangeException(nameof(inventoryServiceType), inventoryServiceType, null)
+            };
         }
     }
 }

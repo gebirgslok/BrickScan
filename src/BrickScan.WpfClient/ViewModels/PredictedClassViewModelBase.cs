@@ -23,12 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using PropertyChanged;
 using Stylet;
 
 namespace BrickScan.WpfClient.ViewModels
 {
     public abstract class PredictedClassViewModelBase : PropertyChangedBase
     {
+        [DoNotNotify]
+        public PredictionResultViewModel? ParentViewModel { get; set; }
+
         public abstract int PredictedClassId { get; }
     }
 }

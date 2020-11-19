@@ -84,6 +84,9 @@ namespace BrickScan.WpfClient
                 .As<IInventoryServiceViewModelFactory>();           
             builder.RegisterType<InventorySettingsViewModel>().AsSelf();
             builder.RegisterType<BricklinkApiSettingsViewModel>().AsSelf();
+            builder.RegisterType<BricklinkApiInventoryOverviewViewModel>().AsSelf();
+            builder.RegisterType<BricklinkApiAddInventoryViewModel>().AsSelf();
+            builder.RegisterType<BricklinkApiViewModelFactory>().As<IBricklinkApiViewModelFactory>();
         }
 
         private static void RegisterViewModels(ContainerBuilder builder)

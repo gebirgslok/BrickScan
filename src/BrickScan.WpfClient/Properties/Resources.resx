@@ -322,4 +322,13 @@
   <data name="ActiveInventoryServiceType" xml:space="preserve">
     <value>Active inventory service</value>
   </data>
+  <data name="QueryingBricklinkInventory" xml:space="preserve">
+    <value>Querying existing Bricklink inventory...</value>
+  </data>
+  <data name="Used" xml:space="preserve">
+    <value>Used</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>New</value>
+  </data>
 </root>

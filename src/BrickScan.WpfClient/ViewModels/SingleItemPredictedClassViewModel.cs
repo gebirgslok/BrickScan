@@ -29,6 +29,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
+using BrickScan.WpfClient.Inventory;
 using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls.Dialogs;
 using PropertyChanged;
@@ -63,8 +64,6 @@ namespace BrickScan.WpfClient.ViewModels
 
         public bool HasManyDisplayImages => _displayImages.Length > 1;
 
-        public bool IsConfirmDatasetClassAvailable => _predictedDatasetClassDto.UnconfirmedImageId != null;
-
         public bool CanConfirmImageBelongsToClassAsync { get; private set; } = true;
 
         public string PartNo => _predictedDatasetClassDto.Items.First().Number;
@@ -77,12 +76,7 @@ namespace BrickScan.WpfClient.ViewModels
 
         public string? BricklinkColorName => _predictedDatasetClassDto.Items.First().Color?.BricklinkColorName;
 
-        public string? ConfirmImageBelongsToClassToolTip =>
-            IsConfirmDatasetClassAvailable ? 
-                UserSession.IsTrusted ? 
-                    Properties.Resources.ConfirmImageBelongsToClassToolTip : 
-                    "Not logged on or not authorized."
-                : null;
+        public string? ConfirmImageBelongsToClassToolTip => Properties.Resources.ConfirmImageBelongsToClassToolTip;
 
         public SingleItemPredictedClassViewModel(PredictedDatasetClassDto predictedDatasetClassDto,
             ILogger logger,
@@ -105,7 +99,6 @@ namespace BrickScan.WpfClient.ViewModels
 
             SelectedDisplayImage = _displayImages.Length > 0 ? _displayImages[0] : null;
         }
-
 
         public void ShowNextImage()
         {
@@ -132,7 +125,8 @@ namespace BrickScan.WpfClient.ViewModels
 
         public void AddToInventory()
         {
-            //TODO FUTURE Feature.
+            var request = new OnInventoryServiceRequested(_predictedDatasetClassDto.Items.First(), ParentViewModel);
+            _eventAggregator.PublishOnUIThread(request);
         }
 
         public async Task ConfirmImageBelongsToClassAsync()

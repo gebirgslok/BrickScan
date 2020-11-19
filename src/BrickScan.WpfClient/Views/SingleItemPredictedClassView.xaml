@@ -40,7 +40,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <s:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <converter:BooleanAndConverter x:Key="BooleanAndConverter" />
+        <converter:BooleanAndToVisibilityConverter x:Key="BooleanAndToVisibilityConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -204,15 +204,14 @@
                 VerticalAlignment="Center"
                 Command="{s:Action ConfirmImageBelongsToClassAsync}"
                 Style="{DynamicResource MahApps.Styles.Button.Circle}"
-                ToolTip="{Binding Path=ConfirmImageBelongsToClassToolTip, Mode=OneWay}"
-                ToolTipService.ShowOnDisabled="True"
-                Visibility="{Binding Path=IsConfirmDatasetClassAvailable, Mode=OneTime, Converter={StaticResource BoolToVisibilityConverter}}">
-                <Button.IsEnabled>
-                    <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                ToolTip="{Binding Path=ConfirmImageBelongsToClassToolTip, Mode=OneTime}"
+                ToolTipService.ShowOnDisabled="True">
+                <Button.Visibility>
+                    <MultiBinding Converter="{StaticResource BooleanAndToVisibilityConverter}">
                         <Binding Mode="OneWay" Path="UserSession.IsTrusted" />
                         <Binding Mode="OneWay" Path="CanConfirmImageBelongsToClassAsync" />
                     </MultiBinding>
-                </Button.IsEnabled>
+                </Button.Visibility>
                 <iconPacks:Material Kind="Check" />
             </Button>
         </StackPanel>

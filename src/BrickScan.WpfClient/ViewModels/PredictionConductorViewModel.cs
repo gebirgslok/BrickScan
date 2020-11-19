@@ -24,7 +24,10 @@
 #endregion
 
 using System;
+using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
+using BrickScan.WpfClient.Inventory;
+using BrickScan.WpfClient.Inventory.ViewModels;
 using OpenCvSharp;
 using Stylet;
 
@@ -32,17 +35,24 @@ namespace BrickScan.WpfClient.ViewModels
 {
     public sealed class PredictionConductorViewModel : Conductor<PropertyChangedBase>, 
         IHandle<OnPredictionRequested>, 
-        IHandle<OnPredictionResultCloseRequested>
+        IHandle<OnPredictionResultCloseRequested>,
+        IHandle<OnInventoryServiceRequested>
     {
         private readonly PredictViewModel _predictViewModel;
         private readonly Func<Mat, PredictionResultViewModel> _predictionResultViewModelFunc;
+        private readonly IInventoryServiceViewModelFactory _inventoryServiceViewModelFactory;
+        private readonly IUserConfiguration _configuration;
 
         public PredictionConductorViewModel(PredictViewModel predictViewModel, 
-            Func<Mat, PredictionResultViewModel> predictionResultViewModelFunc)
+            Func<Mat, PredictionResultViewModel> predictionResultViewModelFunc, 
+            IInventoryServiceViewModelFactory inventoryServiceViewModelFactory, 
+            IUserConfiguration configuration)
         {
             DisposeChildren = false;
             _predictViewModel = predictViewModel;
             _predictionResultViewModelFunc = predictionResultViewModelFunc;
+            _inventoryServiceViewModelFactory = inventoryServiceViewModelFactory;
+            _configuration = configuration;
             ActiveItem = _predictViewModel;
         }
 
@@ -54,6 +64,17 @@ namespace BrickScan.WpfClient.ViewModels
         public void Handle(OnPredictionResultCloseRequested message)
         {
             ActiveItem = _predictViewModel;
+        }
+
+        public void Handle(OnInventoryServiceRequested message)
+        {
+            ActiveItem = _inventoryServiceViewModelFactory.CreateViewModel(message, _configuration.SelectedInventoryServiceType);
+        }
+
+        public void Temp()
+        {
+            var r = new OnInventoryServiceRequested(new PredictedDatasetItemDto(), null);
+            ActiveItem = _inventoryServiceViewModelFactory.CreateViewModel(r, _configuration.SelectedInventoryServiceType);
         }
     }
 }

@@ -27,10 +27,21 @@ using Stylet;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
 {
-    public interface IInventoryServiceViewModelFactory
+    public class BricklinkApiAddInventoryViewModel : PropertyChangedBase
     {
-        PropertyChangedBase CreateSettingsViewModel(InventoryServiceType inventoryServiceType);
+        private readonly OnInventoryServiceRequested _request;
 
-        PropertyChangedBase CreateViewModel(OnInventoryServiceRequested request, InventoryServiceType inventoryServiceType);
+        public Condition Condition { get; set; }
+
+        public int Quantity { get; set; } = 1;
+
+        public decimal PricePerPiece { get; set; }
+
+        public string? Storage { get; set; }
+
+        public BricklinkApiAddInventoryViewModel(OnInventoryServiceRequested request)
+        {
+            _request = request;
+        }
     }
 }

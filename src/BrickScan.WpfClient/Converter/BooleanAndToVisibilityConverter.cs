@@ -23,14 +23,26 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Stylet;
+using System;
+using System.Globalization;
+using System.Linq;
+using System.Windows;
+using System.Windows.Data;
 
-namespace BrickScan.WpfClient.Inventory.ViewModels
+namespace BrickScan.WpfClient.Converter
 {
-    public interface IInventoryServiceViewModelFactory
+    internal class BooleanAndToVisibilityConverter : IMultiValueConverter
     {
-        PropertyChangedBase CreateSettingsViewModel(InventoryServiceType inventoryServiceType);
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var booleanValues = values.Cast<bool>();
+            var allTrue= booleanValues.All(x => x);
+            return allTrue ? Visibility.Visible : Visibility.Collapsed;
+        }
 
-        PropertyChangedBase CreateViewModel(OnInventoryServiceRequested request, InventoryServiceType inventoryServiceType);
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException($"{nameof(ConvertBack)} on type {nameof(BooleanAndToVisibilityConverter)} is not supported.");
+        }
     }
 }

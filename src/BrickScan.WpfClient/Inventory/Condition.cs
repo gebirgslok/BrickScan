@@ -23,14 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Stylet;
+using BrickScan.WpfClient.Model;
 
-namespace BrickScan.WpfClient.Inventory.ViewModels
+namespace BrickScan.WpfClient.Inventory
 {
-    public interface IInventoryServiceViewModelFactory
+    public enum Condition
     {
-        PropertyChangedBase CreateSettingsViewModel(InventoryServiceType inventoryServiceType);
+        [LocalizedDisplayName(typeof(Properties.Resources), "Used")]
+        Used = 0,
 
-        PropertyChangedBase CreateViewModel(OnInventoryServiceRequested request, InventoryServiceType inventoryServiceType);
+        [LocalizedDisplayName(typeof(Properties.Resources), "New")]
+        New = 1
     }
 }

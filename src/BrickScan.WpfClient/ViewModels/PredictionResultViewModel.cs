@@ -32,6 +32,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
+using BrickScan.WpfClient.Inventory;
 using BrickScan.WpfClient.Model;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
@@ -60,7 +61,7 @@ namespace BrickScan.WpfClient.ViewModels
         public PredictionResultViewModel(Mat imageSection,
             Func<Task<PredictionResult>, PredictionResult, NotifyTask<PredictionResult>> notifyTaskFactory,
             IEventAggregator eventAggregator,
-            IPredictedClassViewModelFactory predictedClassViewModelFactory, 
+            IPredictedClassViewModelFactory predictedClassViewModelFactory,
             ILogger logger,
             IBrickScanApiClient apiClient)
         {
@@ -90,7 +91,7 @@ namespace BrickScan.WpfClient.ViewModels
 
         private IEnumerable<PredictedClassViewModelBase> BuildViewModels(List<PredictedDatasetClassDto>? predictedClases)
         {
-            return predictedClases?.Select(x => _predictedClassViewModelFactory.Create(x)) ?? 
+            return predictedClases?.Select(x => _predictedClassViewModelFactory.Create(x)) ??
                    new List<PredictedClassViewModelBase>();
         }
 
@@ -104,9 +105,9 @@ namespace BrickScan.WpfClient.ViewModels
                 var newWidth = (int)(1.0 * input.Width * t / maxWidthOrHeight);
                 var newHeight = (int)(1.0 * input.Height * t / maxWidthOrHeight);
 
-                _logger.Information("Input image {Size} was tool large, resized to {NewWidth} x {NewHeight}.", 
-                    input.Size(), 
-                    newWidth, 
+                _logger.Information("Input image {Size} was tool large, resized to {NewWidth} x {NewHeight}.",
+                    input.Size(),
+                    newWidth,
                     newHeight);
 
                 return input.Resize(new Size(newWidth, newHeight));

@@ -439,6 +439,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New.
+        /// </summary>
+        public static string New {
+            get {
+                return ResourceManager.GetString("New", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Next.
         /// </summary>
         public static string Next {
@@ -498,6 +507,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string ProgramVersion {
             get {
                 return ResourceManager.GetString("ProgramVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Querying existing Bricklink inventory....
+        /// </summary>
+        public static string QueryingBricklinkInventory {
+            get {
+                return ResourceManager.GetString("QueryingBricklinkInventory", resourceCulture);
             }
         }
         
@@ -714,6 +732,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string UseAsDefaultInventory {
             get {
                 return ResourceManager.GetString("UseAsDefaultInventory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Used.
+        /// </summary>
+        public static string Used {
+            get {
+                return ResourceManager.GetString("Used", resourceCulture);
             }
         }
         
