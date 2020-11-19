@@ -23,22 +23,23 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Inventory.ViewModels;
-using Stylet;
+using System;
+using System.ComponentModel;
+using BrickScan.WpfClient.Extensions;
+using Xunit;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Tests.Extensions
 {
-    internal class SettingsViewModel : PropertyChangedBase
+    public class EnumExtensionsTests
     {
-        public UiSettingsViewModel UiSettingsViewModel { get; }
-
-        public InventorySettingsViewModel InventorySettingsViewModel { get; }
-
-        public SettingsViewModel(UiSettingsViewModel uiSettingsViewModel, 
-            InventorySettingsViewModel inventorySettingsViewModel)
+        [Theory]
+        [InlineData(Inventory.InventoryServiceType.BricklinkApi, typeof(DisplayNameAttribute))]
+        [InlineData(Inventory.InventoryServiceType.CustomRestApi, typeof(DisplayNameAttribute))]
+        [InlineData(Inventory.InventoryServiceType.BricklinkXml, typeof(DisplayNameAttribute))]
+        public void GetAttributeOfType(Enum val, Type t)
         {
-            UiSettingsViewModel = uiSettingsViewModel;
-            InventorySettingsViewModel = inventorySettingsViewModel;
+            var attribute = val.GetAttributeOfType<DisplayNameAttribute>();
+            Assert.True(t.IsInstanceOfType(attribute!));
         }
     }
 }

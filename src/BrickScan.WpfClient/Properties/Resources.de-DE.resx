@@ -327,4 +327,19 @@
   <data name="TooManyRequestsErrorMessage" xml:space="preserve">
     <value>Zu viele Anforderungen. Bitte warte ein paar Sekunden und versuche es erneut.</value>
   </data>
+  <data name="BricklinkApi" xml:space="preserve">
+    <value>Bricklink-API</value>
+  </data>
+  <data name="BricklinkXml" xml:space="preserve">
+    <value>Bricklink-XML-Datei</value>
+  </data>
+  <data name="CustomRestApi" xml:space="preserve">
+    <value>Benutzerdefinierte RESTful-API</value>
+  </data>
+  <data name="InventoryIntegration" xml:space="preserve">
+    <value>Inventar-Integration</value>
+  </data>
+  <data name="ActiveInventoryServiceType" xml:space="preserve">
+    <value>Aktive Inventar-Anbindung</value>
+  </data>
 </root>

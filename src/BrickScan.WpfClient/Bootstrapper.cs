@@ -33,6 +33,7 @@ using System.Windows.Threading;
 using Autofac;
 using AutofacSerilogIntegration;
 using BrickScan.WpfClient.Extensions;
+using BrickScan.WpfClient.Inventory.ViewModels;
 using BrickScan.WpfClient.Model;
 using BrickScan.WpfClient.Properties;
 using BrickScan.WpfClient.Updater;
@@ -77,6 +78,14 @@ namespace BrickScan.WpfClient
                 .InstancePerDependency();
         }
 
+        private static void RegisterInventory(ContainerBuilder builder)
+        {
+            builder.RegisterType<InventoryServiceViewModelFactory>()
+                .As<IInventoryServiceViewModelFactory>();           
+            builder.RegisterType<InventorySettingsViewModel>().AsSelf();
+            builder.RegisterType<BricklinkApiSettingsViewModel>().AsSelf();
+        }
+
         private static void RegisterViewModels(ContainerBuilder builder)
         {
             builder.RegisterType<AddPartsConductorViewModel>().AsSelf();
@@ -116,6 +125,7 @@ namespace BrickScan.WpfClient
         {
             RegisterViewModels(builder);
             RegisterViews(builder);
+            RegisterInventory(builder);
 
             builder.Register(c => PublicClientApplicationBuilder.Create(IdentitySettings.ClientId)
                     .WithB2CAuthority(IdentitySettings.AuthoritySignUpSignIn)

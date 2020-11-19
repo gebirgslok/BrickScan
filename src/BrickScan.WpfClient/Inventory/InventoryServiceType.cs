@@ -23,22 +23,19 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Inventory.ViewModels;
-using Stylet;
+using BrickScan.WpfClient.Model;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Inventory
 {
-    internal class SettingsViewModel : PropertyChangedBase
+    public enum InventoryServiceType
     {
-        public UiSettingsViewModel UiSettingsViewModel { get; }
+        [LocalizedDisplayName(typeof(Properties.Resources), "BricklinkApi")]
+        BricklinkApi = 0,
 
-        public InventorySettingsViewModel InventorySettingsViewModel { get; }
+        [LocalizedDisplayName(typeof(Properties.Resources), "BricklinkXml")]
+        BricklinkXml = 1,
 
-        public SettingsViewModel(UiSettingsViewModel uiSettingsViewModel, 
-            InventorySettingsViewModel inventorySettingsViewModel)
-        {
-            UiSettingsViewModel = uiSettingsViewModel;
-            InventorySettingsViewModel = inventorySettingsViewModel;
-        }
+        [LocalizedDisplayName(typeof(Properties.Resources), "CustomRestApi")]
+        CustomRestApi = 2
     }
 }

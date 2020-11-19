@@ -33,11 +33,4 @@ namespace BrickScan.WpfClient.Inventory
     {
 
     }
-
-    public enum InventoryServiceType
-    {
-        BricklinkApi = 0,
-        BricklinkXml = 1,
-        CustomRestApi = 2
-    }
 }

@@ -61,6 +61,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Active inventory service.
+        /// </summary>
+        public static string ActiveInventoryServiceType {
+            get {
+                return ResourceManager.GetString("ActiveInventoryServiceType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use 1st train image to display images.
         /// </summary>
         public static string Add1stTrainImageToDisplayImages {
@@ -142,11 +151,29 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bricklink API.
+        /// </summary>
+        public static string BricklinkApi {
+            get {
+                return ResourceManager.GetString("BricklinkApi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bricklink API integration.
         /// </summary>
         public static string BricklinkApiIntegration {
             get {
                 return ResourceManager.GetString("BricklinkApiIntegration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bricklink XML file.
+        /// </summary>
+        public static string BricklinkXml {
+            get {
+                return ResourceManager.GetString("BricklinkXml", resourceCulture);
             }
         }
         
@@ -259,6 +286,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom RESTful API.
+        /// </summary>
+        public static string CustomRestApi {
+            get {
+                return ResourceManager.GetString("CustomRestApi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display images.
         /// </summary>
         public static string DisplayImages {
@@ -354,6 +390,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string InternalServerErrorMessage {
             get {
                 return ResourceManager.GetString("InternalServerErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inventory integration.
+        /// </summary>
+        public static string InventoryIntegration {
+            get {
+                return ResourceManager.GetString("InventoryIntegration", resourceCulture);
             }
         }
         

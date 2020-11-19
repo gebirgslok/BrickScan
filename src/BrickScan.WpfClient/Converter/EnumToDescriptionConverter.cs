@@ -23,22 +23,37 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Inventory.ViewModels;
-using Stylet;
+using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.Windows.Data;
+using BrickScan.WpfClient.Extensions;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Converter
 {
-    internal class SettingsViewModel : PropertyChangedBase
+    [ValueConversion(typeof(Enum), typeof(string))]
+    internal class EnumToDisplayNameConverter : IValueConverter
     {
-        public UiSettingsViewModel UiSettingsViewModel { get; }
-
-        public InventorySettingsViewModel InventorySettingsViewModel { get; }
-
-        public SettingsViewModel(UiSettingsViewModel uiSettingsViewModel, 
-            InventorySettingsViewModel inventorySettingsViewModel)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            UiSettingsViewModel = uiSettingsViewModel;
-            InventorySettingsViewModel = inventorySettingsViewModel;
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            if (value is Enum == false)
+            {
+                throw new ArgumentException($"{nameof(value)} must be of type {typeof(Enum)} (specified = {value.GetType()}).");
+            }
+
+            var enumValue = (Enum)value;
+            var attribute = enumValue.GetAttributeOfType<DisplayNameAttribute>();
+            return attribute?.DisplayName ?? enumValue.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

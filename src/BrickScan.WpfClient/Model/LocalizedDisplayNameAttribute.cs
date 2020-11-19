@@ -23,22 +23,38 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Inventory.ViewModels;
-using Stylet;
+using System;
+using System.ComponentModel;
+using System.Reflection;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Model
 {
-    internal class SettingsViewModel : PropertyChangedBase
+    static class ResourceHelper
     {
-        public UiSettingsViewModel UiSettingsViewModel { get; }
-
-        public InventorySettingsViewModel InventorySettingsViewModel { get; }
-
-        public SettingsViewModel(UiSettingsViewModel uiSettingsViewModel, 
-            InventorySettingsViewModel inventorySettingsViewModel)
+        internal static string LookupResource(Type resourceManagerProvider, string resourceKey)
         {
-            UiSettingsViewModel = uiSettingsViewModel;
-            InventorySettingsViewModel = inventorySettingsViewModel;
+            var propertyInfos =
+                resourceManagerProvider.GetProperties(BindingFlags.Static | BindingFlags.Public);
+
+            foreach (var staticProperty in propertyInfos)
+            {
+                if (staticProperty.PropertyType == typeof(System.Resources.ResourceManager))
+                {
+                    var resourceManager = (System.Resources.ResourceManager)staticProperty.GetValue(null, null);
+                    return resourceManager.GetString(resourceKey) ?? resourceKey;
+                }
+            }
+
+            return resourceKey;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Enum | AttributeTargets.Field)]
+    internal class LocalizedDisplayNameAttribute : DisplayNameAttribute
+    {
+        public LocalizedDisplayNameAttribute(Type resourceManagerProvider, string resourceKey) :
+            base(ResourceHelper.LookupResource(resourceManagerProvider, resourceKey))
+        {
         }
     }
 }

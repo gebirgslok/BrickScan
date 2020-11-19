@@ -307,4 +307,19 @@
   <data name="TooManyRequestsErrorMessage" xml:space="preserve">
     <value>Too many requests. Please wait a few seconds and try again.</value>
   </data>
+  <data name="BricklinkApi" xml:space="preserve">
+    <value>Bricklink API</value>
+  </data>
+  <data name="BricklinkXml" xml:space="preserve">
+    <value>Bricklink XML file</value>
+  </data>
+  <data name="CustomRestApi" xml:space="preserve">
+    <value>Custom RESTful API</value>
+  </data>
+  <data name="InventoryIntegration" xml:space="preserve">
+    <value>Inventory integration</value>
+  </data>
+  <data name="ActiveInventoryServiceType" xml:space="preserve">
+    <value>Active inventory service</value>
+  </data>
 </root>

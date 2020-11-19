@@ -23,22 +23,30 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Inventory.ViewModels;
 using Stylet;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Inventory.ViewModels
 {
-    internal class SettingsViewModel : PropertyChangedBase
+    public class InventorySettingsViewModel : Conductor<PropertyChangedBase>
     {
-        public UiSettingsViewModel UiSettingsViewModel { get; }
+        private readonly IInventoryServiceViewModelFactory _inventoryServiceViewModelFactory;
 
-        public InventorySettingsViewModel InventorySettingsViewModel { get; }
+        public InventoryServiceType SelectedInventoryServiceType { get; set; }
 
-        public SettingsViewModel(UiSettingsViewModel uiSettingsViewModel, 
-            InventorySettingsViewModel inventorySettingsViewModel)
+        public InventorySettingsViewModel(IInventoryServiceViewModelFactory inventoryServiceViewModelFactory)
         {
-            UiSettingsViewModel = uiSettingsViewModel;
-            InventorySettingsViewModel = inventorySettingsViewModel;
+            _inventoryServiceViewModelFactory = inventoryServiceViewModelFactory;
+            ActiveItem = _inventoryServiceViewModelFactory.CreateSettingsViewModel(SelectedInventoryServiceType);
+        }
+
+        protected override void NotifyOfPropertyChange(string propertyName = "")
+        {
+            base.NotifyOfPropertyChange(propertyName);
+
+            if (propertyName == nameof(SelectedInventoryServiceType))
+            {
+                ActiveItem = _inventoryServiceViewModelFactory.CreateSettingsViewModel(SelectedInventoryServiceType);
+            }
         }
     }
 }

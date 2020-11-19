@@ -23,22 +23,34 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Inventory.ViewModels;
-using Stylet;
+using System;
 
-namespace BrickScan.WpfClient.ViewModels
+namespace BrickScan.WpfClient.Extensions
 {
-    internal class SettingsViewModel : PropertyChangedBase
-    {
-        public UiSettingsViewModel UiSettingsViewModel { get; }
-
-        public InventorySettingsViewModel InventorySettingsViewModel { get; }
-
-        public SettingsViewModel(UiSettingsViewModel uiSettingsViewModel, 
-            InventorySettingsViewModel inventorySettingsViewModel)
+    internal static class EnumExtensions
+    {        
+        public static TAttr? GetAttributeOfType<TAttr>(this Enum enumerationValue) where TAttr : Attribute
         {
-            UiSettingsViewModel = uiSettingsViewModel;
-            InventorySettingsViewModel = inventorySettingsViewModel;
+            Type type = enumerationValue.GetType();
+
+            if (!type.IsEnum)
+            {
+                throw new ArgumentException("EnumerationValue must be of Enum type.", nameof(enumerationValue));
+            }
+
+            var memberInfo = type.GetMember(enumerationValue.ToString());
+            
+            if (memberInfo.Length > 0)
+            {
+                var attrs = memberInfo[0].GetCustomAttributes(typeof(TAttr), false);
+
+                if (attrs.Length > 0)
+                {
+                    return (TAttr)attrs[0];
+                }
+            }
+
+            return null;
         }
     }
 }
