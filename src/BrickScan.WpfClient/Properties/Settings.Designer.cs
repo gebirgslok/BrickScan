@@ -94,5 +94,17 @@ namespace BrickScan.WpfClient.Properties {
                 this["IsUpgradeRequired"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SelectedInventoryServiceType {
+            get {
+                return ((int)(this["SelectedInventoryServiceType"]));
+            }
+            set {
+                this["SelectedInventoryServiceType"] = value;
+            }
+        }
     }
 }

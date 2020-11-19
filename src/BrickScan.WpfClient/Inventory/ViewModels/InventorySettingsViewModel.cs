@@ -29,13 +29,27 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 {
     public class InventorySettingsViewModel : Conductor<PropertyChangedBase>
     {
+        private readonly IUserConfiguration _userConfiguration;
         private readonly IInventoryServiceViewModelFactory _inventoryServiceViewModelFactory;
 
-        public InventoryServiceType SelectedInventoryServiceType { get; set; }
+        public InventoryServiceType SelectedInventoryServiceType
+        {
+            get => (InventoryServiceType)_userConfiguration.SelectedInventoryServiceType;
+            set
+            {
+                var index = (int)value;
+                if (index != _userConfiguration.SelectedInventoryServiceType)
+                {
+                    _userConfiguration.SelectedInventoryServiceType = index;
+                }
+            }
+        }
 
-        public InventorySettingsViewModel(IInventoryServiceViewModelFactory inventoryServiceViewModelFactory)
+        public InventorySettingsViewModel(IInventoryServiceViewModelFactory inventoryServiceViewModelFactory,
+            IUserConfiguration userConfiguration)
         {
             _inventoryServiceViewModelFactory = inventoryServiceViewModelFactory;
+            _userConfiguration = userConfiguration;
             ActiveItem = _inventoryServiceViewModelFactory.CreateSettingsViewModel(SelectedInventoryServiceType);
         }
 

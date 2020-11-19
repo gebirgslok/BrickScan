@@ -23,34 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Inventory;
+using Stylet;
 
-namespace BrickScan.WpfClient
+namespace BrickScan.WpfClient.Inventory.ViewModels
 {
-    public interface IUserConfiguration
+    public interface IInventoryServiceViewModelFactory
     {
-        int SelectedSensitivityLevel { get; set; }
-
-        int SelectedCameraIndex { get; set; }
-
-        int SelectedInventoryServiceType { get; set; }
-
-        string ThemeBaseColor { get; set; }
-
-        string ThemeColorScheme { get; set; }
-
-        string SelectedCultureKey { get; set; }
-
-        string? BricklinkTokenValue { get; set; }
-
-        string? BricklinkTokenSecret { get; set; }
-
-        string? BricklinkConsumerKey { get; set; }
-
-        string? BricklinkConsumerSecret { get; set; }
-
-        void Save();
-
-        void SaveBricklinkCredentials();
+        PropertyChangedBase CreateSettingsViewModel(InventoryServiceType inventoryServiceType);
     }
 }

@@ -30,6 +30,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using BrickScan.Library.Core;
+using BrickScan.WpfClient.Inventory;
 using BrickScan.WpfClient.Properties;
 using Serilog;
 
@@ -65,6 +66,19 @@ namespace BrickScan.WpfClient
                 if (value != Settings.Default.SelectedCameraIndex)
                 {
                     Settings.Default.SelectedCameraIndex = value;
+                    Save();
+                }
+            }
+        }
+
+        public int SelectedInventoryServiceType
+        {
+            get => Settings.Default.SelectedInventoryServiceType;
+            set
+            {
+                if (value != Settings.Default.SelectedInventoryServiceType)
+                {
+                    Settings.Default.SelectedInventoryServiceType = value;
                     Save();
                 }
             }

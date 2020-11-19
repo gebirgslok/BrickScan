@@ -47,8 +47,7 @@
             Margin="5"
             VerticalAlignment="Center"
             Content="{x:Static resx:Resources.BricklinkApiIntegration}"
-            FontSize="12"
-            />
+            FontSize="12" />
         <Grid
             Grid.Row="1"
             Margin="5"
