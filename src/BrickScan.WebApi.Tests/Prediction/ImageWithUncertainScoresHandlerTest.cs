@@ -24,6 +24,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using BrickScan.Library.Core;
 using BrickScan.Library.Core.Dto;
@@ -37,8 +38,45 @@ using Xunit;
 
 namespace BrickScan.WebApiTests.Prediction
 {
+    static class PredictedClassesFactory
+    {
+        public static List<PredictedDatasetClassDto> Create(params float[] scores)
+        {
+            var predictedClasses = new List<PredictedDatasetClassDto>();
+
+            var count = 1;
+            foreach (var score in scores)
+            {
+                predictedClasses.Add(new PredictedDatasetClassDto
+                {
+                    Id = count++,
+                    Score = score,
+                    Items = new List<PredictedDatasetItemDto>()
+                });
+            }
+
+            return predictedClasses;
+        }
+    }
+
     public class ImageWithUncertainScoresHandlerTest
     {
+        private static IConfiguration BuildTestConfiguration(bool keepImagesWithLowScores, double addImageScoreThreshold, double addImageScoreDiffThreshold)
+        {
+            var inMemorySettings = new Dictionary<string, string>
+            {
+                {"Prediction:KeepImagesWithLowScores", keepImagesWithLowScores.ToString()},
+                {"Prediction:AddImageScoreThreshold", addImageScoreThreshold.ToString(new CultureInfo("en-US"))},
+                {"Prediction:AddImageScoreDiffThreshold", addImageScoreDiffThreshold.ToString(new CultureInfo("en-US"))}
+            };
+
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+
+            return configuration;
+        }
+
         private static ImageWithUncertainScoresHandler Create(ILogger<ImageWithUncertainScoresHandler>? logger = null,
             IConfiguration? configuration = null,
             IDatasetService? datasetService = null)
@@ -48,19 +86,18 @@ namespace BrickScan.WebApiTests.Prediction
                 datasetService ?? A.Dummy<IDatasetService>());
         }
 
-        [Fact]
-        public async Task HandleAsync_AddsUnclassifiedImage()
+        [Theory]
+        [InlineData(true, 60.0, 20.0, null)]
+        [InlineData(true, 70.0, 60.0, 42)]
+        [InlineData(false, 70.0, 60.0, null)]
+        [InlineData(true, 80.0, 60.0, 42)]
+        [InlineData(true, 80.0, 20.0, 42)]
+        public async Task HandleAsync(bool keepImagesWithLowScores, 
+            double addImageScoreThreshold, 
+            double addImageScoreDiffThreshold,
+            int? expectedDatasetImageId)
         {
-            var inMemorySettings = new Dictionary<string, string>
-            {
-                {"Prediction:KeepImagesWithLowScores",  "true"},
-                {"Prediction:AddImageScoreThreshold",  "70.0"},
-                {"Prediction:AddImageScoreDiffThreshold",  "60.0"},
-            };
-
-            var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
+            var configuration = BuildTestConfiguration(keepImagesWithLowScores, addImageScoreThreshold, addImageScoreDiffThreshold);
 
             var datasetService = A.Fake<IDatasetService>();
             var imageData = new ImageData(new byte[10], ImageFormat.Png);
@@ -69,28 +106,13 @@ namespace BrickScan.WebApiTests.Prediction
 
             var handler = Create(configuration: configuration, datasetService: datasetService);
 
-            var predictedClasses = new List<PredictedDatasetClassDto>
-            {
-                new PredictedDatasetClassDto
-                {
-                    Id = 121,
-                    Score = 72.1f,
-                    Items = new List<PredictedDatasetItemDto>()
-                },
-                new PredictedDatasetClassDto
-                {
-                    Id = 123,
-                    Score = 31.6f,
-                    Items = new List<PredictedDatasetItemDto>()
-                }
-
-            };
+            var predictedClasses = PredictedClassesFactory.Create(72.1f, 31.6f);
 
             await handler.HandleAsync(predictedClasses, imageData);
 
             foreach (var predictedDatasetClassDto in predictedClasses)
             {
-                Assert.Equal(42, predictedDatasetClassDto.UnconfirmedImageId);
+                Assert.Equal(expectedDatasetImageId, predictedDatasetClassDto.UnconfirmedImageId);
             }
         }
     }
