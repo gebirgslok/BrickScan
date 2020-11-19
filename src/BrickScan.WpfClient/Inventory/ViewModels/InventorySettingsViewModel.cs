@@ -34,13 +34,14 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         public InventoryServiceType SelectedInventoryServiceType
         {
-            get => (InventoryServiceType)_userConfiguration.SelectedInventoryServiceType;
+            get => _userConfiguration.SelectedInventoryServiceType;
             set
             {
                 var index = (int)value;
-                if (index != _userConfiguration.SelectedInventoryServiceType)
+                if (index != _userConfiguration.SelectedInventoryServiceTypeIndex)
                 {
-                    _userConfiguration.SelectedInventoryServiceType = index;
+                    _userConfiguration.SelectedInventoryServiceTypeIndex = index;
+                    //NotifyOfPropertyChange(nameof(SelectedInventoryServiceType));
                 }
             }
         }

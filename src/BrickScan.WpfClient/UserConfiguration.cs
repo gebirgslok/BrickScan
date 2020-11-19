@@ -71,7 +71,7 @@ namespace BrickScan.WpfClient
             }
         }
 
-        public int SelectedInventoryServiceType
+        public int SelectedInventoryServiceTypeIndex
         {
             get => Settings.Default.SelectedInventoryServiceType;
             set
@@ -96,6 +96,9 @@ namespace BrickScan.WpfClient
                 }
             }
         }
+
+        public InventoryServiceType SelectedInventoryServiceType =>
+            (InventoryServiceType)SelectedInventoryServiceTypeIndex;
 
         public string ThemeBaseColor
         {
@@ -165,7 +168,7 @@ namespace BrickScan.WpfClient
         public void SaveBricklinkCredentials()
         {
             byte[] entropy = new byte[20];
-            using(RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
             {
                 rng.GetBytes(entropy);
             }
@@ -188,7 +191,7 @@ namespace BrickScan.WpfClient
             {
                 return;
             }
-            
+
             try
             {
                 var binaryData = FileHelper

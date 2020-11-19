@@ -33,7 +33,9 @@ namespace BrickScan.WpfClient
 
         int SelectedCameraIndex { get; set; }
 
-        int SelectedInventoryServiceType { get; set; }
+        int SelectedInventoryServiceTypeIndex { get; set; }
+
+        InventoryServiceType SelectedInventoryServiceType { get; }
 
         string ThemeBaseColor { get; set; }
 
