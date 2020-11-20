@@ -65,19 +65,20 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         private async Task<PropertyChangedBase?> StartQuery(IBricklinkClient bricklinkClient)
         {
-            var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
-            var colorId = _request.Item.Color!.Id;
+            //var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
+            //var colorId = _request.Item.Color!.Id;
 
-            var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] {ItemType.Part},
-                includedStatusFlags: new[] {InventoryStatusType.Available},
-                includedCategoryIds: new[] {item.CategoryId},
-                includedColorIds: new[] {_request.Item.Color!.Id});
+            //var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] {ItemType.Part},
+            //    includedStatusFlags: new[] {InventoryStatusType.Available},
+            //    includedCategoryIds: new[] {item.CategoryId},
+            //    includedColorIds: new[] {_request.Item.Color!.Id});
 
-            var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
-                condition: BricklinkSharp.Client.Condition.Used);
+            //var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
+            //    condition: BricklinkSharp.Client.Condition.Used);
 
-            var queryResult = new BlInventoryQueryResult(item, priceGuide, inventoryList);
-            return _bricklinkApiViewModelFactory.Create(_request, queryResult);
+            //var queryResult = new BlInventoryQueryResult(item, priceGuide, inventoryList);
+            await Task.Delay(500);
+            return _bricklinkApiViewModelFactory.Create(_request, new BlInventoryQueryResult(new CatalogItem(), new PriceGuide(), new BricklinkSharp.Client.Inventory[0]));
         }
 
         private void Dispose(bool disposing)
