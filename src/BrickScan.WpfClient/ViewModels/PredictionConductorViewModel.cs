@@ -24,9 +24,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
-using BrickScan.WpfClient.Inventory;
 using BrickScan.WpfClient.Inventory.ViewModels;
 using OpenCvSharp;
 using Stylet;
@@ -36,7 +36,8 @@ namespace BrickScan.WpfClient.ViewModels
     public sealed class PredictionConductorViewModel : Conductor<PropertyChangedBase>, 
         IHandle<OnPredictionRequested>, 
         IHandle<OnPredictionResultCloseRequested>,
-        IHandle<OnInventoryServiceRequested>
+        IHandle<OnInventoryServiceRequested>,
+        IHandle<OnInventoryServiceCloseRequested>
     {
         private readonly PredictViewModel _predictViewModel;
         private readonly Func<Mat, PredictionResultViewModel> _predictionResultViewModelFunc;
@@ -73,8 +74,37 @@ namespace BrickScan.WpfClient.ViewModels
 
         public void Temp()
         {
-            var r = new OnInventoryServiceRequested(new PredictedDatasetItemDto(), null);
+            var c = new ColorDto
+            {
+                BricklinkColorHtmlCode = "#FF5577FF",
+                BricklinkColorId = 1,
+                BricklinkColorName = "Super cool",
+                BricklinkColorType = "Solid"
+            };
+            var r = new OnInventoryServiceRequested(new PredictedDatasetItemDto
+            {
+                AdditionalIdentifier = "Foo", 
+                Color = c,
+                Number = "1234abc",
+                DisplayImageUrls = new List<string>
+                {
+                    @"C:\Users\eisenbach\Pictures\doge.png",
+                    @"C:\Users\eisenbach\Pictures\CSharpUtils.png"
+                }
+            }, null);
             ActiveItem = _inventoryServiceViewModelFactory.CreateViewModel(r, _configuration.SelectedInventoryServiceType);
+        }
+
+        public void Handle(OnInventoryServiceCloseRequested message)
+        {
+            if (message.PredictionResultViewModel != null)
+            {
+                ActiveItem = message.PredictionResultViewModel;
+            }
+            else
+            {
+                ActiveItem = _predictViewModel;
+            }
         }
     }
 }

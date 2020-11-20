@@ -23,15 +23,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Events;
-using Stylet;
+using BrickScan.WpfClient.ViewModels;
 
-namespace BrickScan.WpfClient.Inventory.ViewModels
+namespace BrickScan.WpfClient.Events
 {
-    public interface IInventoryServiceViewModelFactory
+    public class OnInventoryServiceCloseRequested
     {
-        PropertyChangedBase CreateSettingsViewModel(InventoryServiceType inventoryServiceType);
+        public PredictionResultViewModel? PredictionResultViewModel { get; }
 
-        PropertyChangedBase CreateViewModel(OnInventoryServiceRequested request, InventoryServiceType inventoryServiceType);
+        public OnInventoryServiceCloseRequested(PredictionResultViewModel? predictionResultViewModel)
+        {
+            PredictionResultViewModel = predictionResultViewModel;
+        }
     }
 }

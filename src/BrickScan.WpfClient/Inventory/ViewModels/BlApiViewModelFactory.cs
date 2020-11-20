@@ -23,15 +23,24 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using BrickScan.WpfClient.Events;
 using Stylet;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
 {
-    public interface IInventoryServiceViewModelFactory
+    public class BlApiViewModelFactory : IBlApiViewModelFactory
     {
-        PropertyChangedBase CreateSettingsViewModel(InventoryServiceType inventoryServiceType);
+        private readonly Func<OnInventoryServiceRequested, BlApiAddInventoryViewModel> _addInventoryViewModel;
 
-        PropertyChangedBase CreateViewModel(OnInventoryServiceRequested request, InventoryServiceType inventoryServiceType);
+        public BlApiViewModelFactory(Func<OnInventoryServiceRequested, BlApiAddInventoryViewModel> addInventoryViewModel)
+        {
+            _addInventoryViewModel = addInventoryViewModel;
+        }
+
+        public PropertyChangedBase Create(OnInventoryServiceRequested request, BlInventoryQueryResult queryResult)
+        {
+            return _addInventoryViewModel.Invoke(request);
+        }
     }
 }

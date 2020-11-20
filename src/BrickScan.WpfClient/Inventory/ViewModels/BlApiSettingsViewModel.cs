@@ -28,7 +28,7 @@ using Stylet;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
 {
-    public class BricklinkApiSettingsViewModel : PropertyChangedBase
+    public class BlApiSettingsViewModel : PropertyChangedBase
     {
         private readonly IUserConfiguration _userConfiguration;
         private string? _tokenValueBeforeSave;
@@ -66,7 +66,7 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
                                                    !string.Equals(_consumerKeyBeforeSave, BricklinkConsumerKey) ||
                                                    !string.Equals(_consumerSecretBeforeSave, BricklinkConsumerSecret);
 
-        public BricklinkApiSettingsViewModel(IUserConfiguration userConfiguration)
+        public BlApiSettingsViewModel(IUserConfiguration userConfiguration)
         {
             _userConfiguration = userConfiguration;           
             UpdateTokenPropertiesBeforeSave();

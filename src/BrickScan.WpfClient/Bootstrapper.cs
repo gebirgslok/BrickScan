@@ -32,6 +32,7 @@ using System.Threading;
 using System.Windows.Threading;
 using Autofac;
 using AutofacSerilogIntegration;
+using BricklinkSharp.Client;
 using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.Inventory.ViewModels;
 using BrickScan.WpfClient.Model;
@@ -83,10 +84,10 @@ namespace BrickScan.WpfClient
             builder.RegisterType<InventoryServiceViewModelFactory>()
                 .As<IInventoryServiceViewModelFactory>();           
             builder.RegisterType<InventorySettingsViewModel>().AsSelf();
-            builder.RegisterType<BricklinkApiSettingsViewModel>().AsSelf();
-            builder.RegisterType<BricklinkApiInventoryOverviewViewModel>().AsSelf();
-            builder.RegisterType<BricklinkApiAddInventoryViewModel>().AsSelf();
-            builder.RegisterType<BricklinkApiViewModelFactory>().As<IBricklinkApiViewModelFactory>();
+            builder.RegisterType<BlApiSettingsViewModel>().AsSelf();
+            builder.RegisterType<BlApiInventoryOverviewViewModel>().AsSelf().ExternallyOwned();
+            builder.RegisterType<BlApiAddInventoryViewModel>().AsSelf();
+            builder.RegisterType<BlApiViewModelFactory>().As<IBlApiViewModelFactory>();
         }
 
         private static void RegisterViewModels(ContainerBuilder builder)
@@ -183,6 +184,10 @@ namespace BrickScan.WpfClient
 
             builder.RegisterType<PredictedClassViewModelFactory>().As<IPredictedClassViewModelFactory>().SingleInstance();
             builder.RegisterLogger();
+
+            builder.Register(c => BricklinkClientFactory.Build())
+                .As<IBricklinkClient>()
+                .SingleInstance();
         }
     }
 }

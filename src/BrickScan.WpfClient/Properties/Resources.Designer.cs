@@ -259,6 +259,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Condition.
+        /// </summary>
+        public static string Condition {
+            get {
+                return ResourceManager.GetString("Condition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirmation.
         /// </summary>
         public static string Confirmation {
@@ -282,6 +291,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string ConnectCameraTooltip {
             get {
                 return ResourceManager.GetString("ConnectCameraTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create new Bricklink inventory lot.
+        /// </summary>
+        public static string CreateNewBricklinkInventory {
+            get {
+                return ResourceManager.GetString("CreateNewBricklinkInventory", resourceCulture);
             }
         }
         
@@ -502,11 +520,29 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Price per part.
+        /// </summary>
+        public static string PricePerPart {
+            get {
+                return ResourceManager.GetString("PricePerPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Program version.
         /// </summary>
         public static string ProgramVersion {
             get {
                 return ResourceManager.GetString("ProgramVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quantity.
+        /// </summary>
+        public static string Quantity {
+            get {
+                return ResourceManager.GetString("Quantity", resourceCulture);
             }
         }
         
@@ -660,6 +696,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string Stop {
             get {
                 return ResourceManager.GetString("Stop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Storage/bin.
+        /// </summary>
+        public static string StorageOrBin {
+            get {
+                return ResourceManager.GetString("StorageOrBin", resourceCulture);
             }
         }
         

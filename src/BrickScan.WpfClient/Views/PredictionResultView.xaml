@@ -62,7 +62,6 @@
                 <Run Text="{Binding Path=ImageSizeString, Mode=OneTime}" /><Run Text=")" />
             </TextBlock>
         </Grid>
-
         <StackPanel
             Grid.Row="0"
             Grid.Column="1"
@@ -83,7 +82,6 @@
                 Foreground="{DynamicResource MahApps.Brushes.Text}"
                 Text="{x:Static resx:Resources.RunningIdentificationMessage}" />
         </StackPanel>
-
         <!--  Failure: Display message  -->
         <Grid
             Grid.Row="0"

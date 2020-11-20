@@ -32,7 +32,6 @@ using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Inventory;
 using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls.Dialogs;
-using PropertyChanged;
 using Serilog;
 using Stylet;
 
@@ -48,33 +47,16 @@ namespace BrickScan.WpfClient.ViewModels
         private readonly IDialogCoordinator _dialogCoordinator;
         private readonly IEventAggregator _eventAggregator;
         private readonly PredictedDatasetClassDto _predictedDatasetClassDto;
-        private readonly Uri[] _displayImages;
 
         public override int PredictedClassId => _predictedDatasetClassDto.Id;
 
         public IUserSession UserSession { get; }
 
-        public Uri? SelectedDisplayImage { get; set; }
-
-        [DependsOn(nameof(SelectedDisplayImage))]
-        public bool CanShowNextImage => Array.IndexOf(_displayImages, SelectedDisplayImage) < _displayImages.Length - 1;
-
-        [DependsOn(nameof(SelectedDisplayImage))]
-        public bool CanShowPreviousImage => Array.IndexOf(_displayImages, SelectedDisplayImage) > 0;
-
-        public bool HasManyDisplayImages => _displayImages.Length > 1;
-
         public bool CanConfirmImageBelongsToClassAsync { get; private set; } = true;
 
-        public string PartNo => _predictedDatasetClassDto.Items.First().Number;
-
-        public string? AdditionalIdentifier => _predictedDatasetClassDto.Items.First().AdditionalIdentifier;
+        public PredictedDatasetItemDto Item => _predictedDatasetClassDto.Items.First();
 
         public float Score => _predictedDatasetClassDto.Score;
-
-        public string? BricklinkColorHtmlCode => _predictedDatasetClassDto.Items.First().Color?.BricklinkColorHtmlCode;
-
-        public string? BricklinkColorName => _predictedDatasetClassDto.Items.First().Color?.BricklinkColorName;
 
         public string? ConfirmImageBelongsToClassToolTip => Properties.Resources.ConfirmImageBelongsToClassToolTip;
 
@@ -91,20 +73,6 @@ namespace BrickScan.WpfClient.ViewModels
             _dialogCoordinator = dialogCoordinator;
             _eventAggregator = eventAggregator;
             UserSession = userSession;
-
-            _displayImages = _predictedDatasetClassDto
-                .DisplayImageUrls?
-                .Select(url => new Uri(url))
-                .ToArray() ?? new Uri[0];
-
-            SelectedDisplayImage = _displayImages.Length > 0 ? _displayImages[0] : null;
-        }
-
-        public void ShowNextImage()
-        {
-            var currentIndex = Array.IndexOf(_displayImages, SelectedDisplayImage);
-            var nextIndex = currentIndex + 1;
-            SelectedDisplayImage = _displayImages[nextIndex];
         }
 
         public void OpenOnBricklink()
@@ -154,13 +122,6 @@ namespace BrickScan.WpfClient.ViewModels
             {
                 await controller.CloseAsync();
             }
-        }
-
-        public void ShowPreviousImage()
-        {
-            var currentIndex = Array.IndexOf(_displayImages, SelectedDisplayImage);
-            var previousIndex = currentIndex - 1;
-            SelectedDisplayImage = _displayImages[previousIndex];
         }
 
         public void Handle(OnImageConfirmed message)

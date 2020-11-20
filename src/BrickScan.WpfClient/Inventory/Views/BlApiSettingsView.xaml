@@ -24,7 +24,7 @@
 -->
 
 <UserControl
-    x:Class="BrickScan.WpfClient.Inventory.Views.BricklinkApiSettingsView"
+    x:Class="BrickScan.WpfClient.Inventory.Views.BlApiSettingsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:BrickScan.WpfClient.Controls"

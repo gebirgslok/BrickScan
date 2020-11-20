@@ -23,15 +23,25 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Events;
-using Stylet;
+using BricklinkSharp.Client;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
 {
-    public interface IInventoryServiceViewModelFactory
+    public class BlInventoryQueryResult
     {
-        PropertyChangedBase CreateSettingsViewModel(InventoryServiceType inventoryServiceType);
+        internal CatalogItem CatalogItem { get; }
 
-        PropertyChangedBase CreateViewModel(OnInventoryServiceRequested request, InventoryServiceType inventoryServiceType);
+        internal PriceGuide PriceGuide { get; }
+
+        internal BricklinkSharp.Client.Inventory[] InventoryList { get; }
+
+        public BlInventoryQueryResult(CatalogItem catalogItem, 
+            PriceGuide priceGuide, 
+            BricklinkSharp.Client.Inventory[] inventoryList)
+        {
+            CatalogItem = catalogItem;
+            PriceGuide = priceGuide;
+            InventoryList = inventoryList;
+        }
     }
 }

@@ -24,17 +24,18 @@
 #endregion
 
 using System;
+using BrickScan.WpfClient.Events;
 using Stylet;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
 {
     public class InventoryServiceViewModelFactory : IInventoryServiceViewModelFactory
     {
-        private readonly Lazy<BricklinkApiSettingsViewModel> _bricklinkApiSettingsVmFactory;
-        private readonly Func<OnInventoryServiceRequested, BricklinkApiInventoryOverviewViewModel> _bricklinkApiInventoryOverviewVmFactory;
+        private readonly Lazy<BlApiSettingsViewModel> _bricklinkApiSettingsVmFactory;
+        private readonly Func<OnInventoryServiceRequested, BlApiInventoryOverviewViewModel> _bricklinkApiInventoryOverviewVmFactory;
 
-        public InventoryServiceViewModelFactory(Lazy<BricklinkApiSettingsViewModel> bricklinkApiSettingsVmFactory, 
-            Func<OnInventoryServiceRequested, BricklinkApiInventoryOverviewViewModel> bricklinkApiInventoryOverviewVmFactory)
+        public InventoryServiceViewModelFactory(Lazy<BlApiSettingsViewModel> bricklinkApiSettingsVmFactory, 
+            Func<OnInventoryServiceRequested, BlApiInventoryOverviewViewModel> bricklinkApiInventoryOverviewVmFactory)
         {
             _bricklinkApiSettingsVmFactory = bricklinkApiSettingsVmFactory;
             _bricklinkApiInventoryOverviewVmFactory = bricklinkApiInventoryOverviewVmFactory;

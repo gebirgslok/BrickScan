@@ -351,4 +351,19 @@
   <data name="New" xml:space="preserve">
     <value>Neu</value>
   </data>
+  <data name="CreateNewBricklinkInventory" xml:space="preserve">
+    <value>Neue Inventarposition auf Bricklink erstellen</value>
+  </data>
+  <data name="Condition" xml:space="preserve">
+    <value>Zustand</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Menge</value>
+  </data>
+  <data name="PricePerPart" xml:space="preserve">
+    <value>Preis pro Teil</value>
+  </data>
+  <data name="StorageOrBin" xml:space="preserve">
+    <value>Lager/Fach</value>
+  </data>
 </root>
