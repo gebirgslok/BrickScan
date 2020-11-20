@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using BricklinkSharp.Client;
 using BrickScan.Library.Core;
 using BrickScan.WpfClient.Inventory;
 using BrickScan.WpfClient.Properties;
@@ -126,13 +127,29 @@ namespace BrickScan.WpfClient
             }
         }
 
-        public string? BricklinkTokenValue { get; set; }
+        public string? BricklinkTokenValue
+        {
+            get => BricklinkClientConfiguration.Instance.TokenValue; 
+            set => BricklinkClientConfiguration.Instance.TokenValue = value;
+        }
 
-        public string? BricklinkTokenSecret { get; set; }
+        public string? BricklinkTokenSecret
+        {
+            get => BricklinkClientConfiguration.Instance.TokenSecret; 
+            set => BricklinkClientConfiguration.Instance.TokenSecret = value;
+        }
 
-        public string? BricklinkConsumerKey { get; set; }
+        public string? BricklinkConsumerKey
+        {
+            get => BricklinkClientConfiguration.Instance.ConsumerKey; 
+            set => BricklinkClientConfiguration.Instance.ConsumerKey = value;
+        }
 
-        public string? BricklinkConsumerSecret { get; set; }
+        public string? BricklinkConsumerSecret
+        {
+            get => BricklinkClientConfiguration.Instance.ConsumerSecret; 
+            set => BricklinkClientConfiguration.Instance.ConsumerSecret = value;
+        }
 
         public UserConfiguration(ILogger logger)
         {
