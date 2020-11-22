@@ -91,8 +91,16 @@ namespace BrickScan.WpfClient.ViewModels
 
         private IEnumerable<PredictedClassViewModelBase> BuildViewModels(List<PredictedDatasetClassDto>? predictedClases)
         {
-            return predictedClases?.Select(x => _predictedClassViewModelFactory.Create(x)) ??
-                   new List<PredictedClassViewModelBase>();
+            var viewModels =  predictedClases?
+                                  .Select(x => _predictedClassViewModelFactory.Create(x)).ToArray() ?? 
+                              new PredictedClassViewModelBase[0];
+
+            foreach (var predictedClassViewModelBase in viewModels)
+            {
+                predictedClassViewModelBase.ParentViewModel = this;
+            }
+
+            return viewModels;
         }
 
         private Mat ResizeIfTooLarge(Mat input)

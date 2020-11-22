@@ -23,34 +23,40 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
+using System.Collections.Generic;
+using BrickScan.Library.Core.Dto;
+using BrickScan.WpfClient.Model;
 
 namespace BrickScan.WpfClient.Extensions
 {
-    internal static class EnumExtensions
+    internal static class PredictedDatasetItemDtoExtensions
     {
-        public static TAttr? GetAttributeOfType<TAttr>(this Enum enumerationValue) where TAttr : Attribute
+        internal static DatasetItemContainer ToDatasetItemContainer(this PredictedDatasetItemDto dto, 
+            List<string>? imageUrlsFromClass = null, 
+            float? score = null)
         {
-            Type type = enumerationValue.GetType();
+            var displayImageUrls = new List<string>();
 
-            if (!type.IsEnum)
+            if (imageUrlsFromClass != null)
             {
-                throw new ArgumentException("EnumerationValue must be of Enum type.", nameof(enumerationValue));
+                displayImageUrls.AddRange(imageUrlsFromClass);
             }
 
-            var memberInfo = type.GetMember(enumerationValue.ToString());
-            
-            if (memberInfo.Length > 0)
+            if (dto.DisplayImageUrls != null)
             {
-                var attrs = memberInfo[0].GetCustomAttributes(typeof(TAttr), false);
-
-                if (attrs.Length > 0)
-                {
-                    return (TAttr)attrs[0];
-                }
+                displayImageUrls.AddRange(dto.DisplayImageUrls);
             }
 
-            return null;
+            return new DatasetItemContainer
+            {
+                Number = dto.Number,
+                AdditionalIdentifier = dto.AdditionalIdentifier,
+                ColorName = dto.Color?.BricklinkColorName ?? "Unknown",
+                HtmlColor = dto.Color?.BricklinkColorHtmlCode ?? "#00000000",
+                BricklinkColor = dto.Color?.BricklinkColorId ?? 0,
+                Score = score,
+                DisplayImageUrls = displayImageUrls
+            };
         }
     }
 }

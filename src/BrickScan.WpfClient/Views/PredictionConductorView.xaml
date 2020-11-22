@@ -34,9 +34,9 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <StackPanel Orientation="Vertical">
+    <mah:TransitioningContentControl s:View.Model="{Binding ActiveItem, Mode=OneWay}" />
+    <!--<StackPanel Orientation="Vertical">
         <mah:TransitioningContentControl s:View.Model="{Binding ActiveItem, Mode=OneWay}" />
         <Button Command="{s:Action Temp}" Content="Temp" />
-    </StackPanel>
-
+    </StackPanel>-->
 </UserControl>

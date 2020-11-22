@@ -29,15 +29,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:BrickScan.WpfClient.Properties"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:ClassModifier="internal"
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -51,7 +49,9 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             MaxWidth="500"
+            Margin="2"
             VerticalAlignment="Center"
+            FontWeight="SemiBold"
             Foreground="{DynamicResource MahApps.Brushes.Text}"
             TextWrapping="Wrap" />
         <Image
@@ -66,13 +66,66 @@
         <Grid
             Grid.Row="1"
             Grid.Column="1"
-            HorizontalAlignment="Stretch">
+            HorizontalAlignment="Stretch"
+            IsSharedSizeScope="True">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" SharedSizeGroup="BlPropertyRow" />
+                <RowDefinition Height="Auto" SharedSizeGroup="BlPropertyRow" />
+                <RowDefinition Height="Auto" SharedSizeGroup="BlPropertyRow" />
+                <RowDefinition Height="Auto" SharedSizeGroup="BlPropertyRow" />
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{x:Static resx:Resources.Weight}" />
+            <TextBlock
+                x:Name="Year"
+                Grid.Row="0"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                FontWeight="SemiBold"
+                Foreground="{DynamicResource MahApps.Brushes.Text}" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{x:Static resx:Resources.Weight}" />
+            <TextBlock
+                x:Name="Weight"
+                Grid.Row="1"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                FontWeight="SemiBold"
+                Foreground="{DynamicResource MahApps.Brushes.Text}" />
+            <Label
+                Grid.Row="2"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{x:Static resx:Resources.Dimensions}" />
+            <TextBlock
+                x:Name="Dimensions"
+                Grid.Row="2"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                FontWeight="SemiBold"
+                Foreground="{DynamicResource MahApps.Brushes.Text}" />
+            <Label
+                Grid.Row="3"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{x:Static resx:Resources.Url}" />
+            <TextBlock Grid.Row="3" Grid.Column="1">
+                <Hyperlink Click="Hyperlink_OnClick">
+                    <Hyperlink.Inlines>
+                        <Run Text="{x:Static resx:Resources.OpenOnBricklink}" />
+                    </Hyperlink.Inlines>
+                </Hyperlink>
+            </TextBlock>
         </Grid>
-
     </Grid>
 </UserControl>

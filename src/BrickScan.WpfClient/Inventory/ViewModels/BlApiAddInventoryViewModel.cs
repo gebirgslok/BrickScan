@@ -23,8 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.Library.Core.Dto;
+using System;
+using System.Threading.Tasks;
+using BricklinkSharp.Client;
 using BrickScan.WpfClient.Events;
+using BrickScan.WpfClient.Extensions;
+using BrickScan.WpfClient.Model;
+using Serilog;
 using Stylet;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
@@ -32,15 +37,91 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
     public class BlApiAddInventoryViewModel : PropertyChangedBase
     {
         private readonly OnInventoryServiceRequested _request;
+        private readonly BlInventoryQueryResult _blQueryResult;
+        private readonly ILogger _logger;
+        private readonly IBricklinkClient _bricklinkClient;
+        private int? _inventoryId;
 
-        public PredictedDatasetItemDto DatasetItem => _request.Item;
+        private bool WillCreate => !_inventoryId.HasValue;
+
+        public DatasetItemContainer DatasetItem => _request.Item;
+
+        public CatalogItem CatalogItem => _blQueryResult.CatalogItem;
 
         public InventoryParameterViewModel InventoryParameterViewModel { get; }
 
-        public BlApiAddInventoryViewModel(OnInventoryServiceRequested request)
+        public bool IsProcessing { get; private set; }
+
+        public string CreateOrUpdateText => _inventoryId.HasValue ? 
+            Properties.Resources.Update : 
+            Properties.Resources.Create;
+
+        public BlApiAddInventoryViewModel(OnInventoryServiceRequested request, 
+            BlInventoryQueryResult blQueryResult,
+            ILogger logger, 
+            IBricklinkClient bricklinkClient)
         {
             _request = request;
-            InventoryParameterViewModel = new InventoryParameterViewModel();
+            _blQueryResult = blQueryResult;
+            _logger = logger;
+            _bricklinkClient = bricklinkClient;
+            InventoryParameterViewModel = new InventoryParameterViewModel
+            {
+                PricePerPart = blQueryResult.PriceGuide.QuantityAveragePrice
+            };
+        }
+
+        private async Task<int> CreateInventoryAsync()
+        {
+            var newInventory = new NewInventory
+            {
+                Bulk = 1,
+                ColorId = _request.Item.BricklinkColor,
+                Condition = InventoryParameterViewModel.Condition.ToBricklinkSharpCondition(),
+                Item = new ItemBase
+                {
+                    Number = _request.Item.Number,
+                    Type = ItemType.Part
+                },
+                Quantity = InventoryParameterViewModel.Quantity,
+                UnitPrice = InventoryParameterViewModel.PricePerPart,
+                Remarks = InventoryParameterViewModel.StorageOrBin
+            };
+
+            var inventory = await _bricklinkClient.CreateInventoryAsync(newInventory);
+            return inventory.InventoryId;
+        }
+
+        private async Task UpdateInventoryAsync()
+        {
+            await Task.Delay(1000);
+        }
+
+        public async Task CreateOrUpdateAsync()
+        {
+            IsProcessing = true;
+
+            try
+            {
+                if (WillCreate)
+                {
+                    var inventoryId = await CreateInventoryAsync();
+                    _inventoryId = inventoryId;
+                    NotifyOfPropertyChange(nameof(CreateOrUpdateText));
+                }
+                else
+                {
+                    await UpdateInventoryAsync();
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, 
+                    $"Failed to {(WillCreate ? "create" : "update")} inventory lot. Received {{Message}}", 
+                    exception.Message);
+            }
+
+            IsProcessing = false;
         }
     }
 }

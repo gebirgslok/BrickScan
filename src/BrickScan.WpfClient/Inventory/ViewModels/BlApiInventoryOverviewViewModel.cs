@@ -51,8 +51,13 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             _request = request;
             _bricklinkApiViewModelFactory = bricklinkApiViewModelFactory;
             _eventAggregator = eventAggregator;
-            InitializationNotifier = notifyTaskFactory.Invoke(StartQuery(bricklinkClient), null);
+            InitializationNotifier = notifyTaskFactory.Invoke(QueryBricklinkData(bricklinkClient), null);
             InitializationNotifier.PropertyChanged += HandleInitializationNotifierPropertyChanged;
+        }
+
+        ~BlApiInventoryOverviewViewModel()
+        {
+            Dispose(false);
         }
 
         private void HandleInitializationNotifierPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -63,22 +68,21 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             }
         }
 
-        private async Task<PropertyChangedBase?> StartQuery(IBricklinkClient bricklinkClient)
+        private async Task<PropertyChangedBase?> QueryBricklinkData(IBricklinkClient bricklinkClient)
         {
-            //var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
-            //var colorId = _request.Item.Color!.Id;
+            var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
+            var colorId = _request.Item.BricklinkColor;
 
-            //var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] {ItemType.Part},
-            //    includedStatusFlags: new[] {InventoryStatusType.Available},
-            //    includedCategoryIds: new[] {item.CategoryId},
-            //    includedColorIds: new[] {_request.Item.Color!.Id});
+            var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] { ItemType.Part },
+                includedStatusFlags: new[] { InventoryStatusType.Available },
+                includedCategoryIds: new[] { item.CategoryId },
+                includedColorIds: new[] { _request.Item.BricklinkColor });
 
-            //var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
-            //    condition: BricklinkSharp.Client.Condition.Used);
+            var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
+                condition: BricklinkSharp.Client.Condition.Used);
 
-            //var queryResult = new BlInventoryQueryResult(item, priceGuide, inventoryList);
-            await Task.Delay(500);
-            return _bricklinkApiViewModelFactory.Create(_request, new BlInventoryQueryResult(new CatalogItem(), new PriceGuide(), new BricklinkSharp.Client.Inventory[0]));
+            var queryResult = new BlInventoryQueryResult(item, priceGuide, inventoryList);
+            return _bricklinkApiViewModelFactory.Create(_request, queryResult);
         }
 
         private void Dispose(bool disposing)

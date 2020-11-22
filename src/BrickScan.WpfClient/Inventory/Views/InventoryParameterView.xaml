@@ -101,7 +101,7 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             Interval="0.1"
-            Minimum="0.00"
+            Minimum="0.001"
             NumericInputMode="Decimal"
             Value="{Binding PricePerPart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Label

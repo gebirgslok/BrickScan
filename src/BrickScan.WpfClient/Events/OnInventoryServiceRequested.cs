@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.Library.Core.Dto;
+using BrickScan.WpfClient.Model;
 using BrickScan.WpfClient.ViewModels;
 
 namespace BrickScan.WpfClient.Events
@@ -32,9 +32,9 @@ namespace BrickScan.WpfClient.Events
     {
         public PredictionResultViewModel? PredictionResultViewModel { get; }
 
-        public PredictedDatasetItemDto Item { get; }
+        public DatasetItemContainer Item { get; }
 
-        internal OnInventoryServiceRequested(PredictedDatasetItemDto item, PredictionResultViewModel? predictionResultViewModel)
+        internal OnInventoryServiceRequested(DatasetItemContainer item, PredictionResultViewModel? predictionResultViewModel)
         {
             Item = item;
             PredictionResultViewModel = predictionResultViewModel;

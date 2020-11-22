@@ -366,4 +366,25 @@
   <data name="StorageOrBin" xml:space="preserve">
     <value>Lager/Fach</value>
   </data>
+  <data name="Weight" xml:space="preserve">
+    <value>Gewicht</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Jahr</value>
+  </data>
+  <data name="Dimensions" xml:space="preserve">
+    <value>Abmessungen</value>
+  </data>
+  <data name="OpenOnBricklink" xml:space="preserve">
+    <value>Bricklink-Seite öffnen</value>
+  </data>
+  <data name="Url" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Erstellen</value>
+  </data>
 </root>

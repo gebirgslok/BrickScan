@@ -29,7 +29,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
-using BrickScan.WpfClient.Inventory;
+using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.Model;
 using MahApps.Metro.Controls.Dialogs;
 using Serilog;
@@ -39,9 +39,6 @@ namespace BrickScan.WpfClient.ViewModels
 {
     public sealed class SingleItemPredictedClassViewModel : PredictedClassViewModelBase, IHandle<OnImageConfirmed>
     {
-        private const string BRICKLINK_PART_URL_TEMPLATE =
-            "https://www.bricklink.com/v2/catalog/catalogitem.page?P={0}#T=S&C={1}";
-
         private readonly ILogger _logger;
         private readonly IBrickScanApiClient _apiClient;
         private readonly IDialogCoordinator _dialogCoordinator;
@@ -52,10 +49,10 @@ namespace BrickScan.WpfClient.ViewModels
 
         public IUserSession UserSession { get; }
 
-        public bool CanConfirmImageBelongsToClassAsync { get; private set; } = true;
+        public bool CanConfirmImageBelongsToClassAsync { get; private set; }
 
-        public PredictedDatasetItemDto Item => _predictedDatasetClassDto.Items.First();
-
+        public DatasetItemContainer Item { get; }
+        
         public float Score => _predictedDatasetClassDto.Score;
 
         public string? ConfirmImageBelongsToClassToolTip => Properties.Resources.ConfirmImageBelongsToClassToolTip;
@@ -68,6 +65,14 @@ namespace BrickScan.WpfClient.ViewModels
             IUserSession userSession)
         {
             _predictedDatasetClassDto = predictedDatasetClassDto;
+
+            Item = _predictedDatasetClassDto
+                .Items
+                .First()
+                .ToDatasetItemContainer(_predictedDatasetClassDto.DisplayImageUrls,
+                    _predictedDatasetClassDto.Score);
+
+            CanConfirmImageBelongsToClassAsync = _predictedDatasetClassDto.UnconfirmedImageId.HasValue;
             _logger = logger;
             _apiClient = apiClient;
             _dialogCoordinator = dialogCoordinator;
@@ -82,7 +87,7 @@ namespace BrickScan.WpfClient.ViewModels
                 var item = _predictedDatasetClassDto.Items.First();
                 var partNo = item.Number;
                 var colorId = item.Color!.BricklinkColorId;
-                var url = string.Format(BRICKLINK_PART_URL_TEMPLATE, partNo, colorId);
+                var url = BricklinkHelper.GeneratePartUrl(partNo, colorId);
                 Process.Start(url);
             }
             catch (Exception e)
@@ -93,7 +98,12 @@ namespace BrickScan.WpfClient.ViewModels
 
         public void AddToInventory()
         {
-            var request = new OnInventoryServiceRequested(_predictedDatasetClassDto.Items.First(), ParentViewModel);
+            var container = _predictedDatasetClassDto
+                .Items
+                .First()
+                .ToDatasetItemContainer(_predictedDatasetClassDto.DisplayImageUrls);
+
+            var request = new OnInventoryServiceRequested(container, ParentViewModel);
             _eventAggregator.PublishOnUIThread(request);
         }
 

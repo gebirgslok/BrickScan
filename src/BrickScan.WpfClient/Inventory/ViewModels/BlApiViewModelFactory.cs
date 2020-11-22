@@ -31,16 +31,16 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 {
     public class BlApiViewModelFactory : IBlApiViewModelFactory
     {
-        private readonly Func<OnInventoryServiceRequested, BlApiAddInventoryViewModel> _addInventoryViewModel;
+        private readonly Func<OnInventoryServiceRequested,BlInventoryQueryResult, BlApiAddInventoryViewModel> _addInventoryViewModel;
 
-        public BlApiViewModelFactory(Func<OnInventoryServiceRequested, BlApiAddInventoryViewModel> addInventoryViewModel)
+        public BlApiViewModelFactory(Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiAddInventoryViewModel> addInventoryViewModel)
         {
             _addInventoryViewModel = addInventoryViewModel;
         }
 
         public PropertyChangedBase Create(OnInventoryServiceRequested request, BlInventoryQueryResult queryResult)
         {
-            return _addInventoryViewModel.Invoke(request);
+            return _addInventoryViewModel.Invoke(request, queryResult);
         }
     }
 }

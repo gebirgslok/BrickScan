@@ -24,9 +24,13 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using BricklinkSharp.Client;
+using BrickScan.WpfClient.Model;
+using Microsoft.Xaml.Behaviors.Media;
 
 namespace BrickScan.WpfClient.Controls
 {
@@ -49,6 +53,21 @@ namespace BrickScan.WpfClient.Controls
             InitializeComponent();
         }
 
+        private static string GetDimensions(CatalogItem item)
+        {
+            if (item.DimX == 0 || item.DimY == 0)
+            {
+                return "?";
+            }
+
+            if (item.DimZ == 0)
+            {
+                return $"{item.DimX} × {item.DimY}";
+            }
+
+            return $"{item.DimX} × {item.DimY} × {item.DimZ}";
+        }
+
         private static void OnDatasetItemChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             if (!(sender is BlCatalogItemDisplayBox control))
@@ -63,10 +82,24 @@ namespace BrickScan.WpfClient.Controls
 
             control.SetCurrentValue(_catalogItemProperty, item);
             control.Title.Text = $"{item.Number} - {item.Name}";
+            control.Dimensions.Text = GetDimensions(item);
+            control.Weight.Text = $"{item.Weight:F2} g";
+            control.Year.Text = item.YearReleased.ToString();
+            var url = item.ImageUrl;
+            control.ThumbnailImage.Source = url == null ? null : new BitmapImage(new Uri($"https:{item.ImageUrl}"));
+        }
 
-            var url = item.ThumbnailUrl;
-            control.ThumbnailImage.Source = url == null ? null : new BitmapImage(new Uri(url));
-
+        private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var url = BricklinkHelper.GeneratePartUrl(CatalogItem!.Number);
+                Process.Start(url);
+            }
+            catch
+            {
+                //Ignored.
+            }
         }
     }
 }

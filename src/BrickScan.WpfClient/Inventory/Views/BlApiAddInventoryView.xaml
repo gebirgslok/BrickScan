@@ -29,14 +29,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:BrickScan.WpfClient.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:BrickScan.WpfClient.Properties"
     xmlns:s="https://github.com/canton7/Stylet"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <s:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -49,24 +54,71 @@
             Content="{x:Static resx:Resources.CreateNewBricklinkInventory}"
             FontSize="14"
             FontWeight="SemiBold" />
-        <Border
+        <StackPanel
             Grid.Row="1"
-            Margin="5"
-            Padding="5"
             HorizontalAlignment="Center"
-            BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
-            BorderThickness="1">
-            <controls:DatasetItemDisplayBox DatasetItem="{Binding DatasetItem, Mode=OneTime}" />
-        </Border>
+            Orientation="Horizontal">
+            <Border
+                Margin="5"
+                Padding="5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Stretch"
+                BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                BorderThickness="1">
+                <controls:DatasetItemDisplayBox DatasetItem="{Binding DatasetItem, Mode=OneTime}" />
+            </Border>
+            <Border
+                Margin="5"
+                Padding="5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Stretch"
+                BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                BorderThickness="1">
+                <controls:BlCatalogItemDisplayBox CatalogItem="{Binding CatalogItem, Mode=OneTime}" />
+            </Border>
+        </StackPanel>
         <Border
             Grid.Row="2"
             Grid.Column="0"
+            Width="600"
             Margin="5"
             Padding="5"
             HorizontalAlignment="Center"
             BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
             BorderThickness="1">
-            <ContentControl s:View.Model="{Binding Path=InventoryParameterViewModel, Mode=OneTime}" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ContentControl
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="0"
+                    s:View.Model="{Binding Path=InventoryParameterViewModel, Mode=OneTime}" />
+                <mah:ProgressRing
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="5"
+                    IsActive="True"
+                    IsLarge="True"
+                    Visibility="{Binding Path=IsProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="2"
+                    Padding="10,2,10,2"
+                    VerticalAlignment="Center"
+                    mah:ControlsHelper.ContentCharacterCasing="Normal"
+                    Command="{s:Action CreateOrUpdateAsync}"
+                    Content="{Binding Path=CreateOrUpdateText, Mode=OneWay}"
+                    Style="{DynamicResource MahApps.Styles.Button.Square}" />
+            </Grid>
+
         </Border>
     </Grid>
 </UserControl>

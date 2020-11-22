@@ -295,6 +295,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create.
+        /// </summary>
+        public static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create new Bricklink inventory lot.
         /// </summary>
         public static string CreateNewBricklinkInventory {
@@ -309,6 +318,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string CustomRestApi {
             get {
                 return ResourceManager.GetString("CustomRestApi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dimensions.
+        /// </summary>
+        public static string Dimensions {
+            get {
+                return ResourceManager.GetString("Dimensions", resourceCulture);
             }
         }
         
@@ -489,6 +507,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string NoUsbCameraSelectedTooltip {
             get {
                 return ResourceManager.GetString("NoUsbCameraSelectedTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Bricklink page.
+        /// </summary>
+        public static string OpenOnBricklink {
+            get {
+                return ResourceManager.GetString("OpenOnBricklink", resourceCulture);
             }
         }
         
@@ -763,11 +790,29 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update.
+        /// </summary>
+        public static string Update {
+            get {
+                return ResourceManager.GetString("Update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Upload.
         /// </summary>
         public static string Upload {
             get {
                 return ResourceManager.GetString("Upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL.
+        /// </summary>
+        public static string Url {
+            get {
+                return ResourceManager.GetString("Url", resourceCulture);
             }
         }
         
@@ -804,6 +849,24 @@ namespace BrickScan.WpfClient.Properties {
         public static string WaitingForConfirmationResponse {
             get {
                 return ResourceManager.GetString("WaitingForConfirmationResponse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Weight.
+        /// </summary>
+        public static string Weight {
+            get {
+                return ResourceManager.GetString("Weight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Year.
+        /// </summary>
+        public static string Year {
+            get {
+                return ResourceManager.GetString("Year", resourceCulture);
             }
         }
     }

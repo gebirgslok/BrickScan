@@ -23,18 +23,24 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Stylet;
+using System.Collections.Generic;
 
-namespace BrickScan.WpfClient.Inventory.ViewModels
+namespace BrickScan.WpfClient.Model
 {
-    public class InventoryParameterViewModel : PropertyChangedBase
+    public class DatasetItemContainer
     {
-        public Condition Condition { get; set; }
+        public string Number { get; set; } = null!;
 
-        public int Quantity { get; set; } = 1;
+        public string? AdditionalIdentifier { get; set; }
 
-        public decimal PricePerPart { get; set; } = 0.1M;
+        public List<string>? DisplayImageUrls { get; set; }
 
-        public string? StorageOrBin { get; set; }
+        public string HtmlColor { get; set; } = "#00000000";
+
+        public string ColorName { get; set; } = "Unknown";
+
+        public int BricklinkColor { get; set; }
+
+        public float? Score { get; set; }
     }
 }

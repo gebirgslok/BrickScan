@@ -29,7 +29,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using BrickScan.Library.Core.Dto;
+using BrickScan.WpfClient.Model;
 
 namespace BrickScan.WpfClient.Controls
 {
@@ -37,23 +37,17 @@ namespace BrickScan.WpfClient.Controls
     {
         private static readonly DependencyProperty _datasetItemProperty = DependencyProperty.Register(
             nameof(DatasetItem),
-            typeof(PredictedDatasetItemDto),
+            typeof(DatasetItemContainer),
             typeof(DatasetItemDisplayBox),
             new PropertyMetadata(OnDatasetItemChanged));
-
-        private static readonly DependencyProperty _scoreProperty = DependencyProperty.Register(
-            nameof(Score),
-            typeof(float?),
-            typeof(DatasetItemDisplayBox),
-            new PropertyMetadata(OnScoreChanged));
 
         private int _currentImageIndex;
 
         private int ImagesCount => DatasetItem?.DisplayImageUrls?.Count ?? 0;
 
-        public PredictedDatasetItemDto? DatasetItem
+        public DatasetItemContainer? DatasetItem
         {
-            get => (PredictedDatasetItemDto)GetValue(_datasetItemProperty);
+            get => (DatasetItemContainer)GetValue(_datasetItemProperty);
             set => SetValue(_datasetItemProperty, value);
         }
 
@@ -69,16 +63,10 @@ namespace BrickScan.WpfClient.Controls
             return null;
         }
 
-        public float? Score
-        {
-            get => (float?) GetValue(_scoreProperty);
-            set => SetValue(_scoreProperty, value);
-        }
-
         public DatasetItemDisplayBox()
         {
             InitializeComponent();
-            UpdateScoreVisibility(Score);
+            UpdateScoreVisibility(DatasetItem?.Score);
         }
 
         private void UpdateNextPrevButtonEnabledStates()
@@ -112,16 +100,6 @@ namespace BrickScan.WpfClient.Controls
             UpdateNextPrevButtonEnabledStates();
         }
 
-        private static void OnScoreChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (!(sender is DatasetItemDisplayBox control))
-            {
-                return;
-            }
-
-            control.UpdateScoreVisibility(e.NewValue as float?);
-        }
-
         private static void OnDatasetItemChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             if (!(sender is DatasetItemDisplayBox control))
@@ -129,15 +107,15 @@ namespace BrickScan.WpfClient.Controls
                 return;
             }
 
-            if (!(e.NewValue is PredictedDatasetItemDto item))
+            if (!(e.NewValue is DatasetItemContainer item))
             {
                 return;
             }
 
             control.SetCurrentValue(_datasetItemProperty, item);
             control.PartNo.Text = item.Number;
-            control.ColorRectangle.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(item.Color?.BricklinkColorHtmlCode));
-            control.ColorName.Text = item.Color?.BricklinkColorName;
+            control.ColorRectangle.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(item.HtmlColor));
+            control.ColorName.Text = item.ColorName;
             control.AdditionalIdentifier.Text = item.AdditionalIdentifier;
 
             var url = item.DisplayImageUrls?.First();
@@ -146,6 +124,7 @@ namespace BrickScan.WpfClient.Controls
             var count = item.DisplayImageUrls?.Count ?? 0;
             control.ImageShowNextPreviousPanel.Visibility = count > 1 ? Visibility.Visible : Visibility.Collapsed;
             control.UpdateNextPrevButtonEnabledStates();
+            control.UpdateScoreVisibility(item.Score);
         }
 
         private void OnShowNextImageClicked(object sender, RoutedEventArgs e)

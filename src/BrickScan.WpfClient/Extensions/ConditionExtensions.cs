@@ -23,18 +23,26 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using Stylet;
+using System;
+using BrickScan.WpfClient.Inventory;
 
-namespace BrickScan.WpfClient.Inventory.ViewModels
+namespace BrickScan.WpfClient.Extensions
 {
-    public class InventoryParameterViewModel : PropertyChangedBase
+    internal static class ConditionExtensions
     {
-        public Condition Condition { get; set; }
+        public static BricklinkSharp.Client.Condition ToBricklinkSharpCondition(this Condition c)
+        {
+            switch (c)
+            {
+                case Condition.Used:
+                    return BricklinkSharp.Client.Condition.Used;
 
-        public int Quantity { get; set; } = 1;
+                case Condition.New:
+                    return BricklinkSharp.Client.Condition.New;
+                default:
 
-        public decimal PricePerPart { get; set; } = 0.1M;
-
-        public string? StorageOrBin { get; set; }
+                    throw new ArgumentOutOfRangeException(nameof(c), c, null);
+            }
+        }
     }
 }
