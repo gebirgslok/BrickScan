@@ -106,5 +106,17 @@ namespace BrickScan.WpfClient.Properties {
                 this["SelectedInventoryServiceType"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SelectedBricklinkConditionIndex {
+            get {
+                return ((int)(this["SelectedBricklinkConditionIndex"]));
+            }
+            set {
+                this["SelectedBricklinkConditionIndex"] = value;
+            }
+        }
     }
 }

@@ -28,6 +28,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 using BrickScan.WpfClient.Events;
+using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.ViewModels;
 using Stylet;
 
@@ -38,6 +39,7 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
         private readonly OnInventoryServiceRequested _request;
         private readonly IBlApiViewModelFactory _bricklinkApiViewModelFactory;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IUserConfiguration _userConfiguration;
         private bool _isDisposed;
 
         public NotifyTask<PropertyChangedBase?> InitializationNotifier { get; }
@@ -46,11 +48,13 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             Func<Task<PropertyChangedBase?>, PropertyChangedBase?, NotifyTask<PropertyChangedBase?>> notifyTaskFactory,
             IBlApiViewModelFactory bricklinkApiViewModelFactory,
             IEventAggregator eventAggregator,
-            IBricklinkClient bricklinkClient)
+            IBricklinkClient bricklinkClient, 
+            IUserConfiguration userConfiguration)
         {
             _request = request;
             _bricklinkApiViewModelFactory = bricklinkApiViewModelFactory;
             _eventAggregator = eventAggregator;
+            _userConfiguration = userConfiguration;
             InitializationNotifier = notifyTaskFactory.Invoke(QueryBricklinkData(bricklinkClient), null);
             InitializationNotifier.PropertyChanged += HandleInitializationNotifierPropertyChanged;
         }
@@ -78,21 +82,22 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             //    includedCategoryIds: new[] { item.CategoryId },
             //    includedColorIds: new[] { _request.Item.BricklinkColor });
 
+            //var defaultCondition = _userConfiguration.SelectedBricklinkCondition.ToBricklinkSharpCondition();
             //var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
-            //    condition: BricklinkSharp.Client.Condition.Used);
+            //    condition: defaultCondition);
 
             var queryResult = new BlInventoryQueryResult(new CatalogItem
-                {
-                    ImageUrl = @"C:\Users\eisenbach\Pictures\doge.png",
-                    Number = "123abc",
-                    YearReleased = 2000,
-                    Name = "Hello world 123"
-                },
+            {
+                ImageUrl = @"C:\Users\eisenbach\Pictures\doge.png",
+                Number = "123abc",
+                YearReleased = 2000,
+                Name = "Hello world 123"
+            },
                 new PriceGuide
                 {
                     QuantityAveragePrice = 1.23M,
                     AveragePrice = 1.05M
-                }, 
+                },
                 new BricklinkSharp.Client.Inventory[0]);
 
             await Task.Delay(500);

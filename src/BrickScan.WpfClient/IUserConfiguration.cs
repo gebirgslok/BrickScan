@@ -51,6 +51,10 @@ namespace BrickScan.WpfClient
 
         string? BricklinkConsumerSecret { get; set; }
 
+        int SelectedBricklinkConditionIndex { get; set; }
+
+        Condition SelectedBricklinkCondition { get; }
+
         void Save();
 
         void SaveBricklinkCredentials();

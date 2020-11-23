@@ -396,4 +396,7 @@
   <data name="TotalQuantitySubmitted" xml:space="preserve">
     <value>Gesamtmenge übermittelt = {0}.</value>
   </data>
+  <data name="DefaultConditionForInventory" xml:space="preserve">
+    <value>Vorgegebener Zustand für Inventarisierung</value>
+  </data>
 </root>

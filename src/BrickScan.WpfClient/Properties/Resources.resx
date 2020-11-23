@@ -376,4 +376,7 @@
   <data name="TotalQuantitySubmitted" xml:space="preserve">
     <value>Submitted total quantity = {0}.</value>
   </data>
+  <data name="DefaultConditionForInventory" xml:space="preserve">
+    <value>Default condition for inventory</value>
+  </data>
 </root>

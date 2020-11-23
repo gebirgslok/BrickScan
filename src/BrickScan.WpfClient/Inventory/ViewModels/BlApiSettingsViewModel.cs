@@ -66,6 +66,19 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
                                                    !string.Equals(_consumerKeyBeforeSave, BricklinkConsumerKey) ||
                                                    !string.Equals(_consumerSecretBeforeSave, BricklinkConsumerSecret);
 
+        public Condition Condition
+        {
+            get => _userConfiguration.SelectedBricklinkCondition;
+            set
+            {
+                var index = (int)value;
+                if (index != _userConfiguration.SelectedBricklinkConditionIndex)
+                {
+                    _userConfiguration.SelectedBricklinkConditionIndex = index;
+                }
+            }
+        }
+
         public BlApiSettingsViewModel(IUserConfiguration userConfiguration)
         {
             _userConfiguration = userConfiguration;           

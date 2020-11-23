@@ -60,14 +60,16 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
         public BlApiCreateUpdateInventoryViewModel(OnInventoryServiceRequested request, 
             BlInventoryQueryResult blQueryResult,
             ILogger logger, 
-            IBricklinkClient bricklinkClient)
+            IBricklinkClient bricklinkClient,
+            IUserConfiguration userConfiguration)
         {
             _request = request;
             _logger = logger;
             _bricklinkClient = bricklinkClient;
             InventoryParameterViewModel = new InventoryParameterViewModel
             {
-                PricePerPart = blQueryResult.PriceGuide.QuantityAveragePrice
+                PricePerPart = blQueryResult.PriceGuide.QuantityAveragePrice,
+                Condition = userConfiguration.SelectedBricklinkCondition
             };
         }
 

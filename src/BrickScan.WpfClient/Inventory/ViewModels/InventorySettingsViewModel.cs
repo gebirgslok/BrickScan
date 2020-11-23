@@ -41,7 +41,6 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
                 if (index != _userConfiguration.SelectedInventoryServiceTypeIndex)
                 {
                     _userConfiguration.SelectedInventoryServiceTypeIndex = index;
-                    //NotifyOfPropertyChange(nameof(SelectedInventoryServiceType));
                 }
             }
         }

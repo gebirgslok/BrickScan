@@ -34,6 +34,7 @@ using BrickScan.Library.Core;
 using BrickScan.WpfClient.Inventory;
 using BrickScan.WpfClient.Properties;
 using Serilog;
+using Condition = BrickScan.WpfClient.Inventory.Condition;
 
 namespace BrickScan.WpfClient
 {
@@ -150,6 +151,21 @@ namespace BrickScan.WpfClient
             get => BricklinkClientConfiguration.Instance.ConsumerSecret; 
             set => BricklinkClientConfiguration.Instance.ConsumerSecret = value;
         }
+
+        public int SelectedBricklinkConditionIndex
+        {
+            get => Settings.Default.SelectedBricklinkConditionIndex;
+            set
+            {
+                if (value != Settings.Default.SelectedBricklinkConditionIndex)
+                {
+                    Settings.Default.SelectedBricklinkConditionIndex = value;
+                    Save();
+                }
+            }
+        }
+
+        public Condition SelectedBricklinkCondition => (Condition)SelectedBricklinkConditionIndex;
 
         public UserConfiguration(ILogger logger)
         {

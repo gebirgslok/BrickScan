@@ -331,6 +331,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Default condition for inventory.
+        /// </summary>
+        public static string DefaultConditionForInventory {
+            get {
+                return ResourceManager.GetString("DefaultConditionForInventory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dimensions.
         /// </summary>
         public static string Dimensions {
