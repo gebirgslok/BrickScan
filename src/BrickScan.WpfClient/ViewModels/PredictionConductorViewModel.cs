@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using BrickScan.Library.Core.Dto;
-using BrickScan.WpfClient.Controls;
 using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Inventory.ViewModels;
 using BrickScan.WpfClient.Model;
@@ -88,11 +87,12 @@ namespace BrickScan.WpfClient.ViewModels
                 AdditionalIdentifier = "Foo", 
                 HtmlColor = c.BricklinkColorHtmlCode,
                 ColorName = c.BricklinkColorName,
+                BricklinkColor = c.BricklinkColorId,
                 Number = "1234abc",
                 DisplayImageUrls = new List<string>
                 {
-                    @"E:\dataset_images\img-20200929_205041457-26c8.png",
-                    @"E:\dataset_images\img-20200929_205102971-0808.png"
+                    @"C:\Users\eisenbach\Pictures\doge.png",
+                    @"C:\Users\eisenbach\Pictures\CSharpUtils.png"
                 }
             }, null);
             ActiveItem = _inventoryServiceViewModelFactory.CreateViewModel(r, _configuration.SelectedInventoryServiceType);

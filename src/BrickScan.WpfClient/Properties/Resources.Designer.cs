@@ -169,6 +169,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bricklink summary.
+        /// </summary>
+        public static string BricklinkSummary {
+            get {
+                return ResourceManager.GetString("BricklinkSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bricklink XML file.
         /// </summary>
         public static string BricklinkXml {
@@ -381,6 +390,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string HowToGenerateAccessTokens {
             get {
                 return ResourceManager.GetString("HowToGenerateAccessTokens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identified part summary.
+        /// </summary>
+        public static string IdentifiedPartSummary {
+            get {
+                return ResourceManager.GetString("IdentifiedPartSummary", resourceCulture);
             }
         }
         
@@ -768,6 +786,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string TooManyRequestsErrorMessage {
             get {
                 return ResourceManager.GetString("TooManyRequestsErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Submitted total quantity = {0}..
+        /// </summary>
+        public static string TotalQuantitySubmitted {
+            get {
+                return ResourceManager.GetString("TotalQuantitySubmitted", resourceCulture);
             }
         }
         

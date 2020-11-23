@@ -82,7 +82,7 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Content="{x:Static resx:Resources.Weight}" />
+                Content="{x:Static resx:Resources.Year}" />
             <TextBlock
                 x:Name="Year"
                 Grid.Row="0"
@@ -119,7 +119,10 @@
                 Grid.Column="0"
                 VerticalAlignment="Center"
                 Content="{x:Static resx:Resources.Url}" />
-            <TextBlock Grid.Row="3" Grid.Column="1">
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="1"
+                VerticalAlignment="Center">
                 <Hyperlink Click="Hyperlink_OnClick">
                     <Hyperlink.Inlines>
                         <Run Text="{x:Static resx:Resources.OpenOnBricklink}" />

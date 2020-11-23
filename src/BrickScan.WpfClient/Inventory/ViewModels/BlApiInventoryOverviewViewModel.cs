@@ -70,18 +70,33 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         private async Task<PropertyChangedBase?> QueryBricklinkData(IBricklinkClient bricklinkClient)
         {
-            var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
-            var colorId = _request.Item.BricklinkColor;
+            //var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
+            //var colorId = _request.Item.BricklinkColor;
 
-            var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] { ItemType.Part },
-                includedStatusFlags: new[] { InventoryStatusType.Available },
-                includedCategoryIds: new[] { item.CategoryId },
-                includedColorIds: new[] { _request.Item.BricklinkColor });
+            //var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] { ItemType.Part },
+            //    includedStatusFlags: new[] { InventoryStatusType.Available },
+            //    includedCategoryIds: new[] { item.CategoryId },
+            //    includedColorIds: new[] { _request.Item.BricklinkColor });
 
-            var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
-                condition: BricklinkSharp.Client.Condition.Used);
+            //var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
+            //    condition: BricklinkSharp.Client.Condition.Used);
 
-            var queryResult = new BlInventoryQueryResult(item, priceGuide, inventoryList);
+            var queryResult = new BlInventoryQueryResult(new CatalogItem
+                {
+                    ImageUrl = @"C:\Users\eisenbach\Pictures\doge.png",
+                    Number = "123abc",
+                    YearReleased = 2000,
+                    Name = "Hello world 123"
+                },
+                new PriceGuide
+                {
+                    QuantityAveragePrice = 1.23M,
+                    AveragePrice = 1.05M
+                }, 
+                new BricklinkSharp.Client.Inventory[0]);
+
+            await Task.Delay(500);
+
             return _bricklinkApiViewModelFactory.Create(_request, queryResult);
         }
 

@@ -367,4 +367,13 @@
   <data name="Create" xml:space="preserve">
     <value>Create</value>
   </data>
+  <data name="BricklinkSummary" xml:space="preserve">
+    <value>Bricklink summary</value>
+  </data>
+  <data name="IdentifiedPartSummary" xml:space="preserve">
+    <value>Identified part summary</value>
+  </data>
+  <data name="TotalQuantitySubmitted" xml:space="preserve">
+    <value>Submitted total quantity = {0}.</value>
+  </data>
 </root>

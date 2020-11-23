@@ -24,31 +24,21 @@
 #endregion
 
 using System;
-using BricklinkSharp.Client;
-using BrickScan.WpfClient.Events;
-using BrickScan.WpfClient.Model;
-using Stylet;
+using System.Globalization;
+using System.Windows.Data;
 
-namespace BrickScan.WpfClient.Inventory.ViewModels
+namespace BrickScan.WpfClient.Converter
 {
-    public class BlApiAddInventoryViewModel : PropertyChangedBase
+    internal class InvertBooleanConverter : IValueConverter
     {
-        private readonly OnInventoryServiceRequested _request;
-        private readonly BlInventoryQueryResult _blQueryResult;
-
-        public DatasetItemContainer DatasetItem => _request.Item;
-
-        public CatalogItem CatalogItem => _blQueryResult.CatalogItem;
-
-        public BlApiCreateUpdateInventoryViewModel BlApiCreateUpdateInventoryViewModel { get; }
-
-        public BlApiAddInventoryViewModel(OnInventoryServiceRequested request, 
-            BlInventoryQueryResult blQueryResult,
-            Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiCreateUpdateInventoryViewModel> blCreateUpdateInventoryVmFactory)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            _request = request;
-            _blQueryResult = blQueryResult;
-            BlApiCreateUpdateInventoryViewModel = blCreateUpdateInventoryVmFactory.Invoke(_request, _blQueryResult);
+            return !(bool)value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return !(bool)value;
         }
     }
 }
