@@ -133,6 +133,24 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Average (last 6 month).
+        /// </summary>
+        public static string AvgSold {
+            get {
+                return ResourceManager.GetString("AvgSold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Average (current).
+        /// </summary>
+        public static string AvgStock {
+            get {
+                return ResourceManager.GetString("AvgStock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
         public static string Back {
@@ -385,6 +403,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        public static string General {
+            get {
+                return ResourceManager.GetString("General", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
         public static string Home {
@@ -606,6 +633,24 @@ namespace BrickScan.WpfClient.Properties {
         public static string Quantity {
             get {
                 return ResourceManager.GetString("Quantity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quantity average (last 6 month).
+        /// </summary>
+        public static string QuantityAvgSold {
+            get {
+                return ResourceManager.GetString("QuantityAvgSold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quantity average (current).
+        /// </summary>
+        public static string QuantityAvgStock {
+            get {
+                return ResourceManager.GetString("QuantityAvgStock", resourceCulture);
             }
         }
         

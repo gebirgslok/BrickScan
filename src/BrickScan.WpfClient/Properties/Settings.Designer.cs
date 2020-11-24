@@ -142,5 +142,17 @@ namespace BrickScan.WpfClient.Properties {
                 this["BlPriceFixingF"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SelectedPriceFixingBaseMethodIndex {
+            get {
+                return ((int)(this["SelectedPriceFixingBaseMethodIndex"]));
+            }
+            set {
+                this["SelectedPriceFixingBaseMethodIndex"] = value;
+            }
+        }
     }
 }

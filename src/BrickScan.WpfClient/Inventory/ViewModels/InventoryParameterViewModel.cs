@@ -29,6 +29,8 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 {
     public class InventoryParameterViewModel : PropertyChangedBase
     {
+        public bool CanChangeCondition { get; set; } = true;
+
         public Condition Condition { get; set; }
 
         public int Quantity { get; set; } = 1;

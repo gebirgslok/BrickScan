@@ -66,9 +66,16 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             _request = request;
             _logger = logger;
             _bricklinkClient = bricklinkClient;
+            var c = userConfiguration.BlPriceFixingC;
+            var f = userConfiguration.BlPriceFixingF;
+            var finalPrice =
+                userConfiguration.SelectedPriceFixingBaseMethod.GetFinalPrice(blQueryResult.PriceGuide, c, f);
+
+            _logger.Information("Final price = {FinalPrice} (C = {C}, F = {F}).", finalPrice, c, f);
+
             InventoryParameterViewModel = new InventoryParameterViewModel
             {
-                PricePerPart = blQueryResult.PriceGuide.QuantityAveragePrice,
+                PricePerPart = finalPrice,
                 Condition = userConfiguration.SelectedBricklinkCondition
             };
         }
@@ -90,16 +97,23 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
                 Remarks = InventoryParameterViewModel.StorageOrBin
             };
 
-            await Task.Delay(1000);
-            return 15;
+            //await Task.Delay(1000);
+            //return 15;
 
-            //var inventory = await _bricklinkClient.CreateInventoryAsync(newInventory);
-            //return inventory.InventoryId;
+            var inventory = await _bricklinkClient.CreateInventoryAsync(newInventory);
+            return inventory.InventoryId;
         }
 
         private async Task UpdateInventoryAsync()
         {
-            await Task.Delay(1000);
+            var updateInventory = new UpdateInventory
+            {
+                ChangedQuantity = InventoryParameterViewModel.Quantity,
+                UnitPrice = InventoryParameterViewModel.PricePerPart,
+                Remarks = InventoryParameterViewModel.StorageOrBin
+            };
+
+            await _bricklinkClient.UpdateInventoryAsync(_inventoryId!.Value, updateInventory);
         }
 
         private string BuildSubmissionMessage()
@@ -117,6 +131,7 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
                 {
                     var inventoryId = await CreateInventoryAsync();
                     _inventoryId = inventoryId;
+                    InventoryParameterViewModel.CanChangeCondition = false;
                     NotifyOfPropertyChange(nameof(CreateOrUpdateText));
                 }
                 else

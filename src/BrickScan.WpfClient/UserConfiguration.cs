@@ -166,7 +166,22 @@ namespace BrickScan.WpfClient
         }
 
         public Condition SelectedBricklinkCondition => (Condition)SelectedBricklinkConditionIndex;
-        
+
+        public int SelectedPriceFixingBaseMethodIndex
+        {
+            get => Settings.Default.SelectedPriceFixingBaseMethodIndex;
+            set
+            {
+                if (value != Settings.Default.SelectedPriceFixingBaseMethodIndex)
+                {
+                    Settings.Default.SelectedPriceFixingBaseMethodIndex = value;
+                    Save();
+                }
+            }
+        }
+
+        public PriceFixingBaseMethod SelectedPriceFixingBaseMethod => (PriceFixingBaseMethod)SelectedPriceFixingBaseMethodIndex;
+
         public decimal BlPriceFixingC
         {
             get => Settings.Default.BlPriceFixingC;

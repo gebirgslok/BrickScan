@@ -79,6 +79,19 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             }
         }
 
+        public PriceFixingBaseMethod PriceFixingBaseMethod
+        {
+            get => _userConfiguration.SelectedPriceFixingBaseMethod;
+            set
+            {
+                var index = (int)value;
+                if (index != _userConfiguration.SelectedPriceFixingBaseMethodIndex)
+                {
+                    _userConfiguration.SelectedPriceFixingBaseMethodIndex = index;
+                }
+            }
+        }
+
         public decimal BlPriceFixingF
         {
             get => _userConfiguration.BlPriceFixingF;

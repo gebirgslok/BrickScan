@@ -54,16 +54,16 @@ namespace BrickScan.WpfClient.Model
 
         private static readonly Dictionary<int, SensitivityParams> _sensitivityParams = new Dictionary<int, SensitivityParams>
         {
-            {0, new SensitivityParams(10.0, 20.0, 1)},
-            {1, new SensitivityParams(15.0, 30.0, 3)},
-            {2, new SensitivityParams(20.0, 40.0, 3)},
-            {3, new SensitivityParams(25.0, 50.0, 3)},
-            {4, new SensitivityParams(30.0, 60.0, 3)},
-            {5, new SensitivityParams(35.0, 70.0, 5)},
-            {6, new SensitivityParams(40.0, 80.0, 5)},
-            {7, new SensitivityParams(45.0, 90.0, 5)},
-            {8, new SensitivityParams(50.0, 100.0, 5)},
-            {9, new SensitivityParams(55.0, 110.0, 5)},
+            {0, new SensitivityParams(40.0, 80.0, 5)},
+            {1, new SensitivityParams(38.0, 74.0, 5)},
+            {2, new SensitivityParams(36.0, 71.0, 5)},
+            {3, new SensitivityParams(34.0, 68.0, 5)},
+            {4, new SensitivityParams(33.0, 65.0, 3)},
+            {5, new SensitivityParams(31.0, 62.0, 5)},
+            {6, new SensitivityParams(30.0, 59.0, 3)},
+            {7, new SensitivityParams(28.0, 56.0, 3)},
+            {8, new SensitivityParams(27.0, 53.0, 3)},
+            {9, new SensitivityParams(25.0, 50.0, 3)},
         };
 
         private readonly IUserConfiguration _userConfiguration;

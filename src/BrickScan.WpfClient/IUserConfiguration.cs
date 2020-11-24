@@ -55,6 +55,10 @@ namespace BrickScan.WpfClient
 
         Condition SelectedBricklinkCondition { get; }
 
+        int SelectedPriceFixingBaseMethodIndex { get; set; }
+
+        PriceFixingBaseMethod SelectedPriceFixingBaseMethod { get; }
+
         decimal BlPriceFixingC { get; set; }
 
         decimal BlPriceFixingF { get; set; }

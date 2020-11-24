@@ -64,6 +64,7 @@
             Margin="2"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
+            IsEnabled="{Binding Path=CanChangeCondition, Mode=OneWay}"
             ItemsSource="{Binding Source={controls:EnumBindingSource {x:Type inventory:Condition}}, Mode=OneTime}"
             SelectedItem="{Binding Condition, Mode=TwoWay}">
             <ComboBox.ItemTemplate>

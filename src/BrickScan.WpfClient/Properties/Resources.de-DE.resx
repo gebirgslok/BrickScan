@@ -402,4 +402,19 @@
   <data name="PriceFixing" xml:space="preserve">
     <value>Preisermittlung</value>
   </data>
+  <data name="QuantityAvgSold" xml:space="preserve">
+    <value>Gewichteter Durchschnitt (letzten 6 Monate)</value>
+  </data>
+  <data name="AvgSold" xml:space="preserve">
+    <value>Durchschnitt (letzten 6 Monate)</value>
+  </data>
+  <data name="QuantityAvgStock" xml:space="preserve">
+    <value>Gewichteter Durchschnitt (aktuell)</value>
+  </data>
+  <data name="AvgStock" xml:space="preserve">
+    <value>Durchschnitt (aktuell)</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Allgemein</value>
+  </data>
 </root>

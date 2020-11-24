@@ -23,26 +23,22 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using Condition = BrickScan.WpfClient.Inventory.Condition;
+using BrickScan.WpfClient.Model;
 
-namespace BrickScan.WpfClient.Extensions
+namespace BrickScan.WpfClient.Inventory
 {
-    internal static class ConditionExtensions
+    public enum PriceFixingBaseMethod
     {
-        public static BricklinkSharp.Client.Condition ToBricklinkSharpCondition(this Condition c)
-        {
-            switch (c)
-            {
-                case Condition.Used:
-                    return BricklinkSharp.Client.Condition.Used;
+        [LocalizedDisplayName(typeof(Properties.Resources), "QuantityAvgSold")]
+        QuantityAvgSold = 0,
 
-                case Condition.New:
-                    return BricklinkSharp.Client.Condition.New;
-                default:
+        [LocalizedDisplayName(typeof(Properties.Resources), "AvgSold")]
+        AvgSold = 1,
 
-                    throw new ArgumentOutOfRangeException(nameof(c), c, null);
-            }
-        }
+        [LocalizedDisplayName(typeof(Properties.Resources), "QuantityAvgStock")]
+        QuantityAvgStock = 2,
+
+        [LocalizedDisplayName(typeof(Properties.Resources), "AvgStock")]
+        AvgStock = 3
     }
 }

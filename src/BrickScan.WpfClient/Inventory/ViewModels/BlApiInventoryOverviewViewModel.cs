@@ -30,6 +30,7 @@ using BricklinkSharp.Client;
 using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.ViewModels;
+using Serilog;
 using Stylet;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
@@ -40,6 +41,7 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
         private readonly IBlApiViewModelFactory _bricklinkApiViewModelFactory;
         private readonly IEventAggregator _eventAggregator;
         private readonly IUserConfiguration _userConfiguration;
+        private readonly ILogger _logger;
         private bool _isDisposed;
 
         public NotifyTask<PropertyChangedBase?> InitializationNotifier { get; }
@@ -49,12 +51,14 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             IBlApiViewModelFactory bricklinkApiViewModelFactory,
             IEventAggregator eventAggregator,
             IBricklinkClient bricklinkClient, 
-            IUserConfiguration userConfiguration)
+            IUserConfiguration userConfiguration, 
+            ILogger logger)
         {
             _request = request;
             _bricklinkApiViewModelFactory = bricklinkApiViewModelFactory;
             _eventAggregator = eventAggregator;
             _userConfiguration = userConfiguration;
+            _logger = logger;
             InitializationNotifier = notifyTaskFactory.Invoke(QueryBricklinkData(bricklinkClient), null);
             InitializationNotifier.PropertyChanged += HandleInitializationNotifierPropertyChanged;
         }
@@ -74,34 +78,43 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         private async Task<PropertyChangedBase?> QueryBricklinkData(IBricklinkClient bricklinkClient)
         {
-            //var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
-            //var colorId = _request.Item.BricklinkColor;
+            var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
+            var colorId = _request.Item.BricklinkColor;
 
-            //var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] { ItemType.Part },
-            //    includedStatusFlags: new[] { InventoryStatusType.Available },
-            //    includedCategoryIds: new[] { item.CategoryId },
-            //    includedColorIds: new[] { _request.Item.BricklinkColor });
+            var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] { ItemType.Part },
+                includedStatusFlags: new[] { InventoryStatusType.Available },
+                includedCategoryIds: new[] { item.CategoryId },
+                includedColorIds: new[] { _request.Item.BricklinkColor });
 
-            //var defaultCondition = _userConfiguration.SelectedBricklinkCondition.ToBricklinkSharpCondition();
-            //var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
-            //    condition: defaultCondition);
+            
+            var defaultCondition = _userConfiguration.SelectedBricklinkCondition.ToBricklinkSharpCondition();
+            var priceGuideType = _userConfiguration.SelectedPriceFixingBaseMethod.GetPriceGuideType();
 
-            var queryResult = new BlInventoryQueryResult(new CatalogItem
-            {
-                ImageUrl = @"C:\Users\eisenbach\Pictures\doge.png",
-                Number = "123abc",
-                YearReleased = 2000,
-                Name = "Hello world 123"
-            },
-                new PriceGuide
-                {
-                    QuantityAveragePrice = 1.23M,
-                    AveragePrice = 1.05M
-                },
-                new BricklinkSharp.Client.Inventory[0]);
+            _logger.Information("Getting price guide for part no = {PartNo}, " +
+                                "color id = {ColorId} with condition = {Condition} " +
+                                "using method = {PriceGuideMethod}.",
+                item.Number, colorId, defaultCondition, priceGuideType);
 
-            await Task.Delay(500);
+            var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
+                condition: defaultCondition, priceGuideType: priceGuideType);
 
+            //var queryResult = new BlInventoryQueryResult(new CatalogItem
+            //{
+            //    ImageUrl = @"C:\Users\eisenbach\Pictures\doge.png",
+            //    Number = "123abc",
+            //    YearReleased = 2000,
+            //    Name = "Hello world 123"
+            //},
+            //    new PriceGuide
+            //    {
+            //        QuantityAveragePrice = 1.23M,
+            //        AveragePrice = 1.05M
+            //    },
+            //    new BricklinkSharp.Client.Inventory[0]);
+
+            //await Task.Delay(500);
+
+            var queryResult = new BlInventoryQueryResult(item, priceGuide, inventoryList);
             return _bricklinkApiViewModelFactory.Create(_request, queryResult);
         }
 

@@ -382,4 +382,19 @@
   <data name="PriceFixing" xml:space="preserve">
     <value>Price fixing</value>
   </data>
+  <data name="QuantityAvgSold" xml:space="preserve">
+    <value>Quantity average (last 6 month)</value>
+  </data>
+  <data name="AvgSold" xml:space="preserve">
+    <value>Average (last 6 month)</value>
+  </data>
+  <data name="QuantityAvgStock" xml:space="preserve">
+    <value>Quantity average (current)</value>
+  </data>
+  <data name="AvgStock" xml:space="preserve">
+    <value>Average (current)</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
 </root>
