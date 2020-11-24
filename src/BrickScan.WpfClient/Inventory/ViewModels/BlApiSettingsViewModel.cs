@@ -79,6 +79,18 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             }
         }
 
+        public decimal BlPriceFixingF
+        {
+            get => _userConfiguration.BlPriceFixingF;
+            set => _userConfiguration.BlPriceFixingF = value;
+        }
+
+        public decimal BlPriceFixingC
+        {
+            get => _userConfiguration.BlPriceFixingC;
+            set => _userConfiguration.BlPriceFixingC = value;
+        }
+
         public BlApiSettingsViewModel(IUserConfiguration userConfiguration)
         {
             _userConfiguration = userConfiguration;           

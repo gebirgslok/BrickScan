@@ -331,7 +331,7 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Default condition for inventory.
+        ///   Looks up a localized string similar to Default condition.
         /// </summary>
         public static string DefaultConditionForInventory {
             get {
@@ -570,6 +570,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string Parts {
             get {
                 return ResourceManager.GetString("Parts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Price fixing.
+        /// </summary>
+        public static string PriceFixing {
+            get {
+                return ResourceManager.GetString("PriceFixing", resourceCulture);
             }
         }
         

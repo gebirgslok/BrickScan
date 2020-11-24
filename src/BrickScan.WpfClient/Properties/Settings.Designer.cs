@@ -118,5 +118,29 @@ namespace BrickScan.WpfClient.Properties {
                 this["SelectedBricklinkConditionIndex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal BlPriceFixingC {
+            get {
+                return ((decimal)(this["BlPriceFixingC"]));
+            }
+            set {
+                this["BlPriceFixingC"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public decimal BlPriceFixingF {
+            get {
+                return ((decimal)(this["BlPriceFixingF"]));
+            }
+            set {
+                this["BlPriceFixingF"] = value;
+            }
+        }
     }
 }

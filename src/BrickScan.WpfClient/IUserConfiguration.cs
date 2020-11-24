@@ -55,6 +55,10 @@ namespace BrickScan.WpfClient
 
         Condition SelectedBricklinkCondition { get; }
 
+        decimal BlPriceFixingC { get; set; }
+
+        decimal BlPriceFixingF { get; set; }
+
         void Save();
 
         void SaveBricklinkCredentials();

@@ -170,10 +170,10 @@
             Content="Foo"
             FontSize="12"
             FontWeight="SemiBold" />
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="3" IsSharedSizeScope="True">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" SharedSizeGroup="GeneralRows" />
+                <RowDefinition Height="Auto" SharedSizeGroup="GeneralRows" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -200,7 +200,65 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="2"
+                VerticalAlignment="Center"
+                Content="{x:Static resx:Resources.PriceFixing}" />
+            <StackPanel
+                Grid.Row="1"
+                Grid.Column="1"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBlock
+                    Margin="2,2,5,2"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Foreground="{DynamicResource MahApps.Brushes.Text}"
+                    Text="(" />
+                <ComboBox
+                    Width="200"
+                    Margin="2"
+                    VerticalAlignment="Center">
+                    <ComboBox.Items>
+                        <ComboBoxItem Content="method 1" />
+                        <ComboBoxItem Content="method 2" />
+                        <ComboBoxItem Content="method 3" />
+                    </ComboBox.Items>
+                </ComboBox>
+                <TextBlock
+                    Margin="5,2,5,2"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Foreground="{DynamicResource MahApps.Brushes.Text}"
+                    Text="+" />
+                <mah:NumericUpDown
+                    Width="100"
+                    Margin="2"
+                    VerticalAlignment="Center"
+                    NumericInputMode="Decimal"
+                    Value="{Binding Path=BlPriceFixingC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Margin="5,2,5,2"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Foreground="{DynamicResource MahApps.Brushes.Text}"
+                    Text=")" />
+                <TextBlock
+                    Margin="5,2,5,2"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Foreground="{DynamicResource MahApps.Brushes.Text}"
+                    Text="×" />
+                <mah:NumericUpDown
+                    Width="100"
+                    Margin="2"
+                    VerticalAlignment="Center"
+                    NumericInputMode="Decimal"
+                    Value="{Binding Path=BlPriceFixingF, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
         </Grid>
-
     </Grid>
 </UserControl>

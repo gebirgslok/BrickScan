@@ -166,6 +166,32 @@ namespace BrickScan.WpfClient
         }
 
         public Condition SelectedBricklinkCondition => (Condition)SelectedBricklinkConditionIndex;
+        
+        public decimal BlPriceFixingC
+        {
+            get => Settings.Default.BlPriceFixingC;
+            set
+            {
+                if (value != Settings.Default.BlPriceFixingC)
+                {
+                    Settings.Default.BlPriceFixingC = value;
+                    Save();
+                }
+            }
+        }
+
+        public decimal BlPriceFixingF
+        {
+            get => Settings.Default.BlPriceFixingF;
+            set
+            {
+                if (value != Settings.Default.BlPriceFixingF)
+                {
+                    Settings.Default.BlPriceFixingF = value;
+                    Save();
+                }
+            }
+        }
 
         public UserConfiguration(ILogger logger)
         {
