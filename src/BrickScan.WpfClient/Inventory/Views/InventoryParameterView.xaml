@@ -78,7 +78,8 @@
             Grid.Column="0"
             Margin="2"
             VerticalAlignment="Center"
-            Content="{x:Static resx:Resources.Quantity}" ContentStringFormat="{}{0} (+)" />
+            Content="{x:Static resx:Resources.Quantity}"
+            ContentStringFormat="{}{0} (+)" />
         <mah:NumericUpDown
             Grid.Row="1"
             Grid.Column="1"

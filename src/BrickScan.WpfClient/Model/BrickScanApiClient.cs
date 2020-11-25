@@ -62,10 +62,11 @@ namespace BrickScan.WpfClient.Model
                 var resizedTrainImages = new List<BitmapSource>();
 
                 var maxImageSize = AppConfig.MaxNonDisplayImageWidthOrHeight;
+                var maxDisplayImageSize = AppConfig.MaxDisplayImageWidthOrHeight;
 
                 if (useFirstTrainImageAsDisp)
                 {
-                    resizedTrainImages.Add(trainImages.First());
+                    resizedTrainImages.Add(trainImages.First().ClipMaxSize(maxDisplayImageSize, maxDisplayImageSize));
                     resizedTrainImages.AddRange(trainImages.Skip(1).Select(x => x.ClipMaxSize(maxImageSize, maxImageSize)));
                 }
                 else
@@ -89,7 +90,8 @@ namespace BrickScan.WpfClient.Model
 
                 if (extraDisplayImage != null)
                 {
-                    var extraDisplayImageResult = await PostImagesAsync(new List<BitmapSource> { extraDisplayImage }, "extra_disp_image[{0}].png");
+                    var resized = extraDisplayImage.ClipMaxSize(maxDisplayImageSize, maxDisplayImageSize);
+                    var extraDisplayImageResult = await PostImagesAsync(new List<BitmapSource> { resized }, "extra_disp_image[{0}].png");
 
                     if (!extraDisplayImageResult.Success)
                     {
@@ -111,7 +113,8 @@ namespace BrickScan.WpfClient.Model
                     if (items[i].Images != null)
                     {
                         var itemDisplayImageResult =
-                            await PostImagesAsync(items[i].Images!, $"item[{i}].disp_image[{{0}}].png");
+                            await PostImagesAsync(items[i].Images!.Select(x => x.ClipMaxSize(maxDisplayImageSize, maxDisplayImageSize)), 
+                                $"item[{i}].disp_image[{{0}}].png");
 
                         if (!itemDisplayImageResult.Success)
                         {
