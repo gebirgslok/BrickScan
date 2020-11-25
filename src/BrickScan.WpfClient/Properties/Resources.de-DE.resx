@@ -420,4 +420,10 @@
   <data name="UpdateBricklinkInventory" xml:space="preserve">
     <value>Inventarposition (ID = {0}, Menge = {1}) auf Bricklink aktualisieren</value>
   </data>
+  <data name="Id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Remarks" xml:space="preserve">
+    <value>Bemerkung</value>
+  </data>
 </root>

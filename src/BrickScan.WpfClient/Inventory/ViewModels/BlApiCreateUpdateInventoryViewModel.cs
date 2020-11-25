@@ -41,10 +41,10 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
         private readonly IBricklinkClient _bricklinkClient;
         private int _totalSubmittedQuantity;
 
-        private bool MustCreate => Inventory == null;
+        private bool MustCreate => InventoryDto == null;
 
         [AlsoNotifyFor(nameof(SubmissionMessage), nameof(HeaderText))]
-        public BricklinkSharp.Client.Inventory? Inventory { get; private set; }
+        public InventoryDto? InventoryDto { get; private set; }
 
         public InventoryParameterViewModel InventoryParameterViewModel { get; }
 
@@ -56,11 +56,11 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         public string? SubmissionMessage { get; private set; }
 
-        public string HeaderText => Inventory == null
+        public string HeaderText => InventoryDto == null
             ? Properties.Resources.CreateNewBricklinkInventory
-            : string.Format(Properties.Resources.UpdateBricklinkInventory, Inventory.InventoryId, Inventory.Quantity);
+            : string.Format(Properties.Resources.UpdateBricklinkInventory, InventoryDto.Id, InventoryDto.Quantity);
 
-        public string CreateOrUpdateText => Inventory != null ?
+        public string CreateOrUpdateText => InventoryDto != null ?
             Properties.Resources.Update :
             Properties.Resources.Create;
 
@@ -114,21 +114,24 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
         private async Task<BricklinkSharp.Client.Inventory> UpdateInventoryAsync()
         {
             await Task.Delay(1000);
-            return new BricklinkSharp.Client.Inventory { InventoryId = 15, Quantity = InventoryParameterViewModel.Quantity + 1 };
+            return new BricklinkSharp.Client.Inventory { 
+                InventoryId = 15, 
+                Quantity = InventoryParameterViewModel.Quantity + 1, 
+                UnitPrice = InventoryParameterViewModel.PricePerPart
+            };
 
+            var updateInventory = new UpdateInventory
+            {
+                ChangedQuantity = InventoryParameterViewModel.Quantity,
+                UnitPrice = InventoryParameterViewModel.PricePerPart,
+                Remarks = InventoryParameterViewModel.StorageOrBin
+            };
 
-            //var updateInventory = new UpdateInventory
-            //{
-            //    ChangedQuantity = InventoryParameterViewModel.Quantity,
-            //    UnitPrice = InventoryParameterViewModel.PricePerPart,
-            //    Remarks = InventoryParameterViewModel.StorageOrBin
-            //};
+            var inventory = await _bricklinkClient.UpdateInventoryAsync(InventoryDto!.Id, updateInventory);
 
-            //var inventory = await _bricklinkClient.UpdateInventoryAsync(Inventory!.InventoryId, updateInventory);
+            _logger.Information("Received updated inventory: {q = {{Quantity}}, ID = {{Id}}.", inventory.Quantity, inventory.InventoryId);
 
-            //_logger.Information("Received updated inventory: {q = {{Quantity}}, ID = {{Id}}.", inventory.Quantity, inventory.InventoryId);
-
-            //return inventory;
+            return inventory;
         }
 
         private string BuildSubmissionMessage()
@@ -136,9 +139,9 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             return string.Format(Properties.Resources.TotalQuantitySubmitted, _totalSubmittedQuantity);
         }
 
-        internal void SetInventory(BricklinkSharp.Client.Inventory inventory)
+        internal void SetInventory(InventoryDto inventory)
         {
-            Inventory = inventory;
+            InventoryDto = inventory;
         }
 
         public async Task CreateOrUpdateAsync()
@@ -150,12 +153,14 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
                 if (MustCreate)
                 {
                     var inventory = await CreateInventoryAsync();
-                    Inventory = inventory;
+                    InventoryDto = new InventoryDto(inventory);
                     InventoryParameterViewModel.CanChangeCondition = false;
                 }
                 else
                 {
-                    Inventory = await UpdateInventoryAsync();
+                    InventoryDto!.Inventory = await UpdateInventoryAsync();
+                    NotifyOfPropertyChange(nameof(CreateOrUpdateText));
+                    NotifyOfPropertyChange(nameof(HeaderText));
                 }
 
                 WasSubmissionSuccessful = true;

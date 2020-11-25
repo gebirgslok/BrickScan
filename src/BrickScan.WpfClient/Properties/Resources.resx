@@ -400,4 +400,10 @@
   <data name="UpdateBricklinkInventory" xml:space="preserve">
     <value>Update Bricklink inventory lot (ID = {0}, quantity = {1})</value>
   </data>
+  <data name="Id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Remarks" xml:space="preserve">
+    <value>Remarks</value>
+  </data>
 </root>

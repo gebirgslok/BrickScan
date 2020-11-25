@@ -33,11 +33,13 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
     {
         private readonly Func<OnInventoryServiceRequested,BlInventoryQueryResult, BlApiAddInventoryViewModel> _addInventoryVmFactory;
         private readonly Func<OnInventoryServiceRequested,BlInventoryQueryResult, BlApiAddUpdateSingleInventoryViewModel> _addUpdateSingleInventoryVmFactory;
+        private readonly Func<OnInventoryServiceRequested,BlInventoryQueryResult, BlApiAddUpdateMultiInventoriesViewModel> _updateMultiInventoriesVmFactory;
 
-        public BlApiViewModelFactory(Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiAddInventoryViewModel> addInventoryVmFactory, Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiAddUpdateSingleInventoryViewModel> addUpdateSingleInventoryVmFactory)
+        public BlApiViewModelFactory(Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiAddInventoryViewModel> addInventoryVmFactory, Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiAddUpdateSingleInventoryViewModel> addUpdateSingleInventoryVmFactory, Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiAddUpdateMultiInventoriesViewModel> updateMultiInventoriesVmFactory)
         {
             _addInventoryVmFactory = addInventoryVmFactory;
             _addUpdateSingleInventoryVmFactory = addUpdateSingleInventoryVmFactory;
+            _updateMultiInventoriesVmFactory = updateMultiInventoriesVmFactory;
         }
 
         public PropertyChangedBase Create(OnInventoryServiceRequested request, BlInventoryQueryResult queryResult)
@@ -52,7 +54,7 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
                 return _addUpdateSingleInventoryVmFactory.Invoke(request, queryResult);
             }
 
-            return _addInventoryVmFactory.Invoke(request, queryResult);
+            return _updateMultiInventoriesVmFactory.Invoke(request, queryResult);
         }
     }
 }

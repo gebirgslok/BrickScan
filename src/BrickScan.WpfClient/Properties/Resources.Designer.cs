@@ -430,6 +430,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ID.
+        /// </summary>
+        public static string Id {
+            get {
+                return ResourceManager.GetString("Id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identified part summary.
         /// </summary>
         public static string IdentifiedPartSummary {
@@ -669,6 +678,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string QuickstartGuide {
             get {
                 return ResourceManager.GetString("QuickstartGuide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remarks.
+        /// </summary>
+        public static string Remarks {
+            get {
+                return ResourceManager.GetString("Remarks", resourceCulture);
             }
         }
         

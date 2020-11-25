@@ -23,28 +23,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using BrickScan.WpfClient.Events;
-using Stylet;
-
 namespace BrickScan.WpfClient.Inventory.ViewModels
 {
-    public class BlApiAddUpdateSingleInventoryViewModel : PropertyChangedBase
+    internal static class BlApiHelpers
     {
-        public BlApiAddInventoryViewModel BlApiAddInventoryViewModel { get; }
-
-        public BlApiAddInventoryViewModel BlApiUpdateInventoryViewModel { get; }
-
-        public BlApiAddUpdateSingleInventoryViewModel(OnInventoryServiceRequested request,
-            BlInventoryQueryResult blQueryResult,
-            Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiAddInventoryViewModel> addInventoryVmFactory)
+        public static void PopulateUpdateViewModel(BlApiAddInventoryViewModel updateViewModel, InventoryDto inventory)
         {
-            BlApiAddInventoryViewModel = addInventoryVmFactory.Invoke(request, blQueryResult);
-
-            var updateViewModel = addInventoryVmFactory.Invoke(request, blQueryResult);
-            BlApiHelpers.PopulateUpdateViewModel(updateViewModel, new InventoryDto(blQueryResult.InventoryList[0]));
-            BlApiUpdateInventoryViewModel = updateViewModel;
+            updateViewModel.BlApiCreateUpdateInventoryViewModel.SetInventory(inventory);
+            updateViewModel.BlApiCreateUpdateInventoryViewModel.InventoryParameterViewModel.PricePerPart =
+                inventory.UnitPrice;
+            updateViewModel.BlApiCreateUpdateInventoryViewModel.InventoryParameterViewModel.StorageOrBin =
+                inventory.Remarks;
         }
-
     }
 }

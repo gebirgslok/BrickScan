@@ -78,7 +78,7 @@
             Margin="5"
             Padding="5"
             HorizontalAlignment="Center"
-            BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+            BorderBrush="{DynamicResource MahApps.Brushes.Gray9}"
             BorderThickness="1">
             <ContentControl s:View.Model="{Binding Path=BlApiCreateUpdateInventoryViewModel, Mode=OneTime}" />
         </Border>

@@ -112,12 +112,22 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
                     QuantityAveragePrice = 1.23M,
                     AveragePrice = 1.05M
                 },
-                new[] { new BricklinkSharp.Client.Inventory
-                {
-                    InventoryId = 15,
-                    Remarks = "foo1",
-                    UnitPrice = 2.22M
-                }, });
+                new[] { 
+                    new BricklinkSharp.Client.Inventory 
+                    {
+                        InventoryId = 15, 
+                        Remarks = "foo1", 
+                        UnitPrice = 2.22M,
+                        Quantity = 13
+                    },                    
+                    new BricklinkSharp.Client.Inventory 
+                    {
+                        InventoryId = 124342, 
+                        Remarks = "bar4", 
+                        UnitPrice = 2.44M,
+                        Quantity = 34
+                    }
+                });
 
             await Task.Delay(500);
 
