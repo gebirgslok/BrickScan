@@ -67,6 +67,7 @@
             Grid.Row="1"
             Grid.Column="1"
             HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
             IsSharedSizeScope="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" SharedSizeGroup="BlPropertyRow" />

@@ -397,4 +397,7 @@
   <data name="General" xml:space="preserve">
     <value>General</value>
   </data>
+  <data name="UpdateBricklinkInventory" xml:space="preserve">
+    <value>Update Bricklink inventory lot (ID = {0})</value>
+  </data>
 </root>

@@ -31,16 +31,28 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 {
     public class BlApiViewModelFactory : IBlApiViewModelFactory
     {
-        private readonly Func<OnInventoryServiceRequested,BlInventoryQueryResult, BlApiAddInventoryViewModel> _addInventoryViewModel;
+        private readonly Func<OnInventoryServiceRequested,BlInventoryQueryResult, BlApiAddInventoryViewModel> _addInventoryVmFactory;
+        private readonly Func<OnInventoryServiceRequested,BlInventoryQueryResult, BlApiAddUpdateSingleInventoryViewModel> _addUpdateSingleInventoryVmFactory;
 
-        public BlApiViewModelFactory(Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiAddInventoryViewModel> addInventoryViewModel)
+        public BlApiViewModelFactory(Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiAddInventoryViewModel> addInventoryVmFactory, Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiAddUpdateSingleInventoryViewModel> addUpdateSingleInventoryVmFactory)
         {
-            _addInventoryViewModel = addInventoryViewModel;
+            _addInventoryVmFactory = addInventoryVmFactory;
+            _addUpdateSingleInventoryVmFactory = addUpdateSingleInventoryVmFactory;
         }
 
         public PropertyChangedBase Create(OnInventoryServiceRequested request, BlInventoryQueryResult queryResult)
         {
-            return _addInventoryViewModel.Invoke(request, queryResult);
+            if (queryResult.InventoryList.Length == 0)
+            {
+                return _addInventoryVmFactory.Invoke(request, queryResult);
+            }
+
+            if (queryResult.InventoryList.Length == 1)
+            {
+                return _addUpdateSingleInventoryVmFactory.Invoke(request, queryResult);
+            }
+
+            return _addInventoryVmFactory.Invoke(request, queryResult);
         }
     }
 }

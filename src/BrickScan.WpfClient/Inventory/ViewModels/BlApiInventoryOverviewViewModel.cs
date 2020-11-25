@@ -78,43 +78,49 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         private async Task<PropertyChangedBase?> QueryBricklinkData(IBricklinkClient bricklinkClient)
         {
-            var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
-            var colorId = _request.Item.BricklinkColor;
+            //var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
+            //var colorId = _request.Item.BricklinkColor;
 
-            var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] { ItemType.Part },
-                includedStatusFlags: new[] { InventoryStatusType.Available },
-                includedCategoryIds: new[] { item.CategoryId },
-                includedColorIds: new[] { _request.Item.BricklinkColor });
+            //var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] { ItemType.Part },
+            //    includedStatusFlags: new[] { InventoryStatusType.Available },
+            //    includedCategoryIds: new[] { item.CategoryId },
+            //    includedColorIds: new[] { _request.Item.BricklinkColor });
 
-            
-            var defaultCondition = _userConfiguration.SelectedBricklinkCondition.ToBricklinkSharpCondition();
-            var priceGuideType = _userConfiguration.SelectedPriceFixingBaseMethod.GetPriceGuideType();
 
-            _logger.Information("Getting price guide for part no = {PartNo}, " +
-                                "color id = {ColorId} with condition = {Condition} " +
-                                "using method = {PriceGuideMethod}.",
-                item.Number, colorId, defaultCondition, priceGuideType);
+            //var defaultCondition = _userConfiguration.SelectedBricklinkCondition.ToBricklinkSharpCondition();
+            //var priceGuideType = _userConfiguration.SelectedPriceFixingBaseMethod.GetPriceGuideType();
 
-            var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
-                condition: defaultCondition, priceGuideType: priceGuideType);
+            //_logger.Information("Getting price guide for part no = {PartNo}, " +
+            //                    "color id = {ColorId} with condition = {Condition} " +
+            //                    "using method = {PriceGuideMethod}.",
+            //    item.Number, colorId, defaultCondition, priceGuideType);
 
-            //var queryResult = new BlInventoryQueryResult(new CatalogItem
-            //{
-            //    ImageUrl = @"C:\Users\eisenbach\Pictures\doge.png",
-            //    Number = "123abc",
-            //    YearReleased = 2000,
-            //    Name = "Hello world 123"
-            //},
-            //    new PriceGuide
-            //    {
-            //        QuantityAveragePrice = 1.23M,
-            //        AveragePrice = 1.05M
-            //    },
-            //    new BricklinkSharp.Client.Inventory[0]);
+            //var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
+            //    condition: defaultCondition, priceGuideType: priceGuideType);
 
-            //await Task.Delay(500);
+            //var queryResult = new BlInventoryQueryResult(item, priceGuide, inventoryList);
 
-            var queryResult = new BlInventoryQueryResult(item, priceGuide, inventoryList);
+            var queryResult = new BlInventoryQueryResult(new CatalogItem
+            {
+                ImageUrl = @"C:\Users\eisenbach\Pictures\doge.png",
+                Number = "123abc",
+                YearReleased = 2000,
+                Name = "Hello world 123"
+            },
+                new PriceGuide
+                {
+                    QuantityAveragePrice = 1.23M,
+                    AveragePrice = 1.05M
+                },
+                new[] { new BricklinkSharp.Client.Inventory
+                {
+                    InventoryId = 15,
+                    Remarks = "foo1",
+                    UnitPrice = 2.22M
+                }, });
+
+            await Task.Delay(500);
+
             return _bricklinkApiViewModelFactory.Create(_request, queryResult);
         }
 

@@ -889,6 +889,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update Bricklink inventory lot (ID = {0}).
+        /// </summary>
+        public static string UpdateBricklinkInventory {
+            get {
+                return ResourceManager.GetString("UpdateBricklinkInventory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Upload.
         /// </summary>
         public static string Upload {

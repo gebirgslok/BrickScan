@@ -31,7 +31,7 @@ using Stylet;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
 {
-    public class BlApiAddInventoryViewModel : PropertyChangedBase
+    public sealed class BlApiAddInventoryViewModel : PropertyChangedBase
     {
         private readonly OnInventoryServiceRequested _request;
         private readonly BlInventoryQueryResult _blQueryResult;
@@ -42,8 +42,8 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         public BlApiCreateUpdateInventoryViewModel BlApiCreateUpdateInventoryViewModel { get; }
 
-        public BlApiAddInventoryViewModel(OnInventoryServiceRequested request, 
-            BlInventoryQueryResult blQueryResult,
+        public BlApiAddInventoryViewModel(OnInventoryServiceRequested request,
+            BlInventoryQueryResult blQueryResult, 
             Func<OnInventoryServiceRequested, BlInventoryQueryResult, BlApiCreateUpdateInventoryViewModel> blCreateUpdateInventoryVmFactory)
         {
             _request = request;

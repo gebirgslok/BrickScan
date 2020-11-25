@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using BricklinkSharp.Client;
 using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Extensions;
+using PropertyChanged;
 using Serilog;
 using Stylet;
 
@@ -38,10 +39,12 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
         private readonly OnInventoryServiceRequested _request;
         private readonly ILogger _logger;
         private readonly IBricklinkClient _bricklinkClient;
-        private int? _inventoryId;
         private int _totalSubmittedQuantity;
 
-        private bool MustCreate => !_inventoryId.HasValue;
+        private bool MustCreate => Inventory == null;
+
+        [AlsoNotifyFor(nameof(SubmissionMessage), nameof(HeaderText))]
+        public BricklinkSharp.Client.Inventory? Inventory { get; private set; }
 
         public InventoryParameterViewModel InventoryParameterViewModel { get; }
 
@@ -53,13 +56,17 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         public string? SubmissionMessage { get; private set; }
 
-        public string CreateOrUpdateText => _inventoryId.HasValue ? 
-            Properties.Resources.Update : 
+        public string HeaderText => Inventory == null
+            ? Properties.Resources.CreateNewBricklinkInventory
+            : string.Format(Properties.Resources.UpdateBricklinkInventory, Inventory.InventoryId);
+
+        public string CreateOrUpdateText => Inventory != null ?
+            Properties.Resources.Update :
             Properties.Resources.Create;
 
-        public BlApiCreateUpdateInventoryViewModel(OnInventoryServiceRequested request, 
+        public BlApiCreateUpdateInventoryViewModel(OnInventoryServiceRequested request,
             BlInventoryQueryResult blQueryResult,
-            ILogger logger, 
+            ILogger logger,
             IBricklinkClient bricklinkClient,
             IUserConfiguration userConfiguration)
         {
@@ -80,45 +87,52 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             };
         }
 
-        private async Task<int> CreateInventoryAsync()
+        private async Task<BricklinkSharp.Client.Inventory> CreateInventoryAsync()
         {
-            var newInventory = new NewInventory
-            {
-                Bulk = 1,
-                ColorId = _request.Item.BricklinkColor,
-                Condition = InventoryParameterViewModel.Condition.ToBricklinkSharpCondition(),
-                Item = new ItemBase
-                {
-                    Number = _request.Item.Number,
-                    Type = ItemType.Part
-                },
-                Quantity = InventoryParameterViewModel.Quantity,
-                UnitPrice = InventoryParameterViewModel.PricePerPart,
-                Remarks = InventoryParameterViewModel.StorageOrBin
-            };
+            await Task.Delay(1000);
+            return new BricklinkSharp.Client.Inventory { InventoryId = 15 };
 
-            //await Task.Delay(1000);
-            //return 15;
+            //var newInventory = new NewInventory
+            //{
+            //    Bulk = 1,
+            //    ColorId = _request.Item.BricklinkColor,
+            //    Condition = InventoryParameterViewModel.Condition.ToBricklinkSharpCondition(),
+            //    Item = new ItemBase
+            //    {
+            //        Number = _request.Item.Number,
+            //        Type = ItemType.Part
+            //    },
+            //    Quantity = InventoryParameterViewModel.Quantity,
+            //    UnitPrice = InventoryParameterViewModel.PricePerPart,
+            //    Remarks = InventoryParameterViewModel.StorageOrBin
+            //};
 
-            var inventory = await _bricklinkClient.CreateInventoryAsync(newInventory);
-            return inventory.InventoryId;
+            //var inventory = await _bricklinkClient.CreateInventoryAsync(newInventory);
+            //return inventory;
         }
 
         private async Task UpdateInventoryAsync()
         {
-            var updateInventory = new UpdateInventory
-            {
-                ChangedQuantity = InventoryParameterViewModel.Quantity,
-                UnitPrice = InventoryParameterViewModel.PricePerPart,
-                Remarks = InventoryParameterViewModel.StorageOrBin
-            };
+            await Task.Delay(1000);
 
-            await _bricklinkClient.UpdateInventoryAsync(_inventoryId!.Value, updateInventory);
+            //var updateInventory = new UpdateInventory
+            //{
+            //    ChangedQuantity = InventoryParameterViewModel.Quantity,
+            //    UnitPrice = InventoryParameterViewModel.PricePerPart,
+            //    Remarks = InventoryParameterViewModel.StorageOrBin
+            //};
+
+            //await _bricklinkClient.UpdateInventoryAsync(_inventoryId!.Value, updateInventory);
         }
 
         private string BuildSubmissionMessage()
         {
             return string.Format(Properties.Resources.TotalQuantitySubmitted, _totalSubmittedQuantity);
+        }
+
+        internal void SetInventory(BricklinkSharp.Client.Inventory inventory)
+        {
+            Inventory = inventory;
         }
 
         public async Task CreateOrUpdateAsync()
@@ -129,10 +143,9 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             {
                 if (MustCreate)
                 {
-                    var inventoryId = await CreateInventoryAsync();
-                    _inventoryId = inventoryId;
+                    var inventory = await CreateInventoryAsync();
+                    Inventory = inventory;
                     InventoryParameterViewModel.CanChangeCondition = false;
-                    NotifyOfPropertyChange(nameof(CreateOrUpdateText));
                 }
                 else
                 {
@@ -146,8 +159,8 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             }
             catch (Exception exception)
             {
-                _logger.Error(exception, 
-                    $"Failed to {(MustCreate ? "create" : "update")} inventory lot. Received {{Message}}", 
+                _logger.Error(exception,
+                    $"Failed to {(MustCreate ? "create" : "update")} inventory lot. Received {{Message}}",
                     exception.Message);
                 WasSubmissionSuccessful = false;
                 SubmissionMessage = Properties.Resources.RequestFailedMessage;
