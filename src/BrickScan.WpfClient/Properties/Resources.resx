@@ -398,6 +398,6 @@
     <value>General</value>
   </data>
   <data name="UpdateBricklinkInventory" xml:space="preserve">
-    <value>Update Bricklink inventory lot (ID = {0})</value>
+    <value>Update Bricklink inventory lot (ID = {0}, quantity = {1})</value>
   </data>
 </root>

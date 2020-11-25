@@ -58,7 +58,7 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         public string HeaderText => Inventory == null
             ? Properties.Resources.CreateNewBricklinkInventory
-            : string.Format(Properties.Resources.UpdateBricklinkInventory, Inventory.InventoryId);
+            : string.Format(Properties.Resources.UpdateBricklinkInventory, Inventory.InventoryId, Inventory.Quantity);
 
         public string CreateOrUpdateText => Inventory != null ?
             Properties.Resources.Update :
@@ -111,9 +111,11 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             //return inventory;
         }
 
-        private async Task UpdateInventoryAsync()
+        private async Task<BricklinkSharp.Client.Inventory> UpdateInventoryAsync()
         {
             await Task.Delay(1000);
+            return new BricklinkSharp.Client.Inventory { InventoryId = 15, Quantity = InventoryParameterViewModel.Quantity + 1 };
+
 
             //var updateInventory = new UpdateInventory
             //{
@@ -122,7 +124,11 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             //    Remarks = InventoryParameterViewModel.StorageOrBin
             //};
 
-            //await _bricklinkClient.UpdateInventoryAsync(_inventoryId!.Value, updateInventory);
+            //var inventory = await _bricklinkClient.UpdateInventoryAsync(Inventory!.InventoryId, updateInventory);
+
+            //_logger.Information("Received updated inventory: {q = {{Quantity}}, ID = {{Id}}.", inventory.Quantity, inventory.InventoryId);
+
+            //return inventory;
         }
 
         private string BuildSubmissionMessage()
@@ -149,7 +155,7 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
                 }
                 else
                 {
-                    await UpdateInventoryAsync();
+                    Inventory = await UpdateInventoryAsync();
                 }
 
                 WasSubmissionSuccessful = true;

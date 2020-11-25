@@ -889,7 +889,7 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Bricklink inventory lot (ID = {0}).
+        ///   Looks up a localized string similar to Update Bricklink inventory lot (ID = {0}, quantity = {1}).
         /// </summary>
         public static string UpdateBricklinkInventory {
             get {
