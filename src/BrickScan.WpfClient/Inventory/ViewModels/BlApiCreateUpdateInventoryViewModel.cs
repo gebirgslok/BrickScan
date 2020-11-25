@@ -89,37 +89,27 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         private async Task<BricklinkSharp.Client.Inventory> CreateInventoryAsync()
         {
-            await Task.Delay(1000);
-            return new BricklinkSharp.Client.Inventory { InventoryId = 15 };
+            var newInventory = new NewInventory
+            {
+                Bulk = 1,
+                ColorId = _request.Item.BricklinkColor,
+                Condition = InventoryParameterViewModel.Condition.ToBricklinkSharpCondition(),
+                Item = new ItemBase
+                {
+                    Number = _request.Item.Number,
+                    Type = ItemType.Part
+                },
+                Quantity = InventoryParameterViewModel.Quantity,
+                UnitPrice = InventoryParameterViewModel.PricePerPart,
+                Remarks = InventoryParameterViewModel.StorageOrBin
+            };
 
-            //var newInventory = new NewInventory
-            //{
-            //    Bulk = 1,
-            //    ColorId = _request.Item.BricklinkColor,
-            //    Condition = InventoryParameterViewModel.Condition.ToBricklinkSharpCondition(),
-            //    Item = new ItemBase
-            //    {
-            //        Number = _request.Item.Number,
-            //        Type = ItemType.Part
-            //    },
-            //    Quantity = InventoryParameterViewModel.Quantity,
-            //    UnitPrice = InventoryParameterViewModel.PricePerPart,
-            //    Remarks = InventoryParameterViewModel.StorageOrBin
-            //};
-
-            //var inventory = await _bricklinkClient.CreateInventoryAsync(newInventory);
-            //return inventory;
+            var inventory = await _bricklinkClient.CreateInventoryAsync(newInventory);
+            return inventory;
         }
 
         private async Task<BricklinkSharp.Client.Inventory> UpdateInventoryAsync()
         {
-            await Task.Delay(1000);
-            return new BricklinkSharp.Client.Inventory { 
-                InventoryId = 15, 
-                Quantity = InventoryParameterViewModel.Quantity + 1, 
-                UnitPrice = InventoryParameterViewModel.PricePerPart
-            };
-
             var updateInventory = new UpdateInventory
             {
                 ChangedQuantity = InventoryParameterViewModel.Quantity,

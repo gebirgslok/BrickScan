@@ -86,8 +86,15 @@ namespace BrickScan.WpfClient.Controls
             control.Weight.Text = $"{item.Weight:F2} g";
             control.Year.Text = item.YearReleased.ToString();
             var url = item.ImageUrl;
-            control.ThumbnailImage.Source = url == null ? null : new BitmapImage(new Uri($"{item.ImageUrl}"));
-            //control.ThumbnailImage.Source = url == null ? null : new BitmapImage(new Uri($"https:{item.ImageUrl}"));
+
+            try
+            {
+                control.ThumbnailImage.Source = url == null ? null : new BitmapImage(new Uri($"https:{item.ImageUrl}"));
+            }
+            catch
+            {
+                control.ThumbnailImage.Source = null;
+            }
         }
 
         private void Hyperlink_OnClick(object sender, RoutedEventArgs e)

@@ -32,10 +32,11 @@ namespace BrickScan.WpfClient.Inventory
         [LocalizedDisplayName(typeof(Properties.Resources), "BricklinkApi")]
         BricklinkApi = 0,
 
-        [LocalizedDisplayName(typeof(Properties.Resources), "BricklinkXml")]
-        BricklinkXml = 1,
+        //TODO: Feature release
+        //[LocalizedDisplayName(typeof(Properties.Resources), "BricklinkXml")]
+        //BricklinkXml = 1,
 
-        [LocalizedDisplayName(typeof(Properties.Resources), "CustomRestApi")]
-        CustomRestApi = 2
+        //[LocalizedDisplayName(typeof(Properties.Resources), "CustomRestApi")]
+        //CustomRestApi = 2
     }
 }

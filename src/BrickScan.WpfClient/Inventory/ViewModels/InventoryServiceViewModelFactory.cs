@@ -47,9 +47,9 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             {
                 InventoryServiceType.BricklinkApi => _bricklinkApiSettingsVmFactory.Value,
                 //TODO: change this
-                InventoryServiceType.BricklinkXml => _bricklinkApiSettingsVmFactory.Value,
-                //TODO: change this
-                InventoryServiceType.CustomRestApi => _bricklinkApiSettingsVmFactory.Value,
+                //InventoryServiceType.BricklinkXml => _bricklinkApiSettingsVmFactory.Value,
+                ////TODO: change this
+                //InventoryServiceType.CustomRestApi => _bricklinkApiSettingsVmFactory.Value,
                 _ => throw new ArgumentOutOfRangeException(nameof(inventoryServiceType), inventoryServiceType, null)
             };
         }
@@ -59,10 +59,10 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             return inventoryServiceType switch
             {
                 InventoryServiceType.BricklinkApi => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
-                //TODO: change this
-                InventoryServiceType.BricklinkXml => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
-                //TODO: change this
-                InventoryServiceType.CustomRestApi => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
+                ////TODO: change this
+                //InventoryServiceType.BricklinkXml => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
+                ////TODO: change this
+                //InventoryServiceType.CustomRestApi => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
                 _ => throw new ArgumentOutOfRangeException(nameof(inventoryServiceType), inventoryServiceType, null)
             };
         }

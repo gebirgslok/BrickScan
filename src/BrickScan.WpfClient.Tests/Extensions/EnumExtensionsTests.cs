@@ -34,8 +34,9 @@ namespace BrickScan.WpfClient.Tests.Extensions
     {
         [Theory]
         [InlineData(Inventory.InventoryServiceType.BricklinkApi, typeof(DisplayNameAttribute))]
-        [InlineData(Inventory.InventoryServiceType.CustomRestApi, typeof(DisplayNameAttribute))]
-        [InlineData(Inventory.InventoryServiceType.BricklinkXml, typeof(DisplayNameAttribute))]
+        //TODO future release
+        //[InlineData(Inventory.InventoryServiceType.CustomRestApi, typeof(DisplayNameAttribute))]
+        //[InlineData(Inventory.InventoryServiceType.BricklinkXml, typeof(DisplayNameAttribute))]
         public void GetAttributeOfType(Enum val, Type t)
         {
             var attribute = val.GetAttributeOfType<DisplayNameAttribute>();

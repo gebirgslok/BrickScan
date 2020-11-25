@@ -73,31 +73,6 @@ namespace BrickScan.WpfClient.ViewModels
             ActiveItem = _inventoryServiceViewModelFactory.CreateViewModel(message, _configuration.SelectedInventoryServiceType);
         }
 
-        public void Temp()
-        {
-            var c = new ColorDto
-            {
-                BricklinkColorHtmlCode = "#FF5577FF",
-                BricklinkColorId = 1,
-                BricklinkColorName = "Super cool",
-                BricklinkColorType = "Solid"
-            };
-            var r = new OnInventoryServiceRequested(new DatasetItemContainer 
-            {
-                AdditionalIdentifier = "Foo", 
-                HtmlColor = c.BricklinkColorHtmlCode,
-                ColorName = c.BricklinkColorName,
-                BricklinkColor = c.BricklinkColorId,
-                Number = "1234abc",
-                DisplayImageUrls = new List<string>
-                {
-                    @"C:\Users\eisenbach\Pictures\doge.png",
-                    @"C:\Users\eisenbach\Pictures\CSharpUtils.png"
-                }
-            }, null);
-            ActiveItem = _inventoryServiceViewModelFactory.CreateViewModel(r, _configuration.SelectedInventoryServiceType);
-        }
-
         public void Handle(OnInventoryServiceCloseRequested message)
         {
             if (message.PredictionResultViewModel != null)

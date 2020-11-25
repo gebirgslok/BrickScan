@@ -25,6 +25,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 using BrickScan.WpfClient.Events;
@@ -78,58 +79,29 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         private async Task<PropertyChangedBase?> QueryBricklinkData(IBricklinkClient bricklinkClient)
         {
-            //var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
-            //var colorId = _request.Item.BricklinkColor;
+            var item = await bricklinkClient.GetItemAsync(ItemType.Part, _request.Item.Number);
+            var colorId = _request.Item.BricklinkColor;
 
-            //var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] { ItemType.Part },
-            //    includedStatusFlags: new[] { InventoryStatusType.Available },
-            //    includedCategoryIds: new[] { item.CategoryId },
-            //    includedColorIds: new[] { _request.Item.BricklinkColor });
+            var inventoryList = await bricklinkClient.GetInventoryListAsync(new[] { ItemType.Part },
+                includedStatusFlags: new[] { InventoryStatusType.Unavailable },
+                includedCategoryIds: new[] { item.CategoryId },
+                includedColorIds: new[] { _request.Item.BricklinkColor });
 
+            var filtered = inventoryList.Where(x => x.Item.Number == _request.Item.Number &&
+                                                   x.ColorId == _request.Item.BricklinkColor).ToArray();
 
-            //var defaultCondition = _userConfiguration.SelectedBricklinkCondition.ToBricklinkSharpCondition();
-            //var priceGuideType = _userConfiguration.SelectedPriceFixingBaseMethod.GetPriceGuideType();
+            var defaultCondition = _userConfiguration.SelectedBricklinkCondition.ToBricklinkSharpCondition();
+            var priceGuideType = _userConfiguration.SelectedPriceFixingBaseMethod.GetPriceGuideType();
 
-            //_logger.Information("Getting price guide for part no = {PartNo}, " +
-            //                    "color id = {ColorId} with condition = {Condition} " +
-            //                    "using method = {PriceGuideMethod}.",
-            //    item.Number, colorId, defaultCondition, priceGuideType);
+            _logger.Information("Getting price guide for part no = {PartNo}, " +
+                                "color id = {ColorId} with condition = {Condition} " +
+                                "using method = {PriceGuideMethod}.",
+                item.Number, colorId, defaultCondition, priceGuideType);
 
-            //var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
-            //    condition: defaultCondition, priceGuideType: priceGuideType);
+            var priceGuide = await bricklinkClient.GetPriceGuideAsync(ItemType.Part, item.Number, colorId,
+                condition: defaultCondition, priceGuideType: priceGuideType);
 
-            //var queryResult = new BlInventoryQueryResult(item, priceGuide, inventoryList);
-
-            var queryResult = new BlInventoryQueryResult(new CatalogItem
-            {
-                ImageUrl = @"C:\Users\eisenbach\Pictures\doge.png",
-                Number = "123abc",
-                YearReleased = 2000,
-                Name = "Hello world 123"
-            },
-                new PriceGuide
-                {
-                    QuantityAveragePrice = 1.23M,
-                    AveragePrice = 1.05M
-                },
-                new[] { 
-                    new BricklinkSharp.Client.Inventory 
-                    {
-                        InventoryId = 15, 
-                        Remarks = "foo1", 
-                        UnitPrice = 2.22M,
-                        Quantity = 13
-                    },                    
-                    new BricklinkSharp.Client.Inventory 
-                    {
-                        InventoryId = 124342, 
-                        Remarks = "bar4", 
-                        UnitPrice = 2.44M,
-                        Quantity = 34
-                    }
-                });
-
-            await Task.Delay(500);
+            var queryResult = new BlInventoryQueryResult(item, priceGuide, filtered);
 
             return _bricklinkApiViewModelFactory.Create(_request, queryResult);
         }
