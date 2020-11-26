@@ -53,8 +53,13 @@
             Content="{x:Static resx:Resources.InventoryIntegration}"
             FontSize="14"
             FontWeight="SemiBold" />
-        <Grid Grid.Row="1">
-            <Grid>
+        <Grid Grid.Row="1"
+              Margin="5">
+            <Grid IsSharedSizeScope="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" SharedSizeGroup="SettingsRow" />
+                    <RowDefinition Height="Auto" SharedSizeGroup="SettingsRow" />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -69,7 +74,7 @@
                     Grid.Row="0"
                     Grid.Column="1"
                     Width="220"
-                    Margin="5"
+                    Margin="2"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     ItemsSource="{Binding Source={controls:EnumBindingSource {x:Type inventory:InventoryServiceType}}, Mode=OneTime}"
@@ -80,9 +85,29 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="2"
+                    VerticalAlignment="Center"
+                    Content="{x:Static resx:Resources.DefaultConditionForInventory}" />
+                <ComboBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Width="220"
+                    Margin="2"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding Source={controls:EnumBindingSource {x:Type inventory:Condition}}, Mode=OneTime}"
+                    SelectedItem="{Binding Condition, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock VerticalAlignment="Center" Text="{Binding Converter={StaticResource EnumToDisplayNameConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </Grid>
         </Grid>
         <ContentControl Grid.Row="2" s:View.Model="{Binding Path=ActiveItem, Mode=OneWay}" />
-
     </Grid>
 </UserControl>

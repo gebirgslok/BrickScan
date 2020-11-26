@@ -32,6 +32,19 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
         private readonly IUserConfiguration _userConfiguration;
         private readonly IInventoryServiceViewModelFactory _inventoryServiceViewModelFactory;
 
+        public Condition Condition
+        {
+            get => _userConfiguration.SelectedInventoryCondition;
+            set
+            {
+                var index = (int)value;
+                if (index != _userConfiguration.SelectedInventoryConditionIndex)
+                {
+                    _userConfiguration.SelectedInventoryConditionIndex = index;
+                }
+            }
+        }
+
         public InventoryServiceType SelectedInventoryServiceType
         {
             get => _userConfiguration.SelectedInventoryServiceType;

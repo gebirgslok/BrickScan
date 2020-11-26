@@ -23,20 +23,36 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Model;
+using System.Security;
+using System.Windows;
+using System.Windows.Controls;
+using BrickScan.WpfClient.Extensions;
 
-namespace BrickScan.WpfClient.Inventory
+namespace BrickScan.WpfClient.Inventory.Views
 {
-    public enum InventoryServiceType
+    public partial class RestApiSettingsView
     {
-        [LocalizedDisplayName(typeof(Properties.Resources), "BricklinkApi")]
-        BricklinkApi = 0,
+        public RestApiSettingsView()
+        {
+            InitializeComponent();
 
-        //TODO: Feature release
-        //[LocalizedDisplayName(typeof(Properties.Resources), "BricklinkXml")]
-        //BricklinkXml = 1,
+            Loaded += delegate
+            {
+                if (DataContext != null)
+                {
+                    var src = (SecureString) ((dynamic) DataContext).AuthorizationParameter;
+                    var password = src.ToUnsecuredString();
+                    AuthParameterPasswordBox.Password = password;
+                }
+            };
+        }
 
-        [LocalizedDisplayName(typeof(Properties.Resources), "CustomRestApi")]
-        CustomRestApi = 2
+        private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (DataContext != null)
+            {
+                ((dynamic)DataContext).AuthorizationParameter = ((PasswordBox)sender).SecurePassword;
+            }
+        }
     }
 }

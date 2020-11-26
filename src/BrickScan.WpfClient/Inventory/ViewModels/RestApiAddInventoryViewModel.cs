@@ -23,20 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BrickScan.WpfClient.Model;
 
-namespace BrickScan.WpfClient.Inventory
+using Stylet;
+
+namespace BrickScan.WpfClient.Inventory.ViewModels
 {
-    public enum InventoryServiceType
+    public class RestApiAddInventoryViewModel : PropertyChangedBase
     {
-        [LocalizedDisplayName(typeof(Properties.Resources), "BricklinkApi")]
-        BricklinkApi = 0,
-
-        //TODO: Feature release
-        //[LocalizedDisplayName(typeof(Properties.Resources), "BricklinkXml")]
-        //BricklinkXml = 1,
-
-        [LocalizedDisplayName(typeof(Properties.Resources), "CustomRestApi")]
-        CustomRestApi = 2
     }
 }

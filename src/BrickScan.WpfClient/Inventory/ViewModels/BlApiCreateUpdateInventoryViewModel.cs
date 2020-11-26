@@ -29,8 +29,8 @@ using BricklinkSharp.Client;
 using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Extensions;
 using PropertyChanged;
-using Serilog;
 using Stylet;
+using ILogger = Serilog.ILogger;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
 {
@@ -83,7 +83,7 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             InventoryParameterViewModel = new InventoryParameterViewModel
             {
                 PricePerPart = finalPrice,
-                Condition = userConfiguration.SelectedBricklinkCondition
+                Condition = userConfiguration.SelectedInventoryCondition
             };
         }
 

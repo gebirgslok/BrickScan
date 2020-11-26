@@ -133,6 +133,24 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Authorization parameter.
+        /// </summary>
+        public static string AuthorizationParameter {
+            get {
+                return ResourceManager.GetString("AuthorizationParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authorization scheme.
+        /// </summary>
+        public static string AuthorizationScheme {
+            get {
+                return ResourceManager.GetString("AuthorizationScheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Average (last 6 month).
         /// </summary>
         public static string AvgSold {
@@ -408,6 +426,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string General {
             get {
                 return ResourceManager.GetString("General", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        public static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
             }
         }
         
@@ -705,6 +732,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string RequestFailedMessage {
             get {
                 return ResourceManager.GetString("RequestFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RESTful API integration.
+        /// </summary>
+        public static string RestApiIntegration {
+            get {
+                return ResourceManager.GetString("RestApiIntegration", resourceCulture);
             }
         }
         

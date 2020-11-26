@@ -406,4 +406,16 @@
   <data name="Remarks" xml:space="preserve">
     <value>Remarks</value>
   </data>
+  <data name="RestApiIntegration" xml:space="preserve">
+    <value>RESTful API integration</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="AuthorizationScheme" xml:space="preserve">
+    <value>Authorization scheme</value>
+  </data>
+  <data name="AuthorizationParameter" xml:space="preserve">
+    <value>Authorization parameter</value>
+  </data>
 </root>

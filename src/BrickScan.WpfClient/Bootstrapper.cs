@@ -91,6 +91,7 @@ namespace BrickScan.WpfClient
             builder.RegisterType<BlApiCreateUpdateInventoryViewModel>().AsSelf();
             builder.RegisterType<BlApiAddUpdateSingleInventoryViewModel>().AsSelf();
             builder.RegisterType<BlApiAddUpdateMultiInventoriesViewModel>().AsSelf();
+            builder.RegisterType<RestApiSettingsViewModel>().AsSelf();
         }
 
         private static void RegisterViewModels(ContainerBuilder builder)

@@ -110,12 +110,12 @@ namespace BrickScan.WpfClient.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SelectedBricklinkConditionIndex {
+        public int SelectedInventoryConditionIndex {
             get {
-                return ((int)(this["SelectedBricklinkConditionIndex"]));
+                return ((int)(this["SelectedInventoryConditionIndex"]));
             }
             set {
-                this["SelectedBricklinkConditionIndex"] = value;
+                this["SelectedInventoryConditionIndex"] = value;
             }
         }
         
@@ -152,6 +152,19 @@ namespace BrickScan.WpfClient.Properties {
             }
             set {
                 this["SelectedPriceFixingBaseMethodIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://api.my-domain.com/inventory?partNo=$(PartNo)&colorId=$(ColorId)&condition" +
+            "=$(Condition)$unitPrice=$(UnitPrice)&storage=$(Storage)&quantity=$(Quantity)")]
+        public string RestApiUrl {
+            get {
+                return ((string)(this["RestApiUrl"]));
+            }
+            set {
+                this["RestApiUrl"] = value;
             }
         }
     }

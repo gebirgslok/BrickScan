@@ -68,13 +68,13 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
         public Condition Condition
         {
-            get => _userConfiguration.SelectedBricklinkCondition;
+            get => _userConfiguration.SelectedInventoryCondition;
             set
             {
                 var index = (int)value;
-                if (index != _userConfiguration.SelectedBricklinkConditionIndex)
+                if (index != _userConfiguration.SelectedInventoryConditionIndex)
                 {
-                    _userConfiguration.SelectedBricklinkConditionIndex = index;
+                    _userConfiguration.SelectedInventoryConditionIndex = index;
                 }
             }
         }

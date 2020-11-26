@@ -27,10 +27,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using BricklinkSharp.Client;
 using BrickScan.Library.Core;
+using BrickScan.WpfClient.Extensions;
 using BrickScan.WpfClient.Inventory;
 using BrickScan.WpfClient.Properties;
 using Serilog;
@@ -44,6 +46,11 @@ namespace BrickScan.WpfClient
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "BrickScan",
             $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.blcredentials.bin");
+
+        private static readonly string _restApiAuthFilename = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "BrickScan",
+            $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.restApiAuthcredentials.bin");
 
         private readonly ILogger _logger;
 
@@ -152,20 +159,20 @@ namespace BrickScan.WpfClient
             set => BricklinkClientConfiguration.Instance.ConsumerSecret = value;
         }
 
-        public int SelectedBricklinkConditionIndex
+        public int SelectedInventoryConditionIndex
         {
-            get => Settings.Default.SelectedBricklinkConditionIndex;
+            get => Settings.Default.SelectedInventoryConditionIndex;
             set
             {
-                if (value != Settings.Default.SelectedBricklinkConditionIndex)
+                if (value != Settings.Default.SelectedInventoryConditionIndex)
                 {
-                    Settings.Default.SelectedBricklinkConditionIndex = value;
+                    Settings.Default.SelectedInventoryConditionIndex = value;
                     Save();
                 }
             }
         }
 
-        public Condition SelectedBricklinkCondition => (Condition)SelectedBricklinkConditionIndex;
+        public Condition SelectedInventoryCondition=> (Condition)SelectedInventoryConditionIndex;
 
         public int SelectedPriceFixingBaseMethodIndex
         {
@@ -208,10 +215,27 @@ namespace BrickScan.WpfClient
             }
         }
 
+        public string? RestApiUrl
+        {
+            get => Settings.Default.RestApiUrl;
+            set
+            {
+                if (value != Settings.Default.RestApiUrl)
+                {
+                    Settings.Default.RestApiUrl = value;
+                    Save();
+                }
+            }
+        }
+
+        public string? RestApiAuthScheme { get; set; }
+        public SecureString? RestApiAuthParameter { get; set; }
+
         public UserConfiguration(ILogger logger)
         {
             _logger = logger;
             ReadBricklinkCredentialsIfFileExists();
+            ReadRestApiAuthorizationIfFileExists();
         }
 
         private static string Unprotect(byte[] bytes, byte[] entropy)
@@ -232,6 +256,54 @@ namespace BrickScan.WpfClient
             var plainBytes = Encoding.UTF8.GetBytes(s);
             var cipherBytes = ProtectedData.Protect(plainBytes, entropy, DataProtectionScope.CurrentUser);
             return cipherBytes;
+        }
+
+        private void ReadBricklinkCredentialsIfFileExists()
+        {
+            if (!File.Exists(_bricklinkCredentialsFilename))
+            {
+                return;
+            }
+
+            try
+            {
+                var binaryData = FileHelper
+                    .ReadByteArrays(_bricklinkCredentialsFilename)
+                    .ToArray();
+
+                var entropy = binaryData[0];
+                BricklinkTokenValue = Unprotect(binaryData[1], entropy);
+                BricklinkTokenSecret = Unprotect(binaryData[2], entropy);
+                BricklinkConsumerKey = Unprotect(binaryData[3], entropy);
+                BricklinkConsumerSecret = Unprotect(binaryData[4], entropy);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to read BL credentials from {File}.", _bricklinkCredentialsFilename);
+            }
+        }
+
+        private void ReadRestApiAuthorizationIfFileExists()
+        {
+            if (!File.Exists(_restApiAuthFilename))
+            {
+                return;
+            }
+
+            try
+            {
+                var binaryData = FileHelper
+                    .ReadByteArrays(_restApiAuthFilename)
+                    .ToArray();
+
+                var entropy = binaryData[0];
+                RestApiAuthScheme = Unprotect(binaryData[1], entropy);
+                RestApiAuthParameter = Unprotect(binaryData[2], entropy).ToSecuredString();
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to read REST API authorization from {File}.", _restApiAuthFilename);
+            }
         }
 
         public void Save()
@@ -259,29 +331,22 @@ namespace BrickScan.WpfClient
             FileHelper.WriteByteArrays(_bricklinkCredentialsFilename, binaryData);
         }
 
-        public void ReadBricklinkCredentialsIfFileExists()
+        public void SaveRestApiAuthorization()
         {
-            if (!File.Exists(_bricklinkCredentialsFilename))
+            byte[] entropy = new byte[20];
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
             {
-                return;
+                rng.GetBytes(entropy);
             }
 
-            try
+            var binaryData = new List<byte[]>
             {
-                var binaryData = FileHelper
-                    .ReadByteArrays(_bricklinkCredentialsFilename)
-                    .ToArray();
+                entropy,
+                Protect(RestApiAuthScheme, entropy),
+                Protect(RestApiAuthParameter.ToUnsecuredString(), entropy)
+            };
 
-                var entropy = binaryData[0];
-                BricklinkTokenValue = Unprotect(binaryData[1], entropy);
-                BricklinkTokenSecret = Unprotect(binaryData[2], entropy);
-                BricklinkConsumerKey = Unprotect(binaryData[3], entropy);
-                BricklinkConsumerSecret = Unprotect(binaryData[4], entropy);
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "Failed to read BL credentials from {File}.", _bricklinkCredentialsFilename);
-            }
+            FileHelper.WriteByteArrays(_restApiAuthFilename, binaryData);
         }
     }
 }

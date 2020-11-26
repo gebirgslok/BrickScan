@@ -23,7 +23,7 @@
     <Setting Name="SelectedInventoryServiceType" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="SelectedBricklinkConditionIndex" Type="System.Int32" Scope="User">
+    <Setting Name="SelectedInventoryConditionIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="BlPriceFixingC" Type="System.Decimal" Scope="User">
@@ -34,6 +34,9 @@
     </Setting>
     <Setting Name="SelectedPriceFixingBaseMethodIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="RestApiUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://api.my-domain.com/inventory?partNo=$(PartNo)&amp;colorId=$(ColorId)&amp;condition=$(Condition)$unitPrice=$(UnitPrice)&amp;storage=$(Storage)&amp;quantity=$(Quantity)</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Security;
 using BrickScan.WpfClient.Inventory;
 
 namespace BrickScan.WpfClient
@@ -51,9 +52,9 @@ namespace BrickScan.WpfClient
 
         string? BricklinkConsumerSecret { get; set; }
 
-        int SelectedBricklinkConditionIndex { get; set; }
+        int SelectedInventoryConditionIndex { get; set; }
 
-        Condition SelectedBricklinkCondition { get; }
+        Condition SelectedInventoryCondition { get; }
 
         int SelectedPriceFixingBaseMethodIndex { get; set; }
 
@@ -63,8 +64,16 @@ namespace BrickScan.WpfClient
 
         decimal BlPriceFixingF { get; set; }
 
+        string? RestApiUrl { get; set; }
+
+        string? RestApiAuthScheme { get; set; }
+
+        SecureString? RestApiAuthParameter { get; set; }
+
         void Save();
 
         void SaveBricklinkCredentials();
+
+        void SaveRestApiAuthorization();
     }
 }

@@ -90,7 +90,7 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
             var filtered = inventoryList.Where(x => x.Item.Number == _request.Item.Number &&
                                                    x.ColorId == _request.Item.BricklinkColor).ToArray();
 
-            var defaultCondition = _userConfiguration.SelectedBricklinkCondition.ToBricklinkSharpCondition();
+            var defaultCondition = _userConfiguration.SelectedInventoryCondition.ToBricklinkSharpCondition();
             var priceGuideType = _userConfiguration.SelectedPriceFixingBaseMethod.GetPriceGuideType();
 
             _logger.Information("Getting price guide for part no = {PartNo}, " +
