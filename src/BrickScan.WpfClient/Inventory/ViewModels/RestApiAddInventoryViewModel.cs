@@ -23,12 +23,33 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-
+using BrickScan.WpfClient.Events;
+using BrickScan.WpfClient.Model;
 using Stylet;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
 {
     public class RestApiAddInventoryViewModel : PropertyChangedBase
     {
+        private readonly OnInventoryServiceRequested _request;
+        private readonly IEventAggregator _eventAggregator;
+
+        public DatasetItemContainer Item => _request.Item;
+
+        public RestApiSendInventoryRequestViewModel RestApiSendInventoryRequestViewModel { get; }
+
+        public RestApiAddInventoryViewModel(OnInventoryServiceRequested request, 
+            RestApiSendInventoryRequestViewModel restApiSendInventoryRequestViewModel, 
+            IEventAggregator eventAggregator)
+        {
+            _request = request;
+            RestApiSendInventoryRequestViewModel = restApiSendInventoryRequestViewModel;
+            _eventAggregator = eventAggregator;
+        }
+
+        public void NavigateBack()
+        {
+            _eventAggregator.PublishOnUIThread(new OnInventoryServiceCloseRequested(_request.PredictionResultViewModel));
+        }
     }
 }

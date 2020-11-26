@@ -418,4 +418,10 @@
   <data name="AuthorizationParameter" xml:space="preserve">
     <value>Authorization parameter</value>
   </data>
+  <data name="CreateNewInventory" xml:space="preserve">
+    <value>Create new inventory</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
 </root>

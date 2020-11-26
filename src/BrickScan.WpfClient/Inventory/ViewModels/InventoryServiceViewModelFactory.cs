@@ -34,14 +34,17 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
         private readonly Lazy<BlApiSettingsViewModel> _bricklinkApiSettingsVmFactory;
         private readonly Lazy<RestApiSettingsViewModel> _restApiSettingsVmFactory;
         private readonly Func<OnInventoryServiceRequested, BlApiInventoryOverviewViewModel> _bricklinkApiInventoryOverviewVmFactory;
+        private readonly Func<OnInventoryServiceRequested, RestApiAddInventoryViewModel> _restApiAddInventoryVmFactory;
 
         public InventoryServiceViewModelFactory(Lazy<BlApiSettingsViewModel> bricklinkApiSettingsVmFactory, 
             Func<OnInventoryServiceRequested, BlApiInventoryOverviewViewModel> bricklinkApiInventoryOverviewVmFactory, 
-            Lazy<RestApiSettingsViewModel> restApiSettingsVmFactory)
+            Lazy<RestApiSettingsViewModel> restApiSettingsVmFactory, 
+            Func<OnInventoryServiceRequested, RestApiAddInventoryViewModel> restApiAddInventoryVmFactory)
         {
             _bricklinkApiSettingsVmFactory = bricklinkApiSettingsVmFactory;
             _bricklinkApiInventoryOverviewVmFactory = bricklinkApiInventoryOverviewVmFactory;
             _restApiSettingsVmFactory = restApiSettingsVmFactory;
+            _restApiAddInventoryVmFactory = restApiAddInventoryVmFactory;
         }
 
         public PropertyChangedBase CreateSettingsViewModel(InventoryServiceType inventoryServiceType)
@@ -63,8 +66,7 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
                 InventoryServiceType.BricklinkApi => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
                 ////TODO: change this
                 //InventoryServiceType.BricklinkXml => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
-                ////TODO: change this
-                //InventoryServiceType.CustomRestApi => _bricklinkApiInventoryOverviewVmFactory.Invoke(request),
+                InventoryServiceType.CustomRestApi => _restApiAddInventoryVmFactory.Invoke(request),
                 _ => throw new ArgumentOutOfRangeException(nameof(inventoryServiceType), inventoryServiceType, null)
             };
         }

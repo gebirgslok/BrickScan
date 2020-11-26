@@ -57,9 +57,14 @@ namespace BrickScan.WpfClient.Extensions
 
         public static bool EqualsTo(this SecureString? s1, SecureString? s2)
         {
-            if (s1 == null || s2 == null)
+            if ((s1 == null && s2 != null) || (s1 != null && s2 == null))
             {
                 return false;
+            }
+
+            if (s1 == null && s2 == null)
+            {
+                return true;
             }
 
             var bstr1 = IntPtr.Zero;
@@ -67,8 +72,8 @@ namespace BrickScan.WpfClient.Extensions
 
             try
             {
-                bstr1 = Marshal.SecureStringToBSTR(s1);
-                bstr2 = Marshal.SecureStringToBSTR(s2);
+                bstr1 = Marshal.SecureStringToBSTR(s1!);
+                bstr2 = Marshal.SecureStringToBSTR(s2!);
                 var length1 = Marshal.ReadInt32(bstr1, -4);
                 var length2 = Marshal.ReadInt32(bstr2, -4);
 

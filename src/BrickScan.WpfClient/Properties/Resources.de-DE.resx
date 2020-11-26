@@ -438,4 +438,10 @@
   <data name="AuthorizationParameter" xml:space="preserve">
     <value>Authorisierungs-Parameter</value>
   </data>
+  <data name="CreateNewInventory" xml:space="preserve">
+    <value>Neue Inventarposition erstellen</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Senden</value>
+  </data>
 </root>

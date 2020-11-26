@@ -358,6 +358,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create new inventory.
+        /// </summary>
+        public static string CreateNewInventory {
+            get {
+                return ResourceManager.GetString("CreateNewInventory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom RESTful API.
         /// </summary>
         public static string CustomRestApi {
@@ -813,6 +822,15 @@ namespace BrickScan.WpfClient.Properties {
         public static string SelectImage {
             get {
                 return ResourceManager.GetString("SelectImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send.
+        /// </summary>
+        public static string Send {
+            get {
+                return ResourceManager.GetString("Send", resourceCulture);
             }
         }
         
