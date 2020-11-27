@@ -23,31 +23,117 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using System.Globalization;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
+using BrickScan.WpfClient.Events;
+using BrickScan.WpfClient.Extensions;
+using Serilog;
 using Stylet;
 
 namespace BrickScan.WpfClient.Inventory.ViewModels
 {
+    internal class RestApiDefaults
+    {
+        public const string PART_NO = "$(PartNo)";
+        public const string COLOR_ID = "$(ColorId)";
+        public const string CONDITION = "$(Condition)";
+        public const string UNIT_PRICE = "$(UnitPrice)";
+        public const string STORAGE = "$(Storage)";
+        public const string QUANTITY = "$(Quantity)";
+    }
+
     public class RestApiSendInventoryRequestViewModel : PropertyChangedBase
     {
+        private readonly HttpClient _httpClient;
+        private readonly ILogger _logger;
+        private readonly IUserConfiguration _userConfiguration;
+        private readonly OnInventoryServiceRequested _request;
+
         public InventoryParameterViewModel InventoryParameterViewModel { get; }
 
         public bool IsProcessing { get; private set; }
 
-        public RestApiSendInventoryRequestViewModel(IUserConfiguration userConfiguration)
+        public bool WasSubmissionSuccessful { get; private set; }
+
+        public bool IsSubmitted { get; private set; }
+
+        public RestApiSendInventoryRequestViewModel(OnInventoryServiceRequested request, 
+            IUserConfiguration userConfiguration, 
+            HttpClient httpClient, 
+            ILogger logger)
         {
+            _request = request;
+            _userConfiguration = userConfiguration;
+            _httpClient = httpClient;
+            _logger = logger;
             InventoryParameterViewModel = new InventoryParameterViewModel
             {
                 Condition = userConfiguration.SelectedInventoryCondition
             };
         }
 
+        private string ParseUrlTemplate(string urlTemplate)
+        {
+            var builder = new StringBuilder(urlTemplate);
+            builder.Replace(RestApiDefaults.PART_NO, _request.Item.Number);
+            builder.Replace(RestApiDefaults.COLOR_ID, _request.Item.BricklinkColor.ToString());
+            builder.Replace(RestApiDefaults.CONDITION,
+                InventoryParameterViewModel.Condition.ToString().ToLowerInvariant());
+            builder.Replace(RestApiDefaults.QUANTITY, InventoryParameterViewModel.Quantity.ToString());
+            builder.Replace(RestApiDefaults.STORAGE, InventoryParameterViewModel.StorageOrBin ?? "not_available");
+            builder.Replace(RestApiDefaults.UNIT_PRICE,
+                InventoryParameterViewModel.PricePerPart.ToString(new CultureInfo("en-US")));
+
+            return builder.ToString();
+        }
+
         public async Task SendRequestAsync()
         {
             IsProcessing = true;
-            await Task.Delay(1000);
+
+            string? urlTemplate = null;
+            string? url = null;
+            try
+            {
+                urlTemplate = _userConfiguration.RestApiUrl;
+
+                if (string.IsNullOrEmpty(urlTemplate))
+                {
+                    throw new InvalidOperationException($"{nameof(_userConfiguration.RestApiUrl)} cannot be Null or empty.");
+                }
+
+                url = ParseUrlTemplate(urlTemplate!);
+
+                using var request = new HttpRequestMessage(HttpMethod.Post, new Uri(url));
+
+                if (_userConfiguration.RestApiAuthScheme != null)
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue(_userConfiguration.RestApiAuthScheme,
+                        _userConfiguration.RestApiAuthParameter.ToUnsecuredString());
+                }
+
+                var response = await _httpClient.SendAsync(request);
+
+                //TODO use it?
+                var stringResponse = await response.Content.ReadAsStringAsync();
+
+                WasSubmissionSuccessful = true;
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to send HTTP request for: " + 
+                                         Environment.NewLine + 
+                                         "URL: {Url}," +
+                                         "URL template: {UrlTemplate}", url ?? "Null", urlTemplate ?? "Null");
+                WasSubmissionSuccessful = false;
+            }
 
             IsProcessing = false;
+            IsSubmitted = true;
         }
     }
 }
