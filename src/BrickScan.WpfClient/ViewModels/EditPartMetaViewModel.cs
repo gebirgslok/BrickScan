@@ -73,7 +73,7 @@ namespace BrickScan.WpfClient.ViewModels
 
         public bool WasSubmissionSuccessful { get; private set; }
 
-        public string? SubmissionMessage { get; private set; } = "hello world test 1234";
+        public string? SubmissionMessage { get; private set; }
 
         public EditPartMetaViewModel(IEnumerable<BitmapSource> trainImages,
             IEventAggregator eventAggregator,

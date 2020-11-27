@@ -23,8 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Configuration;
 using System.Globalization;
 using System.Net;
 using System.Net.Http;
@@ -158,10 +156,7 @@ namespace BrickScan.WpfClient
             builder.Register(c =>
                 {
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-                    return new HttpClient
-                    {
-                        BaseAddress = new Uri(ConfigurationManager.AppSettings["BrickScanApiBaseUrl"])
-                    };
+                    return new HttpClient();
                 })
                 .AsSelf()
                 .SingleInstance();

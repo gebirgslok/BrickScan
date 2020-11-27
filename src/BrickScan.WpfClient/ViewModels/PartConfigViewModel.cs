@@ -25,14 +25,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Model;
 using Microsoft.Win32;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using PropertyChanged;
 using Stylet;
 
@@ -59,19 +56,17 @@ namespace BrickScan.WpfClient.ViewModels
         public bool IsValid => !string.IsNullOrEmpty(PartNo) && SelectedColor != null;
 
         public PartConfigViewModel(Func<Task<IEnumerable<ColorDto>>, IEnumerable<ColorDto>, NotifyTask<IEnumerable<ColorDto>>> notifierTaskFunc,
-        HttpClient httpClient)
+            IBrickScanApiClient apiClient)
         {
-            var task = GetColorsAsnc(httpClient);
+            var task = GetColorsAsnc(apiClient);
             GetColorsNotifier = notifierTaskFunc.Invoke(task, new List<ColorDto>());
         }
 
-        private async Task<IEnumerable<ColorDto>> GetColorsAsnc(HttpClient httpClient)
+        private async Task<IEnumerable<ColorDto>> GetColorsAsnc(IBrickScanApiClient apiClient)
         {
             if (_cachedColors == null)
             {
-                var response = await httpClient.GetAsync("colors");
-                var responseString = await response.Content.ReadAsStringAsync();
-                _cachedColors = JsonConvert.DeserializeObject<List<ColorDto>>(responseString);
+                _cachedColors = await apiClient.GetColorsAsync();
             }
 
             return _cachedColors;

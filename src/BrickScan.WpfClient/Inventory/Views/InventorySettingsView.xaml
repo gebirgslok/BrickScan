@@ -53,8 +53,7 @@
             Content="{x:Static resx:Resources.InventoryIntegration}"
             FontSize="14"
             FontWeight="SemiBold" />
-        <Grid Grid.Row="1"
-              Margin="5">
+        <Grid Grid.Row="1" Margin="5">
             <Grid IsSharedSizeScope="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" SharedSizeGroup="SettingsRow" />

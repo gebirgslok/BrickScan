@@ -26,6 +26,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using BrickScan.Library.Core.Dto;
 
 namespace BrickScan.WpfClient.Model
 {
@@ -40,5 +41,7 @@ namespace BrickScan.WpfClient.Model
         Task<PredictionResult> PredictAsync(byte[] imageBytes);
 
         Task AssignTrainImageToClassAsync(int trainImageId, int classId);
+
+        Task<IEnumerable<ColorDto>> GetColorsAsync();
     }
 }

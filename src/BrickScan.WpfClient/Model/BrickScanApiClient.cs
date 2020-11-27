@@ -25,12 +25,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Extensions;
@@ -51,6 +53,12 @@ namespace BrickScan.WpfClient.Model
             _httpClient = httpClient;
             _logger = logger;
             _userSession = userSession;
+        }
+
+        private Uri BuildAbsoluteUri(string uriPath)
+        {
+            var basePath = ConfigurationManager.AppSettings["BrickScanApiBaseUrl"];
+            return new Uri($"{basePath}{uriPath}", UriKind.Absolute);
         }
 
         public async Task<bool> SubmitClassAsync(BitmapSource? extraDisplayImage, IList<BitmapSource> trainImages,
@@ -113,7 +121,7 @@ namespace BrickScan.WpfClient.Model
                     if (items[i].Images != null)
                     {
                         var itemDisplayImageResult =
-                            await PostImagesAsync(items[i].Images!.Select(x => x.ClipMaxSize(maxDisplayImageSize, maxDisplayImageSize)), 
+                            await PostImagesAsync(items[i].Images!.Select(x => x.ClipMaxSize(maxDisplayImageSize, maxDisplayImageSize)),
                                 $"item[{i}].disp_image[{{0}}].png");
 
                         if (!itemDisplayImageResult.Success)
@@ -127,7 +135,7 @@ namespace BrickScan.WpfClient.Model
                     datasetClass.Items.Add(item);
                 }
 
-                using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("classes/submit", UriKind.Relative));
+                using var request = new HttpRequestMessage(HttpMethod.Post, BuildAbsoluteUri("classes/submit"));
 
                 var accessToken = await _userSession.GetAccessTokenAsync(false);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -174,7 +182,7 @@ namespace BrickScan.WpfClient.Model
                     count++;
                 }
 
-                using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("images", UriKind.Relative));
+                using var request = new HttpRequestMessage(HttpMethod.Post, BuildAbsoluteUri("images"));
 
                 var accessToken = await _userSession.GetAccessTokenAsync(true);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -211,7 +219,7 @@ namespace BrickScan.WpfClient.Model
 
         public async Task<PredictionResult> PredictAsync(byte[] imageBytes)
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("prediction/predict", UriKind.Relative));
+            using var request = new HttpRequestMessage(HttpMethod.Post, BuildAbsoluteUri("prediction/predict"));
 
             var accessToken = await _userSession.GetAccessTokenAsync(false);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -233,10 +241,10 @@ namespace BrickScan.WpfClient.Model
 
             var problemDetails = JObject.Parse(responseString);
 
-            if ((int) response.StatusCode == 429)
+            if ((int)response.StatusCode == 429)
             {
                 _logger.Error("Received an 'too many requests' status code ({{StatusCode}}) " +
-                              "from request URI = {RequestUri}. Problem details = {@ProblemDetails}.", 
+                              "from request URI = {RequestUri}. Problem details = {@ProblemDetails}.",
                     429, "prediction/predict", problemDetails);
 
                 return new PredictionResult(false, errorMessage: Properties.Resources.TooManyRequestsErrorMessage);
@@ -262,8 +270,7 @@ namespace BrickScan.WpfClient.Model
         {
             var method = HttpMethod.Post;
 
-            using var request = new HttpRequestMessage(method,
-                new Uri($"classes/{classId}/assign-train-image?imageId={trainImageId}", UriKind.Relative));
+            using var request = new HttpRequestMessage(method, BuildAbsoluteUri($"classes/{classId}/assign-train-image?imageId={trainImageId}"));
 
             var accessToken = await _userSession.GetAccessTokenAsync(true);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -271,6 +278,13 @@ namespace BrickScan.WpfClient.Model
             var response = await _httpClient.SendAsync(request);
 
             _logger.Information("Received status code = {StatusCode} for confirmation.", response.StatusCode);
+        }
+
+        public async Task<IEnumerable<ColorDto>> GetColorsAsync()
+        {
+            var response = await _httpClient.GetAsync(BuildAbsoluteUri("colors"));
+            var responseString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<ColorDto[]>(responseString);
         }
     }
 }
