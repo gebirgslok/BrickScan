@@ -24,11 +24,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using BrickScan.Library.Core.Dto;
 using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Inventory.ViewModels;
-using BrickScan.WpfClient.Model;
 using OpenCvSharp;
 using Stylet;
 

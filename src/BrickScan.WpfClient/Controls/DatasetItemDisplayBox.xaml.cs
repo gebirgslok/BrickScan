@@ -27,6 +27,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using BrickScan.WpfClient.Model;
@@ -51,6 +52,14 @@ namespace BrickScan.WpfClient.Controls
             set => SetValue(_datasetItemProperty, value);
         }
 
+        public Orientation Orientation { get; set; } = Orientation.Vertical;
+
+        public DatasetItemDisplayBox()
+        {
+            InitializeComponent();
+            UpdateScoreVisibility(DatasetItem?.Score);
+        }
+
         private string? GetUrl(int index)
         {
             var urls = DatasetItem?.DisplayImageUrls;
@@ -61,12 +70,6 @@ namespace BrickScan.WpfClient.Controls
             }
 
             return null;
-        }
-
-        public DatasetItemDisplayBox()
-        {
-            InitializeComponent();
-            UpdateScoreVisibility(DatasetItem?.Score);
         }
 
         private void UpdateNextPrevButtonEnabledStates()

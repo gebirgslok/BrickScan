@@ -745,6 +745,15 @@ namespace BrickScan.WpfClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Response.
+        /// </summary>
+        public static string Response {
+            get {
+                return ResourceManager.GetString("Response", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to RESTful API integration.
         /// </summary>
         public static string RestApiIntegration {

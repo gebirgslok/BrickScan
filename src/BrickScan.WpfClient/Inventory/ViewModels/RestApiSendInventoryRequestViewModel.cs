@@ -31,6 +31,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BrickScan.WpfClient.Events;
 using BrickScan.WpfClient.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using Stylet;
 
@@ -60,6 +62,8 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
         public bool WasSubmissionSuccessful { get; private set; }
 
         public bool IsSubmitted { get; private set; }
+
+        public string? Response { get; private set; }
 
         public RestApiSendInventoryRequestViewModel(OnInventoryServiceRequested request, 
             IUserConfiguration userConfiguration, 
@@ -118,8 +122,18 @@ namespace BrickScan.WpfClient.Inventory.ViewModels
 
                 var response = await _httpClient.SendAsync(request);
 
-                //TODO use it?
                 var stringResponse = await response.Content.ReadAsStringAsync();
+
+                try
+                {
+                    var token = JObject.Parse(stringResponse);
+                    Response = token.ToString(Formatting.Indented);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex, "Failed to parse response to JSON. Using {RawResponse} instead.", stringResponse);
+                    Response = stringResponse;
+                }
 
                 WasSubmissionSuccessful = true;
             }

@@ -444,4 +444,7 @@
   <data name="Send" xml:space="preserve">
     <value>Senden</value>
   </data>
+  <data name="Response" xml:space="preserve">
+    <value>Antwort</value>
+  </data>
 </root>

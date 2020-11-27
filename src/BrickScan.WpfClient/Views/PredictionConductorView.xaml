@@ -34,10 +34,10 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <mah:TransitioningContentControl s:View.Model="{Binding ActiveItem, Mode=OneWay}" />
+    <!--<mah:TransitioningContentControl s:View.Model="{Binding ActiveItem, Mode=OneWay}" />-->
     <!--  TODO Remove this  -->
-    <!--<StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical">
         <mah:TransitioningContentControl s:View.Model="{Binding ActiveItem, Mode=OneWay}" />
         <Button Command="{s:Action Temp}" Content="Temp" />
-    </StackPanel>-->
+    </StackPanel>
 </UserControl>

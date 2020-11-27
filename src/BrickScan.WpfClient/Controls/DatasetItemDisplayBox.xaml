@@ -35,19 +35,11 @@
     d:DesignWidth="800"
     x:ClassModifier="internal"
     mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid
-            Grid.Row="0"
-            Grid.Column="0"
-            Grid.ColumnSpan="2">
+    <StackPanel
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Orientation="{Binding Path=Orientation, Mode=OneTime}">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -119,43 +111,48 @@
                 FontWeight="SemiBold"
                 Foreground="{DynamicResource MahApps.Brushes.Text}" />
         </Grid>
-        <Image
-            x:Name="SelectedDisplayImage"
-            Grid.Row="1"
-            Grid.Column="0"
-            MaxWidth="180"
-            Margin="2"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            Stretch="Uniform" />
-        <StackPanel
-            x:Name="ImageShowNextPreviousPanel"
-            Grid.Row="1"
-            Grid.Column="1"
-            VerticalAlignment="Top"
-            Orientation="Vertical">
-            <Button
-                x:Name="ShowNextButton"
-                Width="36"
-                Height="36"
-                Margin="2,2,2,0"
-                HorizontalAlignment="Right"
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Image
+                x:Name="SelectedDisplayImage"
+                Grid.Row="0"
+                MaxWidth="180"
+                Margin="2"
+                HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                Click="OnShowNextImageClicked"
-                Style="{DynamicResource MahApps.Styles.Button.Circle}">
-                <iconPacks:Material Kind="ArrowRight" />
-            </Button>
-            <Button
-                x:Name="ShowPreviousButton"
-                Width="36"
-                Height="36"
-                Margin="2,2,2,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Click="OnShowPreviousImageClicked"
-                Style="{DynamicResource MahApps.Styles.Button.Circle}">
-                <iconPacks:Material Kind="ArrowLeft" />
-            </Button>
-        </StackPanel>
-    </Grid>
+                Stretch="Uniform" />
+            <StackPanel
+                x:Name="ImageShowNextPreviousPanel"
+                Grid.Column="1"
+                VerticalAlignment="Top"
+                Orientation="Vertical">
+                <Button
+                    x:Name="ShowNextButton"
+                    Width="36"
+                    Height="36"
+                    Margin="2,2,2,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Click="OnShowNextImageClicked"
+                    Style="{DynamicResource MahApps.Styles.Button.Circle}">
+                    <iconPacks:Material Kind="ArrowRight" />
+                </Button>
+                <Button
+                    x:Name="ShowPreviousButton"
+                    Width="36"
+                    Height="36"
+                    Margin="2,2,2,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Click="OnShowPreviousImageClicked"
+                    Style="{DynamicResource MahApps.Styles.Button.Circle}">
+                    <iconPacks:Material Kind="ArrowLeft" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+    </StackPanel>
 </UserControl>

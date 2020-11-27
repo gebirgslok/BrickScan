@@ -54,6 +54,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -69,6 +71,7 @@
             Grid.Row="0"
             Grid.Column="1"
             Margin="5"
+            VerticalAlignment="Bottom"
             IsActive="True"
             IsLarge="True"
             Visibility="{Binding Path=IsProcessing, Mode=OneWay, Converter={StaticResource BoolToHiddenVisibilityConverter}}" />
@@ -104,7 +107,7 @@
                 Margin="5,1,5,1"
                 Foreground="LimeGreen"
                 Kind="CheckBold"
-                Visibility="{Binding Path=WasSubmissionSuccessful, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                Visibility="{Binding Path=WasSubmissionSuccessful, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" />
             <iconPacks:PackIconMaterial
                 Width="20"
                 Height="20"
@@ -118,5 +121,28 @@
                 Foreground="{DynamicResource MahApps.Brushes.Text}"
                 Text="{Binding Path=SubmissionMessage, Mode=OneWay, TargetNullValue={x:Null}}" />
         </StackPanel>
+        <Label
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Margin="2"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Content="{x:Static resx:Resources.Response}" />
+        <ScrollViewer
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto">
+            <TextBox
+                Margin="2"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                AcceptsReturn="True"
+                IsReadOnly="True"
+                Text="{Binding Path=Response, Mode=OneWay, TargetNullValue={x:Null}}"
+                TextWrapping="NoWrap" />
+        </ScrollViewer>
     </Grid>
 </UserControl>
